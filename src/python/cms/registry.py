@@ -1,5 +1,5 @@
 '''
-Medicaid Domain for NSPAH
+Medicaid Domain for NSAPH
 
 Running this module will create/update data model for raw CMS data
 
@@ -25,8 +25,8 @@ from pathlib import Path
 
 import yaml
 
-from create_schema_config import CMSSchema
-from fts2yaml import MedicaidFTS
+from cms.create_schema_config import CMSSchema
+from cms.fts2yaml import MedicaidFTS
 from nsaph import init_logging
 
 
@@ -72,7 +72,8 @@ class Registry:
             )
         return yaml.dump(domain)
 
-    def built_in_registry_path(self):
+    @staticmethod
+    def built_in_registry_path():
         src = Path(__file__).parents[3]
         return os.path.join(src, "yml", "cms.yaml")
 
