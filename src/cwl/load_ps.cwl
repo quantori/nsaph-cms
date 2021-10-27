@@ -46,7 +46,7 @@ inputs:
     doc: |
       if defined, then the data ingestion is incremental.
       Transactions are committed after every file is processed
-      and files that have already been prcoessed are skipped
+      and files that have already been processed are skipped
   input:
     type: Directory
     inputBinding:
