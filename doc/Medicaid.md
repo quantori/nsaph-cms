@@ -38,7 +38,7 @@ See [documentation and path references](LegacyMedicaid.md#links-to-legacy-docume
 ## Importing raw data   
                                        
 ### Parsing FTS files to generate schema
-
+**Pipeline step**: [parse_fts](pipeline/parse_fts.md)
 
 The first step is to parse File transfer summary (FTS)
 included with the data and generate YAML schema for
@@ -106,6 +106,8 @@ often hours but is much faster than importing raw data.
 
 
 ### Beneficiaries
+**Pipeline step**: [load_ps](pipeline/load_ps.md)
+                                   
 
 #### BENE_ID column
 
@@ -243,6 +245,7 @@ This is in fact a monthly detalization of beneficiaries
 enrollments in medicaid. 
 
 ## Pipeline
+### Chart
 
     ┌────────────────────────────────────┐
     │ Parse FTS and generate YAML Schema │
@@ -297,6 +300,11 @@ enrollments in medicaid.
     │ Build Indices for Admissions       │
     └────────────────────────────────────┘
 
+### Step by step                      
+
+1. [parse_fts](pipeline/parse_fts.md)
+2. [reset](pipeline/reset.md)
+3. [load_ps](pipeline/load_ps.md)
 
 ## Sample user request: 
 
