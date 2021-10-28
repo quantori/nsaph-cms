@@ -80,3 +80,4 @@ class Registry:
 
 if __name__ == '__main__':
     Registry().update()
+    

@@ -300,7 +300,7 @@ enrollments in medicaid.
     │ Build Indices for Admissions       │
     └────────────────────────────────────┘
 
-### Step by step                      
+### Step by step                     
 
 1. [parse_fts](pipeline/parse_fts.md)
 2. [reset](pipeline/reset.md)

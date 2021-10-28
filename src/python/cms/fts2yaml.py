@@ -224,6 +224,7 @@ class MedicaidFTS:
             d["source"] = {
                 "type": "file"
             }
+            d["index"] = {"required_before_loading_data": True}
         return d
 
     def to_dict(self):
