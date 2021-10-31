@@ -1,11 +1,14 @@
 #!/usr/bin/env cwl-runner
+### Medicaid Table/View Initializer
 
 cwlVersion: v1.2
 class: CommandLineTool
 baseCommand: [python, -m, nsaph.loader.data_loader]
 
 doc: |
-  This tool creates a Mediciad view or a materialized view in the database
+  This tool executes DDL to drop and recreate
+  creates a table, a view or a materialized view in the database.
+  It is assumed it is run for Medicaid domain
 
 
 inputs:

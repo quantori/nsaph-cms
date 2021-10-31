@@ -1,5 +1,5 @@
-## Patient Summary Loader
-**Tool**
+# Patient Summary Loader
+**Tool** 	[nsaph.loader.data_loader](../../../platform/doc/members/data_loader.html)
 
 **Source**: [load_ps.cwl](../../src/cwl/load_ps.cwl)
 
@@ -33,6 +33,7 @@ data model is created from FTS files
 |page_size|int|`1000`|explicit page size for the database|
 |log_frequency|long|`100000`|informational logging occurs every specified number of records|
 |limit|long| |if specified, the process will stop after ingesting the specified number of records |
+|depends_on|File| |a special field used to enforce dependencies and execution order|
 
 ## Outputs
 

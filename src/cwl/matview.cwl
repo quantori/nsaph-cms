@@ -1,4 +1,5 @@
 #!/usr/bin/env cwl-runner
+### Materialized View Creator
 
 cwlVersion: v1.2
 class: Workflow
@@ -32,6 +33,7 @@ inputs:
 steps:
   create:
     run: create.cwl
+    doc: Execute DDL
     in:
       table: table
       database: database
@@ -40,6 +42,7 @@ steps:
 
   index:
     run: index.cwl
+    doc: Build indices
     in:
       depends_on: create/log
       domain: domain

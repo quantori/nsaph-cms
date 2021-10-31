@@ -1,4 +1,5 @@
 #!/usr/bin/env cwl-runner
+### Resource Loader
 
 cwlVersion: v1.2
 class: CommandLineTool

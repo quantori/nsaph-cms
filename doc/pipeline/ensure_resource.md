@@ -1,7 +1,7 @@
-# Generic Table (View/Materialized View) Initializer
-**Tool** 	[nsaph.loader.data_loader](../../../platform/doc/members/data_loader.html)
+# Resource Loader
+**Tool** 	[nsaph.util.pg_json_dump](../../../platform/doc/members/pg_json_dump.html)
 
-**Source**: [reset.cwl](../../src/cwl/reset.cwl)
+**Source**: [ensure_resource.cwl](../../src/cwl/ensure_resource.cwl)
 
 <!-- toc -->
 
@@ -12,18 +12,17 @@
 <!-- tocstop -->
 
 ## Description
-This tool drops the tables and deletes all previous data from the database
+This tool ensures that resources required by
+the processing steps are loaded into the database
 
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-|registry|File| |A path to the data model file |
-|domain|string|`cms`|the name of the domain|
-|table|string|`ps`|the name of the table being deleted|
 |database|File| |Path to database connection file, usually database.ini|
 |connection_name|string| |The name of the section in the database.ini file|
+|table|string| |the name of the table containing required resource|
 
 ## Outputs
 

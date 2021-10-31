@@ -1,4 +1,5 @@
 #!/usr/bin/env cwl-runner
+### Full Medicaid Processing Pipeline
 
 cwlVersion: v1.2
 class: Workflow
@@ -12,7 +13,7 @@ doc: |
   This workflow ingests Medicaid data, provided by
   Centers for Medicare & Medicaid Services (CMS)
   to researches. The expected input format is
-  Medicaid Medicaid Analytic eXtract (MAX) data.
+  Medicaid Analytic eXtract (MAX) data.
 
   The workflow parses File transfer summary (FTS) files,
   loads the raw data into a PostgreSQL DBMS and then processes
@@ -37,6 +38,11 @@ inputs:
 steps:
   states:
     run: ensure_resource.cwl
+    doc: |
+      Ensures the presence of `us_states` table in the database.
+      The table contains mapping between state names, ids
+      (two letter abbreviations), FIPS codes and
+      [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2)
     in:
       database: database
       connection_name: connection_name
@@ -45,6 +51,11 @@ steps:
     out: [log]
   iso:
     run: ensure_resource.cwl
+    doc: |
+      Ensures the presence of `us_iso` table in the database.
+      The table provides a mapping between states, counties and zip
+      codes. It contains FIPS and
+      [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2)
     in:
       database: database
       connection_name: connection_name
@@ -61,6 +72,7 @@ steps:
 
   reset_cms:
     run: reset.cwl
+    doc: Initializes Raw CMS tables
     in:
       registry: fts/model
       domain:
@@ -73,6 +85,7 @@ steps:
 
   load_ps:
     run: load_ps.cwl
+    doc: Loads Patient Summaries
     in:
       depends_on: reset_cms/log
       registry: fts/model
@@ -104,6 +117,7 @@ steps:
 
   create_beneficiaries:
     run: matview.cwl
+    doc: Creates `Beneficiaries` Table
     in:
       depends_on: index_ps/log
       table:
@@ -114,6 +128,7 @@ steps:
 
   create_monthly_view:
     run: matview.cwl
+    doc: Creates internally used `Monthly View`
     in:
       depends_on: create_beneficiaries/index_log
       table:
@@ -124,6 +139,7 @@ steps:
 
   create_enrollments:
     run: matview.cwl
+    doc: Creates `Enrollment` Table
     in:
       depends_on: create_monthly_view/index_log
       table:
@@ -134,6 +150,7 @@ steps:
 
   create_eligibility:
     run: matview.cwl
+    doc: Creates `Eligibility` Table
     in:
       depends_on: create_enrollments/index_log
       table:

@@ -1,7 +1,7 @@
-# Generic Table (View/Materialized View) Initializer
+# Medicaid Table/View Initializer
 **Tool** 	[nsaph.loader.data_loader](../../../platform/doc/members/data_loader.html)
 
-**Source**: [reset.cwl](../../src/cwl/reset.cwl)
+**Source**: [create.cwl](../../src/cwl/create.cwl)
 
 <!-- toc -->
 
@@ -12,16 +12,16 @@
 <!-- tocstop -->
 
 ## Description
-This tool drops the tables and deletes all previous data from the database
+This tool executes DDL to drop and recreate
+creates a table, a view or a materialized view in the database.
+It is assumed it is run for Medicaid domain
 
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-|registry|File| |A path to the data model file |
-|domain|string|`cms`|the name of the domain|
-|table|string|`ps`|the name of the table being deleted|
+|table|string| |the name of the table to be created|
 |database|File| |Path to database connection file, usually database.ini|
 |connection_name|string| |The name of the section in the database.ini file|
 

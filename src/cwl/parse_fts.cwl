@@ -1,4 +1,5 @@
 #!/usr/bin/env cwl-runner
+### FTS Parser
 
 cwlVersion: v1.2
 class: CommandLineTool

@@ -1,4 +1,5 @@
 #!/usr/bin/env cwl-runner
+### Index Builder
 
 cwlVersion: v1.2
 class: CommandLineTool

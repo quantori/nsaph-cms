@@ -1,4 +1,5 @@
 #!/usr/bin/env cwl-runner
+### Generic Table (View/Materialized View) Initializer
 
 cwlVersion: v1.2
 class: CommandLineTool
