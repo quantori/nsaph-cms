@@ -69,7 +69,7 @@ by running the following command:
 ## Data Model
 
 The resulting data model for Medicaid domain is defined by 
-[medicaid.yaml](../../../nsaph/src/yml/medicaid.yaml)
+[medicaid.yaml](../src/python/cms/models/medicaid.yaml)
 
 Four main tables are used to fulfill user requests:
 

@@ -1,7 +1,7 @@
 ## FTS Parser
 **Tool**
 
-**Source**: [reset.cwl](../../src/cwl/reset.cwl)
+**Source**: [reset.cwl](../../../../nsaph/src/cwl/reset.cwl)
 
 <!-- toc -->
 

@@ -77,6 +77,9 @@ inputs:
     doc: |
       if specified, the process will stop after ingesting
       the specified number of records
+  depends_on:
+    type: File?
+    doc: a special field used to enforce dependencies and execution order
 
 
 

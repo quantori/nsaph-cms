@@ -1,4 +1,14 @@
+"""
+This modules selects random lines from the the data and
+outputs the selected lines
+
+"""
+
 import gzip
+from argparse import ArgumentParser
+
+import sys
+
 import os
 import glob
 import random
@@ -38,6 +48,28 @@ def select(pattern: str, destination: str, threshold: float):
     print("All Done")
 
 
+def args():
+    parser = ArgumentParser ("Random records selector")
+    parser.add_argument("--in",
+                        help="pattern to select incoming files",
+                        default="data/*/*.csv*",
+                        dest="input",
+                        required=False)
+    parser.add_argument("--out",
+                        help="Directory to output the random selection",
+                        default="random_data",
+                        required=False)
+    parser.add_argument("--selector",
+                        help="A float value specifying the "
+                             + "share of data to be selected",
+                        default=0.02,
+                        type=float,
+                        required=False)
+    arguments = parser.parse_args()
+    return arguments
+
+
 if __name__ == '__main__':
-    select("data/*/*.csv*", "random_data", 0.02)
+    arg = args()
+    select(arg.input, arg.out, arg.selector)
 
