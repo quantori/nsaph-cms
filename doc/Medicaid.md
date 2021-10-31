@@ -245,8 +245,13 @@ This is in fact a monthly detalization of beneficiaries
 enrollments in medicaid. 
 
 ## Pipeline
-### Chart
 
+See [Medicaid workflow](pipeline/medicaid.md) for details
+
+    ┌────────────────────────────────────┐
+    │ Initialize and prepare the database│
+    └─────────────────┬──────────────────┘
+                      │
     ┌────────────────────────────────────┐
     │ Parse FTS and generate YAML Schema │
     └─────────────────┬──────────────────┘
@@ -300,11 +305,6 @@ enrollments in medicaid.
     │ Build Indices for Admissions       │
     └────────────────────────────────────┘
 
-### Step by step                     
-
-1. [parse_fts](pipeline/parse_fts.md)
-2. [reset](pipeline/reset.md)
-3. [load_ps](pipeline/load_ps.md)
 
 ## Sample user request: 
 
