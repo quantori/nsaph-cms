@@ -177,15 +177,17 @@ we apply the following rules:
     * dob_latest: the latest raw DOB
     * dod_earliest: the earliest raw DOD
                                         
-This allows a user to apply various rules to include or exclude 
+This allows a project curator to apply various rules to include or exclude 
 records where data for beneficiaries is inconsistent. For example,
-a user can:
+the curator can:
 
 * Exclude all inconsistent records
 * Exclude records with inconsistent dates of death (legacy strategy)
 * Exclude records where difference between dates of birth 
   is more than 3 years
 * etc.
+
+We can establish actual rules for NSAPH projects later at a SOP level.
 
 > We have noted that about 7% of records do not have BENE_ID. One 
 > point to consider is that we do not know if this is a result

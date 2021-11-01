@@ -1,17 +1,22 @@
-
 NSAPH CMS Processing Pipelines
 ==========================================================
 
-    `Home ../../nsaph/index.rst`_
-
 .. toctree::
+   :glob:
    :maxdepth: 4
    :caption: Contents:
 
    README
    doc/Medicaid.md
-   doc/LegacyMedicaid.md
    doc/pipeline/medicaid.md
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Also:
+
+   doc/LegacyMedicaid.md
+
 
 Indices and tables
 ==================
