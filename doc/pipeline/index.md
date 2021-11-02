@@ -1,5 +1,5 @@
 # Index Builder
-**Tool** 	[nsaph.loader.index_builder](../../../platform/doc/members/index_builder.html)
+**Tool** 	[nsaph.loader.index_builder](../../../../platform/doc/members/index_builder.html)
 
 **Source**: [index.cwl](../../src/cwl/index.cwl)
 

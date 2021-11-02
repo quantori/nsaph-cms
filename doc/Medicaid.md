@@ -53,12 +53,12 @@ starting positions, the length and the generic format of
 each of the column (such as character, numeric or date)  
 
 Parsing FTS is done by running module 
-[medicaid](src/python/medicaid.py).
+[create_schema_config](../src/python/cms/create_schema_config.py).
                                                        
-    pyhton -m nsaph.cms.medicaid
+    pyhton -m nsaph.cms.create_schema_config
 
 Once the schema is generated, the 
-[Universal Data Loader](../../../nsaph/doc/Datamodels.md) can import it
+[Universal Data Loader](../../../nsaph/src/python/nsaph/loader/data_loader.py) can import it
 by running the following command:
 
     nohup python -u -m nsaph.loader.data_loader --domain cms -t ps --domain cms --incremental --data /data/incoming/rce/ci3_d_medicaid/original_data/cms_medicaid-max/data/  -t ps --pattern "**/maxdata_*_ps_*.csv*"  --threads 4 --page 1000 --log 100000 2>&1 > ps-2021-09-25--21-37.log&
@@ -310,5 +310,5 @@ See [Medicaid workflow](pipeline/medicaid.md) for details
 
 ## Sample user request: 
 
-See https://github.com/NSAPH/data_requests/tree/master/request_projects/feb2021_jenny_medicaid_resp
+See [Jenny Lee Request from February 2021](https://github.com/NSAPH/data_requests/tree/master/request_projects/feb2021_jenny_medicaid_resp)
 

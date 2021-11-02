@@ -1,7 +1,17 @@
-# CMS Data Pipelines
+# CMS Manipulation Package 
 **Pipelines to process CMS data: Medicaid and Medicare**
 
 <!-- toc -->
+
+- [Overview](#overview)
+- [Project Structure](#project-structure)
+  * [Software Sources](#software-sources)
+  * [CWL](#cwl)
+  * [Python](#python)
+    + [Package cms](#package-cms)
+      - [Subpackage with miscellaneous tools for handling CMS data](#subpackage-with-miscellaneous-tools-for-handling-cms-data)
+
+<!-- tocstop -->
 
 ## Overview
 
@@ -61,6 +71,14 @@ Module
 generates 
 [YAML schema](doc/Medicaid.md#parsing-fts-files-to-generate-schema) 
 for CMS medicaid data by parsing FTS files.
+
+##### Subpackage with miscellaneous tools for handling CMS data 
+
+* `nsaph.tools`
+
+This package contains code that was written to try to extract
+corrupted medicare data for 2015. Ultimately, this attempt
+was unsuccessful.
 
 
 

@@ -1,5 +1,5 @@
 # Resource Loader
-**Tool** 	[nsaph.util.pg_json_dump](../../../platform/doc/members/pg_json_dump.html)
+**Tool** 	[nsaph.util.pg_json_dump](../../../../platform/doc/members/pg_json_dump.html)
 
 **Source**: [ensure_resource.cwl](../../src/cwl/ensure_resource.cwl)
 

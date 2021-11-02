@@ -1,5 +1,5 @@
 # Generic Table (View/Materialized View) Initializer
-**Tool** 	[nsaph.loader.data_loader](../../../platform/doc/members/data_loader.html)
+**Tool** 	[nsaph.loader.data_loader](../../../../platform/doc/members/data_loader.html)
 
 **Source**: [reset.cwl](../../src/cwl/reset.cwl)
 

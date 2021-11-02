@@ -1,5 +1,5 @@
 # Patient Summary Loader
-**Tool** 	[nsaph.loader.data_loader](../../../platform/doc/members/data_loader.html)
+**Tool** 	[nsaph.loader.data_loader](../../../../platform/doc/members/data_loader.html)
 
 **Source**: [load_ps.cwl](../../src/cwl/load_ps.cwl)
 
