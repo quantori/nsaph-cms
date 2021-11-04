@@ -11,7 +11,6 @@ class CMSSchema(Context):
     _output = Argument("output",
             help = "Output path for schema",
             type = str,
-            required = False,
             default = None,
             cardinality = Cardinality.single
         )
@@ -19,14 +18,15 @@ class CMSSchema(Context):
     _input = Argument("input",
             help = "Path to directory containing FTS files."
                    + "Files are looked for by using "
-                   + " '**/maxdata_(ps|ip)_*.fts' mask",
+                   + " '**/maxdata_(ps|ip)_*.fts' pattern",
             type = str,
-            required = False,
             default = None,
             cardinality = Cardinality.single
         )
 
     def __init__(self, doc):
         self.output = None
+        ''' Output path for schema '''
         self.input = None
+        ''' Path to directory containing FTS files '''
         super().__init__(CMSSchema, doc, include_default = False)
