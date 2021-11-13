@@ -4,7 +4,7 @@ import os
 import yaml
 
 from nsaph import ORIGINAL_FILE_COLUMN
-from nsaph.reader import fopen
+from nsaph_utils.utils.io_utils import fopen
 from nsaph.pg_keywords import *
 
 
