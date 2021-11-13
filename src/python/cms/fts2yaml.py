@@ -166,7 +166,7 @@ class MedicaidFTS:
         return self
 
     def read_file(self, f):
-        with fopen(f) as fts:
+        with fopen(f, "rt") as fts:
             lines = [line for line in fts]
         i = 0
         column_reader = None
