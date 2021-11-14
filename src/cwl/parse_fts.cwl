@@ -35,7 +35,7 @@ outputs:
   log:
     type: File?
     outputBinding:
-      glob: "*.log"
+      glob: "registry*.log"
   model:
     type: File?
     outputBinding:
