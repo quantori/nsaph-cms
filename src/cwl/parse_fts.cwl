@@ -33,11 +33,14 @@ inputs:
 
 outputs:
   log:
-    type: File
+    type: File?
     outputBinding:
       glob: "*.log"
   model:
-    type: File
+    type: File?
     outputBinding:
       glob: "*.yaml"
+  errors:
+    type: stderr
 
+stderr: parse_fts_err.log

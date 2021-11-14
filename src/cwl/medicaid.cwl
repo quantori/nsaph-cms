@@ -68,7 +68,7 @@ steps:
       input: input
       output:
         valueFrom: cms.yaml
-    out: [log, model]
+    out: [log, model, errors]
 
   reset_cms:
     run: reset.cwl
@@ -167,6 +167,9 @@ outputs:
   parse_log:
     type: File
     outputSource: fts/log
+  parse_err:
+    type: File
+    outputSource: fts/errors
   reset_log:
     type: File
     outputSource: reset_cms/log

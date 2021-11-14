@@ -1,0 +1,13 @@
+{
+    "job": {
+      "database": {
+         "class": "File",
+         "location": "/opt/airflow/project/database.ini"
+      },
+      "input": {
+         "class": "Directory",
+         "location": "/data/incoming/medicaid/mini_random_data/"
+      },
+      "connection_name": "nsaph2"
+    }
+ }
