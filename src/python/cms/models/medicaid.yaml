@@ -44,6 +44,13 @@ medicaid:
           create:
             type: materialized view
             from: cms.ps
+          indices:
+            primary:
+              columns:
+                - bene_id
+                - state
+                - year
+                - max_elg_cd
           columns:
             - bene_id
             - msis_id

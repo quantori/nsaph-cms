@@ -38,7 +38,7 @@ steps:
       table: table
       database: database
       connection_name: connection_name
-    out: [ log ]
+    out: [ log, errors ]
 
   index:
     run: index.cwl
@@ -49,7 +49,18 @@ steps:
       table: table
       database: database
       connection_name: connection_name
-    out: [ log ]
+    out: [ log, errors ]
+
+  vacuum:
+    run: vacuum.cwl
+    doc: Vacuum the view
+    in:
+      depends_on: index/log
+      domain: domain
+      table: table
+      database: database
+      connection_name: connection_name
+    out: [ log, errors ]
 
 outputs:
   create_log:
@@ -58,3 +69,16 @@ outputs:
   index_log:
     type: File
     outputSource: index/log
+  vacuum_log:
+    type: File
+    outputSource: vacuum/log
+
+  create_err:
+    type: File
+    outputSource: create/errors
+  index_err:
+    type: File
+    outputSource: index/errors
+  vacuum_err:
+    type: File
+    outputSource: vacuum/errors

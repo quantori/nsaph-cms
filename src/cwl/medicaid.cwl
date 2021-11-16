@@ -81,7 +81,7 @@ steps:
         valueFrom: "ps"
       database: database
       connection_name: connection_name
-    out: [log]
+    out: [log, errors]
 
   load_ps:
     run: load_ps.cwl
@@ -100,7 +100,7 @@ steps:
         valueFrom: $(true)
       pattern:
         valueFrom: "**/maxdata_*_ps_*.csv*"
-    out: [log]
+    out: [log, errors]
 
   index_ps:
     run: index.cwl
@@ -113,7 +113,20 @@ steps:
         valueFrom: "ps"
       database: database
       connection_name: connection_name
-    out: [log]
+    out: [log, errors]
+
+  vacuum_ps:
+    run: vacuum.cwl
+    in:
+      depends_on: index_ps/log
+      registry: fts/model
+      domain:
+        valueFrom: "cms"
+      table:
+        valueFrom: "ps"
+      database: database
+      connection_name: connection_name
+    out: [log, errors]
 
   create_beneficiaries:
     run: matview.cwl
@@ -124,7 +137,13 @@ steps:
         valueFrom: "beneficiaries"
       database: database
       connection_name: connection_name
-    out: [create_log, index_log]
+    out:
+      - create_log
+      - index_log
+      - vacuum_log
+      - create_err
+      - index_err
+      - vacuum_err
 
   create_monthly_view:
     run: matview.cwl
@@ -135,7 +154,13 @@ steps:
         valueFrom: "monthly"
       database: database
       connection_name: connection_name
-    out: [create_log, index_log]
+    out:
+      - create_log
+      - index_log
+      - vacuum_log
+      - create_err
+      - index_err
+      - vacuum_err
 
   create_enrollments:
     run: matview.cwl
@@ -146,7 +171,13 @@ steps:
         valueFrom: "enrollments"
       database: database
       connection_name: connection_name
-    out: [create_log, index_log]
+    out:
+      - create_log
+      - index_log
+      - vacuum_log
+      - create_err
+      - index_err
+      - vacuum_err
 
   create_eligibility:
     run: matview.cwl
@@ -157,19 +188,25 @@ steps:
         valueFrom: "eligibility"
       database: database
       connection_name: connection_name
-    out: [create_log, index_log]
+    out:
+      - create_log
+      - index_log
+      - vacuum_log
+      - create_err
+      - index_err
+      - vacuum_err
 
 
 outputs:
   resource1_log:
     type: File
     outputSource: states/log
+  resource2_log:
+    type: File
+    outputSource: iso/log
   parse_log:
     type: File
     outputSource: fts/log
-  parse_err:
-    type: File
-    outputSource: fts/errors
   reset_log:
     type: File
     outputSource: reset_cms/log
@@ -179,27 +216,94 @@ outputs:
   ps_index_log:
     type: File
     outputSource: index_ps/log
+  ps_vacuum_log:
+    type: File
+    outputSource: vacuum_ps/log
   ben_create_log:
     type: File
     outputSource: create_beneficiaries/create_log
   ben_index_log:
     type: File
     outputSource: create_beneficiaries/index_log
+  ben_vacuum_log:
+    type: File
+    outputSource: create_beneficiaries/vacuum_log
   mnth_create_log:
     type: File
     outputSource: create_monthly_view/create_log
   mnth_index_log:
     type: File
     outputSource: create_monthly_view/index_log
+  mnth_vacuum_log:
+    type: File
+    outputSource: create_monthly_view/vacuum_log
   enrlm_create_log:
     type: File
     outputSource: create_enrollments/create_log
   enrlm_index_log:
     type: File
     outputSource: create_enrollments/index_log
+  enrlm_vacuum_log:
+    type: File
+    outputSource: create_enrollments/vacuum_log
   elgb_create_log:
     type: File
     outputSource: create_eligibility/create_log
   elgb_index_log:
     type: File
     outputSource: create_eligibility/index_log
+  elgb_vacuum_log:
+    type: File
+    outputSource: create_eligibility/vacuum_log
+
+  parse_err:
+    type: File
+    outputSource: fts/errors
+  reset_err:
+    type: File
+    outputSource: reset_cms/errors
+  ps_create_err:
+    type: File
+    outputSource: load_ps/errors
+  ps_index_err:
+    type: File
+    outputSource: index_ps/errors
+  ps_vacuum_err:
+    type: File
+    outputSource: vacuum_ps/errors
+  ben_create_err:
+    type: File
+    outputSource: create_beneficiaries/create_err
+  ben_index_err:
+    type: File
+    outputSource: create_beneficiaries/index_err
+  ben_vacuum_err:
+    type: File
+    outputSource: create_beneficiaries/vacuum_err
+  mnth_create_err:
+    type: File
+    outputSource: create_monthly_view/create_err
+  mnth_index_err:
+    type: File
+    outputSource: create_monthly_view/index_err
+  mnth_vacuum_err:
+    type: File
+    outputSource: create_monthly_view/vacuum_err
+  enrlm_create_err:
+    type: File
+    outputSource: create_enrollments/create_err
+  enrlm_index_err:
+    type: File
+    outputSource: create_enrollments/index_err
+  enrlm_vacuum_err:
+    type: File
+    outputSource: create_enrollments/vacuum_err
+  elgb_create_err:
+    type: File
+    outputSource: create_eligibility/create_err
+  elgb_index_err:
+    type: File
+    outputSource: create_eligibility/index_err
+  elgb_vacuum_err:
+    type: File
+    outputSource: create_eligibility/vacuum_err

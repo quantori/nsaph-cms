@@ -3,12 +3,11 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-baseCommand: [python, -m, nsaph.loader.index_builder]
+baseCommand: [python, -m, nsaph.loader.vacuum]
 
 doc: |
-  This tool builds all indices for the specified table.
-  Log file displays real-time progress of building indices
-
+  This tool runs VACUUM Aanalyze to make subsequent queries
+  more efficient
 
 inputs:
   #$import: db.yaml
@@ -51,5 +50,5 @@ outputs:
   errors:
     type: stderr
 
-stderr: $("index_" + inputs.table + ".err")
+stderr: $("vacuum_" + inputs.table + ".err")
 

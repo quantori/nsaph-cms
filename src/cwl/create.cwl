@@ -4,6 +4,8 @@
 cwlVersion: v1.2
 class: CommandLineTool
 baseCommand: [python, -m, nsaph.loader.data_loader]
+requirements:
+  InlineJavascriptRequirement: {}
 
 doc: |
   This tool executes DDL to drop and recreate
@@ -40,4 +42,8 @@ outputs:
     type: File
     outputBinding:
       glob: "*.log"
+  errors:
+    type: stderr
+
+stderr: $("create_" + inputs.table + ".err")
 

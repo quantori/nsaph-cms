@@ -43,4 +43,4 @@ outputs:
   errors:
     type: stderr
 
-stderr: parse_fts_err.log
+stderr: parse_fts.err

@@ -48,4 +48,8 @@ outputs:
     type: File
     outputBinding:
       glob: "*.log"
+  errors:
+    type: stderr
+
+stderr: reset.err
 

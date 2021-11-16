@@ -70,6 +70,11 @@ class Registry:
             domain[name]["tables"].update(
                 MedicaidFTS(x).init(self.context.input).to_dict()
             )
+        domain[name]["tables"]["ps"]["indices"] = {
+            "primary": {
+                "columns": ["bene_id", "state_cd", "max_yr_dt"]
+            }
+        }
         return yaml.dump(domain)
 
     @staticmethod
