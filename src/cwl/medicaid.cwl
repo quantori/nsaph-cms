@@ -132,7 +132,7 @@ steps:
     run: matview.cwl
     doc: Creates `Beneficiaries` Table
     in:
-      depends_on: index_ps/log
+      depends_on: vacuum_ps/log
       table:
         valueFrom: "beneficiaries"
       database: database
@@ -149,7 +149,7 @@ steps:
     run: matview.cwl
     doc: Creates internally used `Monthly View`
     in:
-      depends_on: create_beneficiaries/index_log
+      depends_on: create_beneficiaries/vacuum_log
       table:
         valueFrom: "monthly"
       database: database
@@ -166,7 +166,7 @@ steps:
     run: matview.cwl
     doc: Creates `Enrollment` Table
     in:
-      depends_on: create_monthly_view/index_log
+      depends_on: create_monthly_view/vacuum_log
       table:
         valueFrom: "enrollments"
       database: database
@@ -183,7 +183,7 @@ steps:
     run: matview.cwl
     doc: Creates `Eligibility` Table
     in:
-      depends_on: create_enrollments/index_log
+      depends_on: create_enrollments/vacuum_log
       table:
         valueFrom: "eligibility"
       database: database
