@@ -6,8 +6,8 @@
       },
       "input": {
          "class": "Directory",
-         "location": "/data/incoming/medicaid/random_data/"
+         "location": "/data/incoming/medicaid/mini_random_data/"
       },
-      "connection_name": "nsaph2"
+      "connection_name": "nsaph_test"
     }
  }
