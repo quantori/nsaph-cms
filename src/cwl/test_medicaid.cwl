@@ -16,10 +16,19 @@ doc: |
 inputs:
   database:
     type: File
+    default:
+      class: File
+      location: "/opt/airflow/project/database.ini"
     doc: Path to database connection file, usually database.ini
   connection_name:
     type: string
+    default: nsaph_test
     doc: The name of the section in the database.ini file
+  input:
+    type: Directory
+    default:
+      class: Directory
+      location: "/data/incoming/medicaid/mini_random_data/"
 
 steps:
   process:
@@ -27,43 +36,44 @@ steps:
     in:
       database: database
       connection_name: connection_name
+      input: input
     out: 
-      -resource1_log
-      -resource2_log
-      -parse_log
-      -reset_log
-      -ps_create_log
-      -ps_index_log
-      -ps_vacuum_log
-      -ben_create_log
-      -ben_index_log
-      -ben_vacuum_log
-      -mnth_create_log
-      -mnth_index_log
-      -mnth_vacuum_log
-      -enrlm_create_log
-      -enrlm_index_log
-      -enrlm_vacuum_log
-      -elgb_create_log
-      -elgb_index_log
-      -elgb_vacuum_log
-      -parse_err
-      -reset_err
-      -ps_create_err
-      -ps_index_err
-      -ps_vacuum_err
-      -ben_create_err
-      -ben_index_err
-      -ben_vacuum_err
-      -mnth_create_err
-      -mnth_index_err
-      -mnth_vacuum_err
-      -enrlm_create_err
-      -enrlm_index_err
-      -enrlm_vacuum_err
-      -elgb_create_err
-      -elgb_index_err
-      -elgb_vacuum_err
+      - resource1_log
+      - resource2_log
+      - parse_log
+      - reset_log
+      - ps_create_log
+      - ps_index_log
+      - ps_vacuum_log
+      - ben_create_log
+      - ben_index_log
+      - ben_vacuum_log
+      - mnth_create_log
+      - mnth_index_log
+      - mnth_vacuum_log
+      - enrlm_create_log
+      - enrlm_index_log
+      - enrlm_vacuum_log
+      - elgb_create_log
+      - elgb_index_log
+      - elgb_vacuum_log
+      - parse_err
+      - reset_err
+      - ps_create_err
+      - ps_index_err
+      - ps_vacuum_err
+      - ben_create_err
+      - ben_index_err
+      - ben_vacuum_err
+      - mnth_create_err
+      - mnth_index_err
+      - mnth_vacuum_err
+      - enrlm_create_err
+      - enrlm_index_err
+      - enrlm_vacuum_err
+      - elgb_create_err
+      - elgb_index_err
+      - elgb_vacuum_err
   verify:
     run: verify.cwl
     in:
