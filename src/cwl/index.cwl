@@ -38,6 +38,11 @@ inputs:
     doc: The name of the section in the database.ini file
     inputBinding:
       prefix: --connection
+  incremental:
+    type:  boolean
+    default: false
+    inputBinding:
+      prefix: --incremental
   depends_on:
     type: File?
     doc: a special field used to enforce dependencies and execution order

@@ -10,14 +10,7 @@ requirements:
   InlineJavascriptRequirement: {}
 
 doc: |
-  This workflow ingests Medicaid data, provided by
-  Centers for Medicare & Medicaid Services (CMS)
-  to researches. The expected input format is
-  Medicaid Analytic eXtract (MAX) data.
-
-  The workflow parses File transfer summary (FTS) files,
-  loads the raw data into a PostgreSQL DBMS and then processes
-  the data to prepare it for using by NSAPH researches.
+  This workflow prcoesses already ingested Medicaid data
   See [documentation](../Medicaid.md) for detailed
   information.
 
@@ -28,97 +21,29 @@ inputs:
   connection_name:
     type: string
     doc: The name of the section in the database.ini file
-  input:
-    type: Directory
-    doc: |
-      A path to directory, containing unpacked CMS
-      files. The tool will recursively look for data files
-      according to provided pattern
+  registry:
+    type: File
 
 steps:
-  states:
-    run: ensure_resource.cwl
-    doc: |
-      Ensures the presence of `us_states` table in the database.
-      The table contains mapping between state names, ids
-      (two letter abbreviations), FIPS codes and
-      [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2)
+  index_ps:
+    run: index.cwl
     in:
-      database: database
-      connection_name: connection_name
-      table:
-        valueFrom: "us_states"
-    out: [log]
-  iso:
-    run: ensure_resource.cwl
-    doc: |
-      Ensures the presence of `us_iso` table in the database.
-      The table provides a mapping between states, counties and zip
-      codes. It contains FIPS and
-      [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2)
-    in:
-      database: database
-      connection_name: connection_name
-      table:
-        valueFrom: "us_iso"
-    out: [log]
-  fts:
-    run: parse_fts.cwl
-    in:
-      input: input
-      output:
-        valueFrom: cms.yaml
-    out: [log, model, errors]
-
-  reset_cms:
-    run: reset.cwl
-    doc: Initializes Raw CMS tables
-    in:
-      registry: fts/model
+      registry:  registry
       domain:
         valueFrom: "cms"
       table:
         valueFrom: "ps"
-      database: database
-      connection_name: connection_name
-    out: [log, errors]
-
-  load_ps:
-    run: load_ps.cwl
-    doc: Loads Patient Summaries
-    in:
-      depends_on: reset_cms/log
-      registry: fts/model
-      domain:
-        valueFrom: "cms"
-      table:
-        valueFrom: "ps"
-      input: input
       database: database
       connection_name: connection_name
       incremental:
         valueFrom: $(true)
-      pattern:
-        valueFrom: "**/maxdata_*_ps_*.csv*"
-    out: [log, errors]
-
-  index_ps:
-    run: index.cwl
-    in:
-      depends_on: load_ps/log
-      registry: fts/model
-      domain:
-        valueFrom: "cms"
-      table:
-        valueFrom: "ps"
-      database: database
-      connection_name: connection_name
     out: [log, errors]
 
   vacuum_ps:
     run: vacuum.cwl
     in:
       depends_on: index_ps/log
+      registry:  registry
       domain:
         valueFrom: "cms"
       table:
@@ -136,6 +61,8 @@ steps:
         valueFrom: "beneficiaries"
       database: database
       connection_name: connection_name
+      incremental:
+        valueFrom: $(true)
     out:
       - create_log
       - index_log
@@ -153,6 +80,8 @@ steps:
         valueFrom: "monthly"
       database: database
       connection_name: connection_name
+      incremental:
+        valueFrom: $(true)
     out:
       - create_log
       - index_log
@@ -170,6 +99,8 @@ steps:
         valueFrom: "enrollments"
       database: database
       connection_name: connection_name
+      incremental:
+        valueFrom: $(true)
     out:
       - create_log
       - index_log
@@ -187,6 +118,8 @@ steps:
         valueFrom: "eligibility"
       database: database
       connection_name: connection_name
+      incremental:
+        valueFrom: $(true)
     out:
       - create_log
       - index_log
@@ -197,21 +130,6 @@ steps:
 
 
 outputs:
-  resource1_log:
-    type: File
-    outputSource: states/log
-  resource2_log:
-    type: File
-    outputSource: iso/log
-  parse_log:
-    type: File
-    outputSource: fts/log
-  reset_log:
-    type: File
-    outputSource: reset_cms/log
-  ps_create_log:
-    type: File
-    outputSource: load_ps/log
   ps_index_log:
     type: File
     outputSource: index_ps/log
@@ -255,15 +173,6 @@ outputs:
     type: File
     outputSource: create_eligibility/vacuum_log
 
-  parse_err:
-    type: File
-    outputSource: fts/errors
-  reset_err:
-    type: File
-    outputSource: reset_cms/errors
-  ps_create_err:
-    type: File
-    outputSource: load_ps/errors
   ps_index_err:
     type: File
     outputSource: index_ps/errors

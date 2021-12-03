@@ -30,6 +30,11 @@ inputs:
     doc: The name of the section in the database.ini file
     inputBinding:
       prefix: --connection
+  sloppy:
+    type: boolean
+    default: false
+    inputBinding:
+      prefix: --sloppy
 
 arguments:
     - valueFrom: "--reset"

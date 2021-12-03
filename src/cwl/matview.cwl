@@ -26,6 +26,9 @@ inputs:
     type: string
     doc: the name of the domain
     default: medicaid
+  incremental:
+    type:  boolean
+    default: false
   depends_on:
     type: File?
     doc: a special field used to enforce dependencies and execution order
@@ -38,6 +41,7 @@ steps:
       table: table
       database: database
       connection_name: connection_name
+      sloppy: incremental
     out: [ log, errors ]
 
   index:
@@ -47,8 +51,10 @@ steps:
       depends_on: create/log
       domain: domain
       table: table
+      incremental: incremental
       database: database
       connection_name: connection_name
+
     out: [ log, errors ]
 
   vacuum:
