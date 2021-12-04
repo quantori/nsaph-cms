@@ -48,6 +48,10 @@ inputs:
     doc: a special field used to enforce dependencies and execution order
 
 
+arguments:
+    - valueFrom: "--autocommit"
+
+
 outputs:
   log:
     type: File
