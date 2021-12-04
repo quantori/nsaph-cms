@@ -121,6 +121,7 @@ steps:
       depends_on: index_ps/log
       domain:
         valueFrom: "cms"
+      registry:  fts/model
       table:
         valueFrom: "ps"
       database: database
