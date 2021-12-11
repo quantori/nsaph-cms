@@ -4,6 +4,8 @@
 cwlVersion: v1.2
 class: CommandLineTool
 baseCommand: [python, -m, nsaph.loader.vacuum]
+requirements:
+  InlineJavascriptRequirement: {}
 
 doc: |
   This tool runs VACUUM Aanalyze to make subsequent queries

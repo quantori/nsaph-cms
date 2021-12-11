@@ -70,24 +70,10 @@ steps:
         valueFrom: cms.yaml
     out: [log, model, errors]
 
-  reset_cms:
-    run: reset.cwl
-    doc: Initializes Raw CMS tables
-    in:
-      registry: fts/model
-      domain:
-        valueFrom: "cms"
-      table:
-        valueFrom: "ps"
-      database: database
-      connection_name: connection_name
-    out: [log, errors]
-
   load_ps:
-    run: load_ps.cwl
+    run: ingest.cwl
     doc: Loads Patient Summaries
     in:
-      depends_on: reset_cms/log
       registry: fts/model
       domain:
         valueFrom: "cms"
@@ -98,41 +84,46 @@ steps:
       connection_name: connection_name
       incremental:
         valueFrom: $(true)
-      pattern:
-        valueFrom: "**/maxdata_*_ps_*.csv*"
-    out: [log, errors]
+    out:
+      - reset_log
+      - create_log
+      - index_log
+      - vacuum_log
+      - reset_err
+      - create_err
+      - index_err
+      - vacuum_err
 
-  index_ps:
-    run: index.cwl
+  load_ip:
+    run: ingest.cwl
+    doc: Loads inpatient admissions
     in:
-      depends_on: load_ps/log
+      depends_on: load_ps/vacuum_log
       registry: fts/model
       domain:
         valueFrom: "cms"
       table:
-        valueFrom: "ps"
+        valueFrom: "ip"
+      input: input
       database: database
       connection_name: connection_name
-    out: [log, errors]
-
-  vacuum_ps:
-    run: vacuum.cwl
-    in:
-      depends_on: index_ps/log
-      domain:
-        valueFrom: "cms"
-      registry:  fts/model
-      table:
-        valueFrom: "ps"
-      database: database
-      connection_name: connection_name
-    out: [log, errors]
+      incremental:
+        valueFrom: $(true)
+    out:
+      - reset_log
+      - create_log
+      - index_log
+      - vacuum_log
+      - reset_err
+      - create_err
+      - index_err
+      - vacuum_err
 
   create_beneficiaries:
     run: matview.cwl
     doc: Creates `Beneficiaries` Table
     in:
-      depends_on: vacuum_ps/log
+      depends_on: load_ip/vacuum_log
       table:
         valueFrom: "beneficiaries"
       database: database
@@ -179,11 +170,26 @@ steps:
       - index_err
       - vacuum_err
 
+  prepare_eligibility:
+    run: create.cwl
+    doc: |
+      Creates `_Eligibility` View,
+      prerequisit for creation of Eligibility table
+    in:
+      depends_on: create_enrollments/vacuum_log
+      table:
+        valueFrom: "_eligibility"
+      database: database
+      connection_name: connection_name
+    out:
+      - log
+      - errors
+
   create_eligibility:
     run: matview.cwl
     doc: Creates `Eligibility` Table
     in:
-      depends_on: create_enrollments/vacuum_log
+      depends_on: prepare_eligibility/log
       table:
         valueFrom: "eligibility"
       database: database
@@ -196,6 +202,29 @@ steps:
       - index_err
       - vacuum_err
 
+  load_admissions:
+    run: ingest.cwl
+    doc: Processes and loads inpatient admissions
+    in:
+      depends_on: create_eligibility/vacuum_log
+      domain:
+        valueFrom: "medicaid"
+      table:
+        valueFrom: "admissions"
+      input: input
+      database: database
+      connection_name: connection_name
+      incremental:
+        valueFrom: $(true)
+    out:
+      - reset_log
+      - create_log
+      - index_log
+      - vacuum_log
+      - reset_err
+      - create_err
+      - index_err
+      - vacuum_err
 
 outputs:
   resource1_log:
@@ -205,20 +234,34 @@ outputs:
     type: File
     outputSource: iso/log
   parse_log:
-    type: File
+    type: File?
     outputSource: fts/log
-  reset_log:
+
+  ps_reset_log:
     type: File
-    outputSource: reset_cms/log
+    outputSource: load_ps/reset_log
   ps_create_log:
     type: File
-    outputSource: load_ps/log
+    outputSource: load_ps/create_log
   ps_index_log:
     type: File
-    outputSource: index_ps/log
+    outputSource: load_ps/index_log
   ps_vacuum_log:
     type: File
-    outputSource: vacuum_ps/log
+    outputSource: load_ps/vacuum_log
+  ip_reset_log:
+    type: File
+    outputSource: load_ip/reset_log
+  ip_create_log:
+    type: File
+    outputSource: load_ip/create_log
+  ip_index_log:
+    type: File
+    outputSource: load_ip/index_log
+  ip_vacuum_log:
+    type: File
+    outputSource: load_ip/vacuum_log
+
   ben_create_log:
     type: File
     outputSource: create_beneficiaries/create_log
@@ -246,6 +289,9 @@ outputs:
   enrlm_vacuum_log:
     type: File
     outputSource: create_enrollments/vacuum_log
+  elgb_prepare_log:
+    type: File
+    outputSource: prepare_eligibility/log
   elgb_create_log:
     type: File
     outputSource: create_eligibility/create_log
@@ -256,21 +302,51 @@ outputs:
     type: File
     outputSource: create_eligibility/vacuum_log
 
+  admissions_reset_log:
+    type: File
+    outputSource: load_admissions/reset_log
+  admissions_create_log:
+    type: File
+    outputSource: load_admissions/create_log
+  admissions_index_log:
+    type: File
+    outputSource: load_admissions/index_log
+  admissions_vacuum_log:
+    type: File
+    outputSource: load_admissions/vacuum_log
+
+## ERROR LOGS ###########################################
+
   parse_err:
     type: File
     outputSource: fts/errors
-  reset_err:
+
+  ps_reset_err:
     type: File
-    outputSource: reset_cms/errors
+    outputSource: load_ps/reset_err
   ps_create_err:
     type: File
-    outputSource: load_ps/errors
+    outputSource: load_ps/create_err
   ps_index_err:
     type: File
-    outputSource: index_ps/errors
+    outputSource: load_ps/index_err
   ps_vacuum_err:
     type: File
-    outputSource: vacuum_ps/errors
+    outputSource: load_ps/vacuum_err
+  ip_reset_err:
+    type: File
+    outputSource: load_ip/reset_err
+  ip_create_err:
+    type: File
+    outputSource: load_ip/create_err
+  ip_index_err:
+    type: File
+    outputSource: load_ip/index_err
+  ip_vacuum_err:
+    type: File
+    outputSource: load_ip/vacuum_err
+
+
   ben_create_err:
     type: File
     outputSource: create_beneficiaries/create_err
@@ -301,9 +377,24 @@ outputs:
   elgb_create_err:
     type: File
     outputSource: create_eligibility/create_err
+  elgb_prepare_err:
+    type: File
+    outputSource: prepare_eligibility/errors
   elgb_index_err:
     type: File
     outputSource: create_eligibility/index_err
   elgb_vacuum_err:
     type: File
     outputSource: create_eligibility/vacuum_err
+  admissions_reset_err:
+    type: File
+    outputSource: load_admissions/reset_err
+  admissions_create_err:
+    type: File
+    outputSource: load_admissions/create_err
+  admissions_index_err:
+    type: File
+    outputSource: load_admissions/index_err
+  admissions_vacuum_err:
+    type: File
+    outputSource: load_admissions/vacuum_err

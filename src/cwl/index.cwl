@@ -4,6 +4,8 @@
 cwlVersion: v1.2
 class: CommandLineTool
 baseCommand: [python, -m, nsaph.loader.index_builder]
+requirements:
+  InlineJavascriptRequirement: {}
 
 doc: |
   This tool builds all indices for the specified table.

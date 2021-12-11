@@ -4,6 +4,8 @@
 cwlVersion: v1.2
 class: CommandLineTool
 baseCommand: [python, -m, nsaph.loader.data_loader]
+requirements:
+  InlineJavascriptRequirement: {}
 
 doc: |
   This tool drops the tables and deletes all previous data from the database
@@ -11,7 +13,7 @@ doc: |
 
 inputs:
   registry:
-    type: File
+    type: File?
     inputBinding:
       prefix: --registry
     doc: |
@@ -23,7 +25,7 @@ inputs:
     inputBinding:
       prefix: --domain
   table:
-    type: string
+    type: string?
     inputBinding:
       prefix: --table
     default: ps
@@ -51,5 +53,5 @@ outputs:
   errors:
     type: stderr
 
-stderr: reset.err
+stderr:  $("reset-" + inputs.table + ".err")
 

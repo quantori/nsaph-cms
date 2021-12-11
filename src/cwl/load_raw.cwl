@@ -4,6 +4,8 @@
 cwlVersion: v1.2
 class: CommandLineTool
 baseCommand: [python, -m, nsaph.loader.data_loader]
+requirements:
+  InlineJavascriptRequirement: {}
 
 doc: |
   This tool loads patient summary data into a database.
@@ -13,20 +15,18 @@ doc: |
 
 inputs:
   registry:
-    type: File
+    type: File?
     inputBinding:
       prefix: --registry
     doc: |
       A path to the data model file
   domain:
     type: string
-    default: cms
     doc: the name of the domain
     inputBinding:
       prefix: --domain
   table:
     type: string
-    default: ps
     doc: the name of the table being populated
     inputBinding:
       prefix: --table
@@ -58,7 +58,6 @@ inputs:
       according to provided pattern
   pattern:
     type: string
-    default: "**/maxdata_*_ps_*.csv*"
     inputBinding:
       prefix: --pattern
   threads:
@@ -100,5 +99,5 @@ outputs:
   errors:
     type: stderr
 
-stderr: ps.err
+stderr:  $("load-" + inputs.table + ".err")
 

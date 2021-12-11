@@ -75,6 +75,11 @@ class Registry:
                 "columns": ["bene_id", "state_cd", "max_yr_dt"]
             }
         }
+        domain[name]["tables"]["ip"]["indices"] = {
+            "primary": {
+                "columns": ["bene_id", "state_cd", "yr_num"]
+            }
+        }
         return yaml.dump(domain)
 
     @staticmethod

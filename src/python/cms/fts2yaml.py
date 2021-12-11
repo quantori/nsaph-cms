@@ -144,16 +144,19 @@ class MedicaidFTS:
         self.name = type_of_data
         self.pattern = "**/maxdata_{}_*.fts".format(type_of_data)
         self.columns = None
-        self.pk = ["MSIS_ID", "STATE_CD", "MAX_YR_DT"]
+        year_column = "MAX_YR_DT" if type_of_data == "ps" else "YR_NUM"
+        self.pk = ["MSIS_ID", "STATE_CD", year_column]
         self.indices = self.pk + [
             "BENE_ID",
             "EL_DOB",
-            "EL_AGE_GRP_CD",
             "EL_SEX_CD",
             "EL_DOD",
             "EL_RACE_ETHNCY_CD",
             ORIGINAL_FILE_COLUMN
         ]
+        if type_of_data == "ps":
+            self.indices.append("EL_AGE_GRP_CD")
+        return
 
     def init(self, path: str = None):
         if path is not None:
