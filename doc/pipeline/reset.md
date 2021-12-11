@@ -30,3 +30,4 @@ This tool drops the tables and deletes all previous data from the database
 | Name | Type | Description |
 |------|------|-------------|
 |log|File| |
+|errors|stderr| |

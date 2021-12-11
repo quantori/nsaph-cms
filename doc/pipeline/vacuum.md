@@ -1,7 +1,7 @@
-# Resource Loader
-**Tool** 	[nsaph.util.pg_json_dump](../../../../platform/doc/members/pg_json_dump.html)
+# Index Builder
+**Tool** 	[nsaph.loader.vacuum](../../../../platform/doc/members/vacuum.html)
 
-**Source**: [ensure_resource.cwl](../../src/cwl/ensure_resource.cwl)
+**Source**: [vacuum.cwl](../../src/cwl/vacuum.cwl)
 
 <!-- toc -->
 
@@ -12,17 +12,20 @@
 <!-- tocstop -->
 
 ## Description
-This tool ensures that resources required by
-the processing steps are loaded into the database
+This tool runs VACUUM Aanalyze to make subsequent queries
+more efficient
 
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
+|registry|File| |A path to the data model file |
+|domain|string| |the name of the domain|
+|table|string| |the name of the table|
 |database|File| |Path to database connection file, usually database.ini|
 |connection_name|string| |The name of the section in the database.ini file|
-|table|string| |the name of the table containing required resource|
+|depends_on|File| |a special field used to enforce dependencies and execution order|
 
 ## Outputs
 

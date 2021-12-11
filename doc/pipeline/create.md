@@ -24,9 +24,12 @@ It is assumed it is run for Medicaid domain
 |table|string| |the name of the table to be created|
 |database|File| |Path to database connection file, usually database.ini|
 |connection_name|string| |The name of the section in the database.ini file|
+|sloppy|boolean|`False`| |
+|depends_on|File| |a special field used to enforce dependencies and execution order|
 
 ## Outputs
 
 | Name | Type | Description |
 |------|------|-------------|
 |log|File| |
+|errors|stderr| |

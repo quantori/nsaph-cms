@@ -1,7 +1,7 @@
-# Resource Loader
-**Tool** 	[nsaph.util.pg_json_dump](../../../../platform/doc/members/pg_json_dump.html)
+# Index Builder
+**Tool** 	[cms.aggregates](../../src/python/cms/aggregates.py)
 
-**Source**: [ensure_resource.cwl](../../src/cwl/ensure_resource.cwl)
+**Source**: [verify.cwl](../../src/cwl/verify.cwl)
 
 <!-- toc -->
 
@@ -12,8 +12,8 @@
 <!-- tocstop -->
 
 ## Description
-This tool ensures that resources required by
-the processing steps are loaded into the database
+This tool verifies correct counts for a random selection of
+mediciad MAX data
 
 
 ## Inputs
@@ -22,7 +22,7 @@ the processing steps are loaded into the database
 |------|------|---------|-------------|
 |database|File| |Path to database connection file, usually database.ini|
 |connection_name|string| |The name of the section in the database.ini file|
-|table|string| |the name of the table containing required resource|
+|depends_on|File| |a special field used to enforce dependencies and execution order|
 
 ## Outputs
 

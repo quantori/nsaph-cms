@@ -34,3 +34,4 @@ are compatible.
 |------|------|-------------|
 |log|File| |
 |model|File| |
+|errors|stderr| |
