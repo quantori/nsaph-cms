@@ -65,19 +65,27 @@ inputs:
     type: int
     default: 4
     doc: number of threads, concurrently writing into the database
+    inputBinding:
+      prefix: --threads
   page_size:
     type: int
     default: 1000
     doc: explicit page size for the database
+    inputBinding:
+      prefix: --page
   log_frequency:
     type: long
     default: 100000
     doc: informational logging occurs every specified number of records
+    inputBinding:
+      prefix: --log
   limit:
     type: long?
     doc: |
       if specified, the process will stop after ingesting
       the specified number of records
+    inputBinding:
+      prefix: --limit
   depends_on:
     type: File?
     doc: a special field used to enforce dependencies and execution order
