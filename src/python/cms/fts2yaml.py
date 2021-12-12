@@ -103,6 +103,8 @@ class MedicaidFTSColumn:
 
     def to_sql_type(self):
         t = self.type.upper()
+        if t in [PG_SERIAL_TYPE]:
+            return t
         if self.format[0].isdigit():
             fmt = self.format
             can_be_numeric = True
@@ -144,9 +146,15 @@ class MedicaidFTS:
         self.name = type_of_data
         self.pattern = "**/maxdata_{}_*.fts".format(type_of_data)
         self.columns = None
-        year_column = "MAX_YR_DT" if type_of_data == "ps" else "YR_NUM"
-        self.pk = ["MSIS_ID", "STATE_CD", year_column]
-        self.indices = self.pk + [
+        if self.name == "ps":
+            year_column = "MAX_YR_DT"
+            self.pk = ["MSIS_ID", "STATE_CD", year_column]
+            self.indices = self.pk.copy()
+        else:
+            year_column = "YR_NUM"
+            self.pk = ["FILE", "RECORD"]
+            self.indices = ["MSIS_ID", "STATE_CD", year_column, "RECORD"]
+        self.indices += [
             "BENE_ID",
             "EL_DOB",
             "EL_SEX_CD",
@@ -204,6 +212,16 @@ class MedicaidFTS:
             label="RESDAC original file name"
         )
         columns.append(column)
+        if self.name == "ip":
+            column = MedicaidFTSColumn(
+                order=len(columns) + 1,
+                column="RECORD",
+                c_type=PG_SERIAL_TYPE,
+                c_format=None,
+                c_width=None,
+                label="Record number in the file"
+            )
+            columns.append(column)
 
         if not self.columns:
             self.columns = columns

@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-### Materialized View Creator
+### Workflow to load health data from files
 
 cwlVersion: v1.2
 class: Workflow
