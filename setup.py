@@ -16,10 +16,9 @@ setup(
     long_description_content_type = "text/markdown",
     #py_modules = [''],
     package_dir={
-        "cms": "./src/python/cms",
-        "tools": "./src/python/cms/tools/cms"
+        "cms": "./src/python/cms"
     },
-    packages=["cms"],
+    packages=["cms", "cms.tools"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: Harvard University :: Development",
