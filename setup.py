@@ -16,7 +16,8 @@ setup(
     long_description_content_type = "text/markdown",
     #py_modules = [''],
     package_dir={
-        "cms": "./src/python/cms"
+        "cms": "./src/python/cms",
+        "tools": "./src/python/cms/tools/cms"
     },
     packages=["cms"],
     classifiers=[
