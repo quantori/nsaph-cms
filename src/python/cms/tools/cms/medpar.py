@@ -95,10 +95,15 @@ class Column:
 
 
 class Medpar:
-    def __init__(self, dir_path: str, name: str, year:str = None):
+    def __init__(self, dir_path: str, name: str,
+                 year:str = None, dest:str = None):
         self.dir = dir_path
+        if dest:
+            self.dest = dest
+        else:
+            self.dest = self.dir
         self.fts = os.path.join(self.dir, '.'.join([name, "fts"]))
-        self.csv = os.path.join(self.dir, '.'.join([name, "csv.gz"]))
+        self.csv = os.path.join(self.dest, '.'.join([name, "csv.gz"]))
         if not os.path.isfile(self.fts):
             raise Exception("Not found: " + self.fts)
 
@@ -213,19 +218,19 @@ class Medpar:
                             print("{:d}/{:d}/{:d}".format(counter, good, bad))
                 print("File processed. Bad lines: " + str(bad_lines))
 
+    def info(self):
+        for s in [
+            "Columns in File",
+            "Exact File Record Length (Bytes in Variable Block)"
+        ]:
+            print("{}: {}".format(s, self.metadata[s]))
 
-
-
-#def dat2csv(dat_path, csv_path)
+        for name in self.columns:
+            c = self.columns[name]
+            print("{:d} - {} - {} - {:d}".format(c.ord, c.name, c.type, c.start))
 
 
 if __name__ == '__main__':
     m = Medpar(os.curdir, "medpar_all_file_res000017155_req007087_2015")
-    for s in ["Columns in File", "Exact File Record Length (Bytes in Variable Block)"]:
-        print("{}: {}".format(s, m.metadata[s]))
-
-    for name in m.columns:
-        c = m.columns[name]
-        print("{:d} - {} - {} - {:d}".format(c.ord, c.name, c.type, c.start))
-
+    m.info()
     m.export()
