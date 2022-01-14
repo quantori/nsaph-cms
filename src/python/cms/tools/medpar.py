@@ -37,6 +37,7 @@
 import glob
 import gzip
 import os
+import shutil
 from collections import OrderedDict
 from dateutil import parser as date_parser
 import csv
@@ -117,11 +118,12 @@ class Medpar:
         self.dir = dir_path
         if dest:
             if not os.path.exists(dest):
-                os.makedirs(dest)
+                os.makedirs(dest, exist_ok=True)
             self.dest = dest
         else:
             self.dest = self.dir
-        self.fts = os.path.join(self.dir, '.'.join([name, "fts"]))
+        self.name = os.path.join(self.dir, name)
+        self.fts = '.'.join([self.name, "fts"])
         self.csv = os.path.join(self.dest, '.'.join([name, "csv.gz"]))
         if not os.path.isfile(self.fts):
             raise Exception("Not found: " + self.fts)
@@ -194,7 +196,52 @@ class Medpar:
     def validate(self, record):
         assert record[self.columns["MEDPAR_YR_NUM"].ord - 1] == self.year
 
+    def count_lines_in_source(self):
+        lines = 0
+        for dat in self.dat:
+            print(dat)
+            counter = 0
+            with open(dat, "rb") as source:
+                while source.readable():
+                    chunk = source.read(1024)
+                    n = chunk.count(b'\n')
+                    counter += n
+                print("{}: {:d}".format(os.path.basename(dat), counter))
+            lines += counter
+        print("{}[Total]: {:d}".format(self.name, lines))
+        return lines
+
+    def count_lines_in_dest(self):
+        lines = 0
+        if not os.path.isfile(self.csv):
+            return 0
+        with gzip.open(self.csv, "rt") as out:
+            for _ in out:
+                lines += 1
+        print("{}: {:d}".format(self.csv, lines))
+        return lines
+
+    def status(self) -> str:
+        try:
+            if not os.path.isfile(self.csv):
+                return "NONE"
+            l2 = self.count_lines_in_dest()
+            if l2 < 1:
+                return "EMPTY"
+            l1 = self.count_lines_in_source()
+            if l1 != l2:
+                return "MISMATCH: {:d}=>{:d}".format(l1, l2)
+            return "READY"
+        except Exception as x:
+            print(self.fts + ":" + str(x))
+            return "ERROR: " + str(x)
+
+    def status_message(self):
+        return "{}: {}".format(self.fts, self.status())
+
     def export(self):
+        if self.dir != self.dest:
+            shutil.copy(self.fts, self.dest)
         with gzip.open(self.csv, "wt") as out:
             writer = csv.writer(out, quoting=csv.QUOTE_MINIMAL, delimiter='\t')
             for dat in self.dat:

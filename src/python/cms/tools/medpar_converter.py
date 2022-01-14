@@ -44,7 +44,7 @@ from cms.tools.medpar import Medpar
 
 
 class MedParFileSet:
-    def __init__(self, fts:str, dat: List[str]):
+    def __init__(self, fts:str, dat: List[str], basepath: str):
         self.fts = fts
         self.dat = dat
         self.year = None
@@ -60,6 +60,13 @@ class MedParFileSet:
                         self.year = yyyy
         if self.year is None:
             raise ValueError("Could not find year for " + fts)
+        self.reader: Medpar = Medpar(
+                    dir_path=self.dir,
+                    name=self.name,
+                    year=str(self.year),
+                    dest = os.path.join(basepath, str(self.year))
+                )
+        return
 
     def __str__(self) -> str:
         return "{:d}: {}.(fts|{:d}-dat)".format(
@@ -69,9 +76,12 @@ class MedParFileSet:
 
 class MedparConverter:
     @classmethod
-    def find(cls, path: str) -> List[MedParFileSet]:
-        datasets = []
-        fts_files = sorted(glob.glob(os.path.join(path, "**", "*.fts"), recursive=True))
+    def find(cls, basepath: str) -> List[MedParFileSet]:
+        datasets: List[MedParFileSet] = []
+        fts_files = sorted(glob.glob(
+            os.path.join(basepath, "**", "*.fts"),
+            recursive=True
+        ))
         for fts in fts_files:
             base, ext = os.path.splitext(fts)
             dat = sorted(glob.glob(base + "*.dat"))
@@ -80,27 +90,25 @@ class MedparConverter:
                     "Mismatch: {} does not have corresponding dat file(s)".
                         format(fts)
                 )
-            datasets.append(MedParFileSet(fts, dat))
+            datasets.append(MedParFileSet(fts, dat, basepath))
         return datasets
 
     def __init__(self, path: str):
         self.path = path
-        self.datasets = self.find(path)
+        self.datasets: List[MedParFileSet] = self.find(path)
 
     def list(self):
         for dataset in self.datasets:
             print(dataset)
 
-    def convert_dataset(self, dataset: MedParFileSet):
-        m = Medpar(
-            dir_path=dataset.dir,
-            name=dataset.name,
-            year=str(dataset.year),
-            dest = os.path.join(self.path, str(dataset.year))
-        )
+    @staticmethod
+    def convert_dataset(dataset: MedParFileSet):
         try:
-            m.info()
-            m.export()
+            status = dataset.reader.status()
+            if status in ["READY", "ERROR"] or "MISMATCH" in status:
+                return "{}: SKIPPED[{}]".format(dataset.fts, status)
+            dataset.reader.info()
+            dataset.reader.export()
             return "{}: SUCCESS".format(dataset.fts)
         except Exception as x:
             print(x)
@@ -115,7 +123,17 @@ class MedparConverter:
                 )
         for future in concurrent.futures.as_completed(futures):
             print(future.result())
-            
+
+    def status(self):
+        with ThreadPoolExecutor() as executor:
+            futures = []
+            for dataset in self.datasets:
+                futures.append(
+                    executor.submit(dataset.reader.status_message)
+                )
+        for future in concurrent.futures.as_completed(futures):
+            print(future.result())
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -124,5 +142,6 @@ if __name__ == '__main__':
         path = os.curdir
     converter = MedparConverter(path)
     converter.list()
-    converter.convert()
+    #converter.convert()
+    converter.status()
 
