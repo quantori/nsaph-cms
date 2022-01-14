@@ -33,7 +33,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-
+import datetime
 import glob
 import gzip
 import os
@@ -198,14 +198,24 @@ class Medpar:
 
     def count_lines_in_source(self):
         lines = 0
+        blocks = 0
+        t1 = datetime.datetime.now()
+        t0 = t1
         for dat in self.dat:
-            print(dat)
+            print("{}: {}".format(t0.isoformat(), dat))
             counter = 0
             with open(dat, "rb") as source:
                 while source.readable():
-                    chunk = source.read(1024)
+                    chunk = source.read(1024*1024)
+                    blocks += 1
                     n = chunk.count(b'\n')
                     counter += n
+                    t2 = datetime.datetime.now()
+                    elapsed = t2 - t1
+                    if elapsed > datetime.timedelta(minutes=10):
+                        t1 = t2
+                        print("{} running for {}. Blocks = {:d}, lines = {:d}"
+                              .format(dat, str(elapsed), blocks, counter))
                 print("{}: {:d}".format(os.path.basename(dat), counter))
             lines += counter
         print("{}[Total]: {:d}".format(self.name, lines))
