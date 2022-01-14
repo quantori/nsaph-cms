@@ -199,6 +199,7 @@ class Medpar:
     def count_lines_in_source(self):
         lines = 0
         blocks = 0
+        bts = 0
         t1 = datetime.datetime.now()
         t0 = t1
         for dat in self.dat:
@@ -208,6 +209,7 @@ class Medpar:
                 while source.readable():
                     chunk = source.read(1024*1024)
                     blocks += 1
+                    bts += len(chunk)
                     n = chunk.count(b'\n')
                     counter += n
                     t2 = datetime.datetime.now()
@@ -215,7 +217,8 @@ class Medpar:
                     if elapsed > datetime.timedelta(minutes=10):
                         t1 = t2
                         print("{} running for {}. Blocks = {:d}, lines = {:d}"
-                              .format(dat, str(elapsed), blocks, counter))
+                                    + ", bytes = {:d}"
+                              .format(dat, str(elapsed), blocks, counter, bts))
                 print("{}: {:d}".format(os.path.basename(dat), counter))
             lines += counter
         print("{}[Total]: {:d}".format(self.name, lines))
