@@ -38,6 +38,7 @@ import glob
 import gzip
 import os
 import shutil
+import traceback
 from collections import OrderedDict
 from dateutil import parser as date_parser
 import csv
@@ -216,9 +217,12 @@ class Medpar:
                     elapsed = t2 - t1
                     if elapsed > datetime.timedelta(minutes=10):
                         t1 = t2
-                        print("{} running for {}. Blocks = {:d}, lines = {:d}"
-                                    + ", bytes = {:d}"
-                              .format(dat, str(elapsed), blocks, counter, bts))
+                        print(
+                            (
+                                "{} running for {}. Blocks = {:d}, lines = {:d}"
+                                + ", bytes = {:d}"
+                            ).format(dat, str(t2 - t0), blocks, counter, bts)
+                        )
                 print("{}: {:d}".format(os.path.basename(dat), counter))
             lines += counter
         print("{}[Total]: {:d}".format(self.name, lines))
@@ -246,7 +250,8 @@ class Medpar:
                 return "MISMATCH: {:d}=>{:d}".format(l1, l2)
             return "READY"
         except Exception as x:
-            print(self.fts + ":" + str(x))
+            print(self.fts)
+            traceback.print_exception(x)
             return "ERROR: " + str(x)
 
     def status_message(self):
