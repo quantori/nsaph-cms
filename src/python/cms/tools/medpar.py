@@ -209,6 +209,8 @@ class Medpar:
             with open(dat, "rb") as source:
                 while source.readable():
                     chunk = source.read(1024*1024)
+                    if len(chunk) < 1:
+                        break
                     blocks += 1
                     bts += len(chunk)
                     n = chunk.count(b'\n')
@@ -219,8 +221,8 @@ class Medpar:
                         t1 = t2
                         print(
                             (
-                                "{} running for {}. Blocks = {:d}, lines = {:d}"
-                                + ", bytes = {:d}"
+                                "{} running for {}. Blocks = {:,}, lines = {:,}"
+                                + ", bytes = {:,}"
                             ).format(dat, str(t2 - t0), blocks, counter, bts)
                         )
                 print("{}: {:d}".format(os.path.basename(dat), counter))
@@ -251,7 +253,7 @@ class Medpar:
             return "READY"
         except Exception as x:
             print(self.fts)
-            traceback.print_exception(x)
+            traceback.print_exception(type(x), x, None)
             return "ERROR: " + str(x)
 
     def status_message(self):
@@ -260,6 +262,8 @@ class Medpar:
     def export(self):
         if self.dir != self.dest:
             shutil.copy(self.fts, self.dest)
+        t1 = datetime.datetime.now()
+        t0 = t1
         with gzip.open(self.csv, "wt") as out:
             writer = csv.writer(out, quoting=csv.QUOTE_MINIMAL, delimiter='\t')
             for dat in self.dat:
@@ -298,9 +302,15 @@ class Medpar:
                         remainder = block[idx:]
                         block = None
                         counter += 1
-                        if (counter%10000) == 0:
-                            print("{:d}/{:d}/{:d}".format(counter, good, bad))
-                print("File processed. Bad lines: " + str(bad_lines))
+                        if (counter%100000) == 0:
+                            t2 = datetime.datetime.now()
+                            t1 = t2
+                            print("{}[{}]: {:,}/{:,}/{:,}".format(
+                                dat, str(t2 - t0),
+                                counter, good, bad
+                            ))
+                print("{} processed. Bad lines: {:,}"
+                      .format(self.fts, bad_lines))
 
     def info(self):
         for s in [
