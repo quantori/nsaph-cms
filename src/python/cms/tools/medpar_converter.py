@@ -136,12 +136,21 @@ class MedparConverter:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        path = sys.argv[1]
+    args = sys.argv[1:]
+    status = False
+    if len(args) > 1:
+        if args[0] == '-s':
+            status = True
+            args = args[1:]
+    if len(args) > 0:
+        path = args[0]
     else:
         path = os.curdir
     converter = MedparConverter(path)
     converter.list()
-    #converter.convert()
-    converter.status()
+    if status:
+        converter.status()
+    else:
+        converter.convert()
+
 
