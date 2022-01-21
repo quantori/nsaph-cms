@@ -139,7 +139,7 @@ class Medpar:
         block_size = self.metadata["Exact File Record Length (Bytes in Variable Block)"]
         block_size = block_size.strip()
         if ',' in block_size:
-            print("Stripping commas: " + block_size)
+            print("[{}] Stripping commas: {}".format(self.fts, block_size))
             block_size = block_size.replace(',','')
         self.block_size = int(block_size)
         if not year:

@@ -85,6 +85,10 @@ class MedparConverter:
         ))
         for fts in fts_files:
             base, ext = os.path.splitext(fts)
+            csv_gz = sorted(glob.glob(base + "*.csv.gz"))
+            if csv_gz:
+                print("Skipping " + fts)
+                continue
             dat = sorted(glob.glob(base + "*.dat"))
             if not dat:
                 raise ValueError(
