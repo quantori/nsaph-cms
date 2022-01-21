@@ -37,6 +37,7 @@ import concurrent
 import glob
 import os
 import sys
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
@@ -111,7 +112,7 @@ class MedparConverter:
             dataset.reader.export()
             return "{}: SUCCESS".format(dataset.fts)
         except Exception as x:
-            print(x)
+            traceback.print_exception(type(x), x, None, file=sys.stdout)
             return "{}: FAILED".format(dataset.fts)
 
     def convert(self):
