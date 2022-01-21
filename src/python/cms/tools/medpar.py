@@ -136,7 +136,12 @@ class Medpar:
         self.metadata = dict()
         self.columns = OrderedDict()
         self.init()
-        self.block_size = int(self.metadata["Exact File Record Length (Bytes in Variable Block)"])
+        block_size = self.metadata["Exact File Record Length (Bytes in Variable Block)"]
+        block_size = block_size.strip()
+        if ',' in block_size:
+            print("Stripping commas: " + block_size)
+            block_size = block_size.replace(',','')
+        self.block_size = int(block_size)
         if not year:
             year = name[-4:]
         self.year = year
