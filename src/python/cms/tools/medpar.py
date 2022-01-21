@@ -297,7 +297,7 @@ class Medpar:
                             log("Line = " + str(counter))
                             bad_lines += 1
                             log(x)
-                        while block[idx] in [10, 13]:
+                        while idx < len(block) and block[idx] in [10, 13]:
                             idx += 1
                         remainder = block[idx:]
                         block = None
