@@ -38,14 +38,15 @@ import glob
 import os
 import sys
 import traceback
+from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
-from typing import List
+from typing import List, Optional
 
 from cms.tools.medpar import Medpar
 
 
 class MedParFileSet:
-    def __init__(self, fts:str, dat: List[str], basepath: str):
+    def __init__(self, fts:str, dat: List[str], destination: str):
         self.fts = fts
         self.dat = dat
         self.year = None
@@ -65,7 +66,7 @@ class MedParFileSet:
                     dir_path=self.dir,
                     name=self.name,
                     year=str(self.year),
-                    dest = os.path.join(basepath, str(self.year))
+                    dest = os.path.join(destination, str(self.year))
                 )
         return
 
@@ -77,46 +78,66 @@ class MedParFileSet:
 
 class MedparConverter:
     @classmethod
-    def find(cls, basepath: str) -> List[MedParFileSet]:
+    def dataset(cls, fts, destination) -> Optional[MedParFileSet]:
+        base, ext = os.path.splitext(fts)
+        csv_gz = sorted(glob.glob(base + "*.csv.gz"))
+        if csv_gz:
+            print("Skipping " + fts)
+            return None
+        dat = sorted(glob.glob(base + "*.dat"))
+        if not dat:
+            raise ValueError(
+                "Mismatch: {} does not have corresponding dat file(s)".
+                    format(fts)
+            )
+        return MedParFileSet(fts, dat, destination)
+
+    @classmethod
+    def find(cls, basepath: str, destination: str) -> List[MedParFileSet]:
         datasets: List[MedParFileSet] = []
         fts_files = sorted(glob.glob(
             os.path.join(basepath, "**", "*.fts"),
             recursive=True
         ))
         for fts in fts_files:
-            base, ext = os.path.splitext(fts)
-            csv_gz = sorted(glob.glob(base + "*.csv.gz"))
-            if csv_gz:
-                print("Skipping " + fts)
-                continue
-            dat = sorted(glob.glob(base + "*.dat"))
-            if not dat:
-                raise ValueError(
-                    "Mismatch: {} does not have corresponding dat file(s)".
-                        format(fts)
-                )
-            datasets.append(MedParFileSet(fts, dat, basepath))
+            ds = cls.dataset(fts, destination)
+            if ds is not None:
+                datasets.append(ds)
         return datasets
 
-    def __init__(self, path: str):
-        self.path = path
-        self.datasets: List[MedParFileSet] = self.find(path)
+    def __init__(self, source_path: str,
+                 destination: str = None,
+                 verbose: bool = True):
+        self.datasets: List[MedParFileSet] = []
+        self.verbose = verbose
+        if os.path.isdir(source_path):
+            if destination is None:
+                destination = source_path
+            self.datasets = self.find(source_path, destination)
+        elif os.path.isfile(source_path):
+            if destination is None:
+                raise ValueError(
+                    "When source path is a single file, "
+                    "destination must be defined"
+                )
+            self.datasets = [self.dataset(source_path, destination)]
 
     def list(self):
         for dataset in self.datasets:
             print(dataset)
 
     @staticmethod
-    def convert_dataset(dataset: MedParFileSet):
+    def convert_dataset(dataset: MedParFileSet, verbose):
         try:
             status = dataset.reader.status()
             if status in ["READY", "ERROR"] or "MISMATCH" in status:
                 return "{}: SKIPPED[{}]".format(dataset.fts, status)
-            dataset.reader.info()
+            if verbose:
+                dataset.reader.info()
             dataset.reader.export()
             return "{}: SUCCESS".format(dataset.fts)
         except Exception as x:
-            traceback.print_exception(type(x), x, None, file=sys.stdout)
+            traceback.print_exc()
             return "{}: FAILED".format(dataset.fts)
 
     def convert(self):
@@ -124,7 +145,9 @@ class MedparConverter:
             futures = []
             for dataset in self.datasets:
                 futures.append(
-                    executor.submit(self.convert_dataset, dataset=dataset)
+                    executor.submit(self.convert_dataset,
+                                    dataset=dataset,
+                                    verbose=self.verbose)
                 )
         for future in concurrent.futures.as_completed(futures):
             print(future.result())
@@ -140,22 +163,33 @@ class MedparConverter:
             print(future.result())
 
 
+def args():
+    parser = ArgumentParser ("Converter for CMS dat files described by FTS to csv")
+    parser.add_argument(help="Path to a source directory or an FTS file",
+                        dest="input")
+    parser.add_argument("--status", "-s", action='store_true',
+                        help="Display status and exit")
+    parser.add_argument("--convert", "-c", action='store_true',
+                        help="Do conversion")
+    parser.add_argument("--verbose", "-v", action='store_true',
+                        help="Display additional information")
+    parser.add_argument("--destination", "-d",
+                        help="Destination for converted files")
+    arguments = parser.parse_args()
+    return arguments
+
+
 if __name__ == '__main__':
-    args = sys.argv[1:]
+    my_args = args()
     status = False
-    if len(args) > 1:
-        if args[0] == '-s':
-            status = True
-            args = args[1:]
-    if len(args) > 0:
-        path = args[0]
-    else:
-        path = os.curdir
-    converter = MedparConverter(path)
-    converter.list()
-    if status:
+    converter = MedparConverter(source_path=my_args.input,
+                                destination=my_args.destination,
+                                verbose=my_args.verbose)
+    if my_args.verbose:
+        converter.list()
+    if my_args.status:
         converter.status()
-    else:
+    if my_args.convert:
         converter.convert()
 
 

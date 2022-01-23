@@ -110,7 +110,8 @@ class Column:
         self.desc = desc
         self.d = width[1]
 
-
+    def __str__(self) -> str:
+        return "{}: [{}]".format(super().__str__(), self.name)
 
 
 class Medpar:
@@ -179,20 +180,26 @@ class Medpar:
         record = []
         for name in self.columns:
             column = self.columns[name]
-            s = pieces[name]
+            s = pieces[name].decode("utf-8")
             try:
                 if column.type == "NUM" and not column.d:
-                    record.append(int(s))
+                    val = s.strip()
+                    if val:
+                        record.append(int(val))
+                    else:
+                        record.append(None)
                 elif column.type == "DATE":
                     if s.strip():
                         record.append(date_parser.parse(s))
                     else:
                         record.append(None)
                 else:
-                    record.append(s.decode("utf-8") )
+                    record.append(s)
             except Exception as x:
-                log("{:d}: {}[{:d}]: - {}".format(ln, column.name, column.ord, str(x)))
-                record.append(s.decode("utf-8"))
+                log("{:d}: {}[{:d}]: - {}".format(
+                    ln, column.name, column.ord, str(x))
+                )
+                record.append(s)
                 exception_count += 1
                 if exception_count > 3:
                     log(data)
@@ -200,7 +207,14 @@ class Medpar:
         return record
 
     def validate(self, record):
-        assert record[self.columns["MEDPAR_YR_NUM"].ord - 1] == self.year
+        yc = None
+        if "BENE_ENROLLMT_REF_YR" in self.columns:
+            yc = "BENE_ENROLLMT_REF_YR"
+        if "MEDPAR_YR_NUM" in self.columns:
+            yc = "MEDPAR_YR_NUM"
+        if yc is None:
+            raise AssertionError("Yer column was not found in FTS")
+        assert record[self.columns[yc].ord - 1] == self.year
 
     def count_lines_in_source(self):
         lines = 0
