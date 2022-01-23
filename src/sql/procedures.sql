@@ -58,6 +58,7 @@ DECLARE
 BEGIN
     DROP TABLE IF EXISTS medicaid.e2 CASCADE;
     CREATE TABLE medicaid.e2 AS SELECT * FROM medicaid._eligibility WITH NO DATA;
+    ALTER TABLE medicaid.eligibility ADD PRIMARY KEY (bene_id, year, state, month);
     DROP TABLE IF EXISTS medicaid_audit.ecr CASCADE;
     CREATE TABLE medicaid_audit.ecr (
         state VARCHAR(2),
