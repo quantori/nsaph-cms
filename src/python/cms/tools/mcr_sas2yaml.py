@@ -25,13 +25,15 @@ from typing import List
 
 import os
 import yaml
+
+from cms.tools.mcr_sas import MedicareSAS
 from nsaph.data_model.utils import split
 
 from nsaph.loader.introspector import Introspector
 from nsaph.pg_keywords import PG_INT_TYPE
 
 
-class SASIntrospector:
+class SASIntrospector(MedicareSAS):
     @classmethod
     def process(cls, registry_path: str, pattern: str, root_dir:str = '.'):
         introspector = SASIntrospector(registry_path, root_dir)
@@ -40,10 +42,8 @@ class SASIntrospector:
         yaml.dump(introspector.registry, sys.stdout)
         return
 
-    def __init__(self, registry_path: str, root_dir:str = '.'):
-        self.registry_path = registry_path
-        self.domain = "cms"
-        self.root_dir = root_dir
+    def __init__(self, registry_path: str, root_dir: str = '.'):
+        super().__init__(registry_path, root_dir)
         self.registry = None
         if not os.path.isfile(self.registry_path):
             self.init_registry()
@@ -75,37 +75,6 @@ class SASIntrospector:
             yaml.dump(self.registry, f)
         return
 
-    def traverse(self, pattern: str):
-        files: List[str] = glob.glob(os.path.join(self.root_dir, pattern),
-                                     recursive=True)
-        for f in files:
-            if f.endswith(".sas7bdat"):
-                self.handle_sas_file(f)
-            else:
-                raise ValueError("Not implemented: " + f)
-        return
-
-    def handle_sas_file(self, f: str):
-        basedir, fname = os.path.split(f)
-        ydir, basedir = os.path.split(basedir)
-        ydir = os.path.basename(ydir)
-        if ydir not in fname:
-            if "all_file" in fname and ydir.isdigit():
-                logging.warning("No year: " + f)
-            else:
-                raise ValueError("Ambiguous year for " + f)
-        year = int(ydir)
-        if basedir == "denominator":
-            table = "mcr_bene_{:d}".format(year)
-            index_all = True
-        elif basedir == "inpatient":
-            table = "mcr_ip_{:d}".format(year)
-            index_all = False
-        else:
-            raise ValueError("Unrecognized directory name for " + f)
-        self.add_sas_table(table, f, index_all, year)
-        return
-
     @classmethod
     def matches(cls, s: str, candidates: List[str]):
         if s in candidates:
@@ -115,6 +84,14 @@ class SASIntrospector:
             if re.fullmatch(p, s):
                 return True
         return False
+
+    def handle(self, table: str, file_path: str, file_type: str, year: int):
+        if file_type == "denominator":
+            index_all = True
+        else:
+            index_all = False
+        self.add_sas_table(table, file_path, index_all, year)
+        return
 
     def add_sas_table(self, table: str, file_path: str, index_all: bool,
                       year: int):
