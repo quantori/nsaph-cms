@@ -30,7 +30,7 @@ from cms.tools.mcr_sas import MedicareSAS
 from nsaph.data_model.utils import split
 
 from nsaph.loader.introspector import Introspector
-from nsaph.pg_keywords import PG_INT_TYPE
+from nsaph.pg_keywords import PG_INT_TYPE, PG_SERIAL_TYPE
 
 
 class SASIntrospector(MedicareSAS):
@@ -177,7 +177,7 @@ class SASIntrospector(MedicareSAS):
             "RECORD": {
                 "description": "Record (line) number in the file",
                 "index": True,
-                "type": "SERIAL"
+                "type": PG_SERIAL_TYPE
             }
         })
 
