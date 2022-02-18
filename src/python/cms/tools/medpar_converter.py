@@ -42,7 +42,7 @@ from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional
 
-from cms.tools.medpar import Medpar
+from cms.tools.mcr_file import MedicareFile
 
 
 class MedParFileSet:
@@ -62,7 +62,7 @@ class MedParFileSet:
                         self.year = yyyy
         if self.year is None:
             raise ValueError("Could not find year for " + fts)
-        self.reader: Medpar = Medpar(
+        self.reader: MedicareFile = MedicareFile(
                     dir_path=self.dir,
                     name=self.name,
                     year=str(self.year),

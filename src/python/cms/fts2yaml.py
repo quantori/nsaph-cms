@@ -19,12 +19,16 @@
 
 import glob
 import os
+from typing import List
 
 import yaml
 
 from nsaph import ORIGINAL_FILE_COLUMN
 from nsaph_utils.utils.io_utils import fopen
 from nsaph.pg_keywords import *
+
+
+MEDICARE_FILE_TYPES = ["mbsf_ab", "mbsf_d", "mbsf_abcd", "medpar"]
 
 
 def width(s:str):
@@ -46,6 +50,9 @@ class ColumnAttribute:
         except:
             pass
 
+    def __str__(self):
+        return "[{:d}:{:d}] {}".format(self.start, self.end, str(self.conv))
+
 
 class ColumnReader:
     def __init__(self, constructor, pattern):
@@ -66,29 +73,7 @@ class ColumnReader:
         return self.constructor(*attrs)
 
 
-class MedicareFTSColumn:
-    @classmethod
-    def conv(cls, i):
-        if i in [0, 4]:
-            f = int
-        elif i in [5]:
-            f = width
-        else:
-            f = str
-
-    def __init__(self, ord:int, long_name:str, short_name:str, type:str, start:int, width, desc:str):
-        self.name = short_name
-        self.long_name = long_name
-        self.type = type
-        self.ord = ord
-        self.start = start - 1
-        self.length = width[0]
-        self.end = self.start + self.length
-        self.desc = desc
-        self.d = width[1]
-
-
-class MedicaidFTSColumn:
+class FTSColumn:
     @classmethod
     def conv(cls, i):
         if i in [0, 4]:
@@ -96,8 +81,6 @@ class MedicaidFTSColumn:
         else:
             f = str
         return f
-
-    nattrs = 6
 
     def __init__(self, order, column, c_type, c_format, c_width, label):
         self.order = order
@@ -111,7 +94,7 @@ class MedicaidFTSColumn:
         ]
 
     def __eq__(self, o: object) -> bool:
-        if not isinstance(o, MedicaidFTSColumn):
+        if not isinstance(o, FTSColumn):
             return False
         if o is self:
             return True
@@ -120,39 +103,90 @@ class MedicaidFTSColumn:
                 return False
         return True
 
+    def analyze_format(self):
+        if self.format is not None:
+            if self.format[0].isdigit():
+                fmt = self.format
+                can_be_numeric = True
+            else:
+                fmt = self.format[1:]
+                can_be_numeric = False
+            x = fmt.split('.')
+            if x[0].isdigit():
+                w = int(x[0])
+            else:
+                w = None
+            if len(x) > 1 and x[1]:
+                scale = int(x(1))
+            else:
+                scale = None
+        else:
+            scale = None
+            can_be_numeric = True
+            w = self.width
+        return can_be_numeric, scale, w
+
     def to_sql_type(self):
         t = self.type.upper()
         if t in [PG_SERIAL_TYPE]:
             return t
-        if self.format[0].isdigit():
-            fmt = self.format
-            can_be_numeric = True
-        else:
-            fmt = self.format[1:]
-            can_be_numeric = False
-        x = fmt.split('.')
-        if x[0].isdigit():
-            w = int(x[0])
-        else:
-            w = None
-        if len(x) > 1 and x[1]:
-            scale = int(x(1))
-        else:
-            scale = None
+
+        can_be_numeric, scale, wdt = self.analyze_format()
         if t == "CHAR":
-            return "{}({:d})".format(PG_STR_TYPE, w)
+            return "{}({:d})".format(PG_STR_TYPE, wdt)
         if t == "NUM":
             if not can_be_numeric:
-                return "{}({:d})".format(PG_STR_TYPE, w)
+                return "{}({:d})".format(PG_STR_TYPE, wdt)
             if scale is not None:
-                return "{}({:d},{:d})".format(PG_NUMERIC_TYPE, w, scale)
+                return "{}({:d},{:d})".format(PG_NUMERIC_TYPE, wdt, scale)
             return "{}".format(PG_INT_TYPE)
         if t == "DATE":
             return PG_DATE_TYPE
         raise Exception("Unexpected column type: {}".format(t))
 
+    def __str__(self) -> str:
+        return "{:d}: {} [{}]".format(self.order, self.column, self.type)
 
-class MedicaidFTS:
+
+class MedicaidFTSColumn(FTSColumn):
+    nattrs = 6
+
+
+class MedicareFTSColumn(FTSColumn):
+    nattrs = 7
+
+    @classmethod
+    def conv(cls, i):
+        if i in [0, 4, 5]:
+            f = int
+        else:
+            f = str
+        return f
+
+    def __init__(self, order: int, long_name:str, short_name:str, type:str, start:int, width, desc:str):
+        super().__init__(
+            order,
+            column=short_name,
+            c_type=type,
+            c_width=width,
+            c_format=None,
+            label=desc
+        )
+        self.long_name = long_name
+        self.start = start - 1
+        self.end = self.start + self.width
+
+
+class CMSFTS:
+    common_indices = [
+                "BENE_ID",
+                "EL_DOB",
+                "EL_SEX_CD",
+                "EL_DOD",
+                "EL_RACE_ETHNCY_CD",
+                ORIGINAL_FILE_COLUMN
+            ]
+
     def __init__(self, type_of_data: str):
         """
 
@@ -160,40 +194,15 @@ class MedicaidFTS:
             `ip` for inpatient admissions data
         """
 
-        type_of_data = type_of_data.lower()
-        assert type_of_data in ["ps", "ip"]
-        self.name = type_of_data
-        self.pattern = "**/maxdata_{}_*.fts".format(type_of_data)
+        self.name = type_of_data.lower()
+        self.indices = self.common_indices
         self.columns = None
-        if self.name == "ps":
-            year_column = "MAX_YR_DT"
-            self.pk = ["MSIS_ID", "STATE_CD", year_column]
-            self.indices = self.pk.copy()
-        else:
-            year_column = "YR_NUM"
-            self.pk = ["FILE", "RECORD"]
-            self.indices = ["MSIS_ID", "STATE_CD", year_column, "RECORD"]
-        self.indices += [
-            "BENE_ID",
-            "EL_DOB",
-            "EL_SEX_CD",
-            "EL_DOD",
-            "EL_RACE_ETHNCY_CD",
-            ORIGINAL_FILE_COLUMN
-        ]
-        if type_of_data == "ps":
-            self.indices.append("EL_AGE_GRP_CD")
+        self.pk = None
+        self.constructor = None
         return
 
-    def init(self, path: str = None):
-        if path is not None:
-            pattern = os.path.join(path, self.pattern)
-        else:
-            pattern = self.pattern
-        files = glob.glob(pattern)
-        for file in files:
-            self.read_file(file)
-        return self
+    def init(self, path: str):
+        pass
 
     def read_file(self, f):
         with fopen(f, "rt") as fts:
@@ -203,7 +212,7 @@ class MedicaidFTS:
         for i in range(0, len(lines)):
             line = lines[i]
             if line.startswith('---') and '------------------' in line:
-                column_reader = ColumnReader(MedicaidFTSColumn, line)
+                column_reader = ColumnReader(self.constructor, line)
                 break
             continue
 
@@ -222,26 +231,8 @@ class MedicaidFTS:
                 break
             column = column_reader.read(line)
             columns.append(column)
-        column = MedicaidFTSColumn(
-            order=len(columns) + 1,
-            column=ORIGINAL_FILE_COLUMN,
-            c_type="CHAR",
-            c_format="128",
-            c_width=128,
-            label="RESDAC original file name"
-        )
-        columns.append(column)
-        if self.name == "ip":
-            column = MedicaidFTSColumn(
-                order=len(columns) + 1,
-                column="RECORD",
-                c_type=PG_SERIAL_TYPE,
-                c_format=None,
-                c_width=None,
-                label="Record number in the file"
-            )
-            columns.append(column)
 
+        self.on_after_read_file(columns)
         if not self.columns:
             self.columns = columns
             return
@@ -252,6 +243,33 @@ class MedicaidFTS:
         for i in range(len(columns)):
             if columns[i] != self.columns[i]:
                 raise Exception("Reconciliation required: {}, column: {}".format(f, columns[i]))
+
+    def on_after_read_file(self, columns: List[FTSColumn]):
+        self.add_file_column(columns)
+
+    @staticmethod
+    def add_record_column(columns: List[FTSColumn]):
+        column = FTSColumn(
+            order=len(columns) + 1,
+            column="RECORD",
+            c_type=PG_SERIAL_TYPE,
+            c_format=None,
+            c_width=None,
+            label="Record number in the file"
+        )
+        columns.append(column)
+
+    @staticmethod
+    def add_file_column(columns: List[FTSColumn]):
+        column = FTSColumn(
+            order=len(columns) + 1,
+            column=ORIGINAL_FILE_COLUMN,
+            c_type="CHAR",
+            c_format="128",
+            c_width=128,
+            label="RESDAC original file name"
+        )
+        columns.append(column)
 
     def column_to_dict(self, c: MedicaidFTSColumn) -> dict:
         d = {
@@ -278,10 +296,68 @@ class MedicaidFTS:
         table[self.name]["primary_key"] = self.pk
         return table
 
-    def print_yaml(self):
-        self.init()
+    def print_yaml(self, root_dir: str = None):
+        self.init(root_dir)
         table = self.to_dict()
         print(yaml.dump(table))
+
+
+class MedicaidFTS(CMSFTS):
+    def __init__(self, type_of_data: str):
+        super().__init__(type_of_data)
+        self.constructor = MedicaidFTSColumn
+        assert self.name in ["ps", "ip"]
+        self.pattern = "**/maxdata_{}_*.fts".format(type_of_data)
+        if self.name == "ps":
+            year_column = "MAX_YR_DT"
+            self.pk = ["MSIS_ID", "STATE_CD", year_column]
+            self.indices += self.pk.copy()
+            self.indices.append("EL_AGE_GRP_CD")
+        else:
+            year_column = "YR_NUM"
+            self.pk = ["FILE", "RECORD"]
+            self.indices += ["MSIS_ID", "STATE_CD", year_column, "RECORD"]
+
+    def init(self, path: str = None):
+        if path is not None:
+            pattern = os.path.join(path, self.pattern)
+        else:
+            pattern = self.pattern
+        files = glob.glob(pattern)
+        for file in files:
+            self.read_file(file)
+        return self
+
+    def on_after_read_file(self, columns: List[FTSColumn]):
+        super().on_after_read_file(columns)
+        if self.name == "ip":
+            self.add_record_column(columns)
+
+
+class MedicareFTS(CMSFTS):
+    def __init__(self, type_of_data: str):
+        super().__init__(type_of_data)
+        self.constructor = MedicareFTSColumn
+        assert self.name in MEDICARE_FILE_TYPES
+        self.pattern = "**/{}_*.fts".format(type_of_data)
+        self.pk = ["FILE", "RECORD"]
+        if self.name.startswith("mbsf"):
+            year_column = "RFRNC_YR"
+        elif self.name == "medpar":
+            year_column = "MEDPAR_YR_NUM"
+        else:
+            raise ValueError(self.name)
+        self.indices += ["BENE_ID", year_column]
+        if  self.name.startswith("mbsf_ab"):
+            self.indices.append("STATE_CD")
+
+    def init(self, path: str):
+        self.read_file(path)
+        return self
+
+    def on_after_read_file(self, columns: List[FTSColumn]):
+        super().on_after_read_file(columns)
+        self.add_record_column(columns)
 
 
 if __name__ == '__main__':

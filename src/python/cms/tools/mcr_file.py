@@ -15,24 +15,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-#
-#
-#  Developed by Research Software Engineering,
-#  Faculty of Arts and Sciences, Research Computing (FAS RC)
-#  Author: Michael A Bouzinier
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-#
+
 import datetime
 import glob
 import gzip
@@ -114,7 +97,7 @@ class Column:
         return "{}: [{}]".format(super().__str__(), self.name)
 
 
-class Medpar:
+class MedicareFile:
     def __init__(self, dir_path: str, name: str,
                  year:str = None, dest:str = None):
         self.dir = dir_path
@@ -213,7 +196,7 @@ class Medpar:
         if "MEDPAR_YR_NUM" in self.columns:
             yc = "MEDPAR_YR_NUM"
         if yc is None:
-            raise AssertionError("Yer column was not found in FTS")
+            raise AssertionError("Year column was not found in FTS")
         assert record[self.columns[yc].ord - 1] == self.year
 
     def count_lines_in_source(self):
@@ -344,6 +327,6 @@ class Medpar:
 
 
 if __name__ == '__main__':
-    m = Medpar(os.curdir, "medpar_all_file_res000017155_req007087_2015")
+    m = MedicareFile(os.curdir, "medpar_all_file_res000017155_req007087_2015")
     m.info()
     m.export()

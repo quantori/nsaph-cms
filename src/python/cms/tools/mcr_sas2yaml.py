@@ -16,24 +16,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-import glob
+
 import logging
 import re
-
 import sys
 from typing import List
-
-import os
 import yaml
 
+from cms.tools.mcr_registry import MedicareRegistry
 from cms.tools.mcr_sas import MedicareSAS
-from nsaph.data_model.utils import split
 
+from nsaph.data_model.utils import split
 from nsaph.loader.introspector import Introspector
 from nsaph.pg_keywords import PG_INT_TYPE, PG_SERIAL_TYPE
 
 
-class SASIntrospector(MedicareSAS):
+class SASIntrospector(MedicareSAS, MedicareRegistry):
     @classmethod
     def process(cls, registry_path: str, pattern: str, root_dir:str = '.'):
         introspector = SASIntrospector(registry_path, root_dir)
@@ -43,37 +41,8 @@ class SASIntrospector(MedicareSAS):
         return
 
     def __init__(self, registry_path: str, root_dir: str = '.'):
-        super().__init__(registry_path, root_dir)
-        self.registry = None
-        if not os.path.isfile(self.registry_path):
-            self.init_registry()
-        else:
-            self.read_registry()
-        return
-
-    def init_registry(self):
-        self.registry = {
-            self.domain: {
-                "reference": "",
-                "schema": self.domain,
-                "index": "explicit",
-                "quoting": 3,
-                "header": False,
-                "tables": {
-                }
-            }
-        }
-        return
-
-    def read_registry(self):
-        with open(self.registry_path) as f:
-            self.registry = yaml.safe_load(f)
-        return
-
-    def save(self):
-        with open(self.registry_path, "wt") as f:
-            yaml.dump(self.registry, f)
-        return
+        MedicareSAS.__init__(self, root_dir)
+        MedicareRegistry.__init__(self, registry_path)
 
     @classmethod
     def matches(cls, s: str, candidates: List[str]):

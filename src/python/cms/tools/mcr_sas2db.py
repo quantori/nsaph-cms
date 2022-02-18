@@ -39,7 +39,6 @@ class SASLoader(MedicareSAS):
         self.domain = self.context.domain
         self.context.set_empty_args()
         super().__init__(
-            registry_path=self.context.registry,
             root_dir=self.context.data
         )
         if not self.context.incremental and not self.context.sloppy:

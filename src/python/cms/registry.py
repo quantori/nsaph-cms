@@ -41,11 +41,12 @@ Sample user request: https://github.com/NSAPH/data_requests/tree/master/request_
 
 import os
 from pathlib import Path
+from typing import Dict
 
 import yaml
 
 from cms.create_schema_config import CMSSchema
-from cms.fts2yaml import MedicaidFTS
+from cms.fts2yaml import MedicaidFTS, MedicareFTS, MEDICARE_FILE_TYPES
 from nsaph import init_logging
 
 
@@ -62,22 +63,36 @@ class Registry:
         if not context:
             context = CMSSchema(__doc__).instantiate()
         self.context = context
+        self.registry = None
+        self.name = "cms"
 
     def update(self):
         if self.context.output is None:
             registry_path = self.built_in_registry_path()
         else:
             registry_path = self.context.output
+
+        if (not self.context.reset) and os.path.isfile(registry_path):
+            with open(registry_path) as f:
+                self.registry = yaml.safe_load(f)
+        else:
+            self.init()
+        if self.context.type == "medicaid":
+            self.update_medicaid()
+        elif self.context.type == "medicare":
+            self.update_medicare()
+        else:
+            raise ValueError("Unknown data type: " + self.context.type)
+
         with open(registry_path, "wt") as f:
-            f.write(self.create_yaml())
+            f.write(yaml.dump(self.registry))
         return
 
-    def create_yaml(self):
-        name = "cms"
+    def init(self):
         domain = {
-            name: {
+            self.name: {
                 "reference": "https://resdac.org/getting-started-cms-data",
-                "schema": name,
+                "schema": self.name,
                 "index": "explicit",
                 "quoting": 3,
                 "header": False,
@@ -85,21 +100,40 @@ class Registry:
                 }
             }
         }
+        self.registry = domain
+        return
+
+    def update_medicaid(self):
+        domain = self.registry[self.name]
         for x in ["ps", "ip"]:
-            domain[name]["tables"].update(
+            domain["tables"].update(
                 MedicaidFTS(x).init(self.context.input).to_dict()
             )
-        domain[name]["tables"]["ps"]["indices"] = {
+        domain["tables"]["ps"]["indices"] = {
             "primary": {
                 "columns": ["bene_id", "state_cd", "max_yr_dt"]
             }
         }
-        domain[name]["tables"]["ip"]["indices"] = {
+        domain["tables"]["ip"]["indices"] = {
             "primary": {
                 "columns": ["bene_id", "state_cd", "yr_num"]
             }
         }
-        return yaml.dump(domain)
+        return
+
+    def update_medicare(self):
+        domain = self.registry[self.name]
+        f = self.context.input
+        fts = os.path.basename(f)
+        x = None
+        for t in MEDICARE_FILE_TYPES:
+            if fts.startswith(t):
+                x = t
+                break
+        if x is None:
+            raise ValueError("Unsupported Medicare file type: " + fts)
+        table = MedicareFTS(x).init(f).to_dict()
+        domain["tables"].update(table)
 
     @staticmethod
     def built_in_registry_path():

@@ -27,9 +27,7 @@ from typing import List
 
 
 class MedicareSAS(ABC):
-    def __init__(self, registry_path: str, root_dir:str = '.'):
-        self.registry_path = registry_path
-        self.domain = "cms"
+    def __init__(self, root_dir:str = '.'):
         self.root_dir = root_dir
 
     def traverse(self, pattern: str):
