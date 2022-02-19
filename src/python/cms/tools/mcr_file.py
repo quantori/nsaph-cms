@@ -272,7 +272,6 @@ class MedicareFile:
                 print(dat)
                 counter = 0
                 good = 0
-                bad = 0
                 bad_lines = 0
                 remainder = b''
                 with open(dat, "rb") as source:
@@ -288,7 +287,6 @@ class MedicareFile:
                             writer.writerow(record)
                             good += 1
                         except MedparParseException as x:
-                            bad += 1
                             log("Line = " + str(counter) + ':' + str(x.pos))
                             bad_lines += 1
                             log(x)
@@ -309,7 +307,7 @@ class MedicareFile:
                             t1 = t2
                             print("{}[{}]: {:,}/{:,}/{:,}".format(
                                 dat, str(t2 - t0),
-                                counter, good, bad
+                                counter, good, bad_lines
                             ))
                 print("{} processed. Bad lines: {:,}"
                       .format(self.fts, bad_lines))

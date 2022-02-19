@@ -56,13 +56,14 @@ class CMSSchema(Context):
                       default = False
     )
 
-    def __init__(self, doc):
-        self.output = None
+    def __init__(self, doc, path: str = None, inpt: str = None, tp = None,
+                 reset = False):
+        self.output = path
         ''' Output path for schema '''
-        self.input = None
+        self.input = inpt
         ''' Path to directory containing FTS files '''
-        self.type = None
+        self.type = tp
         '''Type of data: medicare or medicaid'''
-        self.reset = None
+        self.reset = reset
         '''Reset content of the data model'''
         super().__init__(CMSSchema, doc, include_default = False)

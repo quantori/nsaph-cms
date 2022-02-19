@@ -46,7 +46,7 @@ from typing import Dict
 import yaml
 
 from cms.create_schema_config import CMSSchema
-from cms.fts2yaml import MedicaidFTS, MedicareFTS, MEDICARE_FILE_TYPES
+from cms.fts2yaml import MedicaidFTS, MedicareFTS, mcr_type
 from nsaph import init_logging
 
 
@@ -59,8 +59,8 @@ class Registry:
     """
 
     def __init__(self, context: CMSSchema = None):
-        init_logging()
         if not context:
+            init_logging()
             context = CMSSchema(__doc__).instantiate()
         self.context = context
         self.registry = None
@@ -124,15 +124,9 @@ class Registry:
     def update_medicare(self):
         domain = self.registry[self.name]
         f = self.context.input
-        fts = os.path.basename(f)
-        x = None
-        for t in MEDICARE_FILE_TYPES:
-            if fts.startswith(t):
-                x = t
-                break
-        if x is None:
-            raise ValueError("Unsupported Medicare file type: " + fts)
-        table = MedicareFTS(x).init(f).to_dict()
+        basedir, fts = os.path.split(f)
+        t = mcr_type(fts)
+        table = MedicareFTS(t).init(f).to_dict()
         domain["tables"].update(table)
 
     @staticmethod

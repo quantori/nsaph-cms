@@ -31,6 +31,13 @@ from nsaph.pg_keywords import *
 MEDICARE_FILE_TYPES = ["mbsf_ab", "mbsf_d", "mbsf_abcd", "medpar"]
 
 
+def mcr_type(file_name: str) -> str:
+    for t in MEDICARE_FILE_TYPES:
+        if file_name.startswith(t):
+            return t
+    raise ValueError("Unsupported Medicare file type: " + file_name)
+
+
 def width(s:str):
     if '.' in s:
         x = s.split('.')
@@ -121,9 +128,12 @@ class FTSColumn:
             else:
                 scale = None
         else:
-            scale = None
+            w = int(self.width)
+            if w != self.width:
+                scale = int(str(self.width).split('.')[1])
+            else:
+                scale = None
             can_be_numeric = True
-            w = self.width
         return can_be_numeric, scale, w
 
     def to_sql_type(self):
@@ -157,8 +167,10 @@ class MedicareFTSColumn(FTSColumn):
 
     @classmethod
     def conv(cls, i):
-        if i in [0, 4, 5]:
+        if i in [0, 4]:
             f = int
+        elif i in [5]:
+            f = float
         else:
             f = str
         return f
@@ -174,16 +186,15 @@ class MedicareFTSColumn(FTSColumn):
         )
         self.long_name = long_name
         self.start = start - 1
-        self.end = self.start + self.width
+        try:
+            self.end = self.start + self.width
+        except:
+            raise
 
 
 class CMSFTS:
     common_indices = [
                 "BENE_ID",
-                "EL_DOB",
-                "EL_SEX_CD",
-                "EL_DOD",
-                "EL_RACE_ETHNCY_CD",
                 ORIGINAL_FILE_COLUMN
             ]
 
@@ -194,11 +205,13 @@ class CMSFTS:
             `ip` for inpatient admissions data
         """
 
-        self.name = type_of_data.lower()
+        self.table_type = type_of_data.lower()
+        self.table_name = None
         self.indices = self.common_indices
         self.columns = None
         self.pk = None
         self.constructor = None
+        self.pattern = None
         return
 
     def init(self, path: str):
@@ -287,13 +300,23 @@ class CMSFTS:
 
     def to_dict(self):
         table = dict()
-        table[self.name] = dict()
-        table[self.name]["columns"] = [
+        tname = self.table_name \
+            if self.table_name is not None else self.table_type
+        t = dict()
+        t["columns"] = [
             {
                 c.column: self.column_to_dict(c)
             } for c in self.columns
         ]
-        table[self.name]["primary_key"] = self.pk
+        t["primary_key"] = self.pk
+        for idx in self.indices:
+            if not isinstance(idx, dict):
+                continue
+            if "indices" not in t:
+                t["indices"] = dict()
+            t["indices"].update(idx)
+
+        table[tname] = t
         return table
 
     def print_yaml(self, root_dir: str = None):
@@ -303,12 +326,20 @@ class CMSFTS:
 
 
 class MedicaidFTS(CMSFTS):
+    medicaid_indices = [
+                "EL_DOB",
+                "EL_SEX_CD",
+                "EL_DOD",
+                "EL_RACE_ETHNCY_CD"
+            ]
+
     def __init__(self, type_of_data: str):
         super().__init__(type_of_data)
         self.constructor = MedicaidFTSColumn
-        assert self.name in ["ps", "ip"]
+        assert self.table_type in ["ps", "ip"]
         self.pattern = "**/maxdata_{}_*.fts".format(type_of_data)
-        if self.name == "ps":
+        self.indices += self.medicaid_indices
+        if self.table_type == "ps":
             year_column = "MAX_YR_DT"
             self.pk = ["MSIS_ID", "STATE_CD", year_column]
             self.indices += self.pk.copy()
@@ -330,7 +361,7 @@ class MedicaidFTS(CMSFTS):
 
     def on_after_read_file(self, columns: List[FTSColumn]):
         super().on_after_read_file(columns)
-        if self.name == "ip":
+        if self.table_type == "ip":
             self.add_record_column(columns)
 
 
@@ -338,21 +369,26 @@ class MedicareFTS(CMSFTS):
     def __init__(self, type_of_data: str):
         super().__init__(type_of_data)
         self.constructor = MedicareFTSColumn
-        assert self.name in MEDICARE_FILE_TYPES
+        assert self.table_type in MEDICARE_FILE_TYPES
         self.pattern = "**/{}_*.fts".format(type_of_data)
         self.pk = ["FILE", "RECORD"]
-        if self.name.startswith("mbsf"):
+        if self.table_type.startswith("mbsf"):
             year_column = "RFRNC_YR"
-        elif self.name == "medpar":
+        elif self.table_type == "medpar":
             year_column = "MEDPAR_YR_NUM"
         else:
-            raise ValueError(self.name)
+            raise ValueError(self.table_type)
         self.indices += ["BENE_ID", year_column]
-        if  self.name.startswith("mbsf_ab"):
+        p_idx_columns = ["BENE_ID", year_column]
+        if self.table_type.startswith("mbsf_ab"):
             self.indices.append("STATE_CD")
+            p_idx_columns.append("STATE_CD")
+        self.indices.append({"primary": {"columns": p_idx_columns}})
 
-    def init(self, path: str):
-        self.read_file(path)
+    def init(self, fts_path: str):
+        ydir = os.path.basename(os.path.dirname(fts_path))
+        self.table_name = "{}_{}".format(self.table_type, ydir)
+        self.read_file(fts_path)
         return self
 
     def on_after_read_file(self, columns: List[FTSColumn]):
