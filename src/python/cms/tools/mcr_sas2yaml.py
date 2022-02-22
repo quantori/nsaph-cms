@@ -122,7 +122,7 @@ class SASIntrospector(MedicareSAS, MedicareRegistry):
                 {
                     key: {
                         "type": c["type"],
-                        "index": "true",
+                        "index": True,
                         "source": {
                             "type": "generated",
                             "code": "GENERATED ALWAYS AS ({}) STORED"
@@ -135,7 +135,9 @@ class SASIntrospector(MedicareSAS, MedicareRegistry):
         columns.append({
             "FILE": {
                 "description": "original file name",
-                "index": "required_before_loading_data: true",
+                "index": {
+                    "required_before_loading_data": True
+                },
                 "source": {
                     "type": "file"
                 },
