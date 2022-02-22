@@ -284,7 +284,7 @@ class CMSFTS:
         )
         columns.append(column)
 
-    def column_to_dict(self, c: MedicaidFTSColumn) -> dict:
+    def column_to_dict(self, c: FTSColumn) -> dict:
         d = {
             "type": c.to_sql_type(),
             "description": c.label
