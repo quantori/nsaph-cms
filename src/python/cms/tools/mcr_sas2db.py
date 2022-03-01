@@ -16,10 +16,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+"""
+Loader looks for SAS 7BDAT files in a given path
+matching a given pattern and loads teh data in the database.
+
+Used for 1999 to 2010 years
+"""
+
 import copy
 import os
 
-import sys
 from nsaph.loader.data_loader import DataLoader
 
 from cms.tools.mcr_sas import MedicareSAS
@@ -27,6 +33,13 @@ from nsaph.loader import LoaderConfig
 
 
 class SASLoader(MedicareSAS):
+    """
+    Loader looks for SAS 7BDAT files in a given path
+    matching a given pattern and loads teh data in the database.
+
+    Used for 1999 to 2010 years
+    """
+
     @classmethod
     def process(cls):
         loader = SASLoader()

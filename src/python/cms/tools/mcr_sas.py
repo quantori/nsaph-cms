@@ -16,6 +16,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+
+"""
+Abstract class to look for and process Medicare files from 1999 to 2010
+
+These files are semi-processed files. For each year we have a denominator
+(or patient summary, or enrollment) file and an inpatient admissions file.
+
+Files are in SAS 7BDAT format.
+"""
+
+
 import glob
 import logging
 
@@ -27,6 +38,11 @@ from typing import List
 
 
 class MedicareSAS(ABC):
+    """
+    Abstract class to look for and process Medicare files from 1999 to 2010
+    in SAS 7BDAT format
+    """
+
     def __init__(self, root_dir:str = '.'):
         self.root_dir = root_dir
 

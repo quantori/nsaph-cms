@@ -33,6 +33,14 @@ from nsaph.loader import LoaderConfig
 
 
 class MedicareLoader:
+    """
+    Medicare Loader for original medicare data received from Resdac. Used
+    for 2011 and later years.
+
+    Looks for FTS files, parses them to generate database model and extract
+    metadata required to read DAT files. Then loads data into teh database.
+    """
+
     @classmethod
     def process(cls):
         loader = MedicareLoader()

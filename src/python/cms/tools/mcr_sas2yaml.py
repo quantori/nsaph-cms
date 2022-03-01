@@ -17,6 +17,13 @@
 #  limitations under the License.
 #
 
+"""
+Introspector that looks for all SAS 7BDAT files in a given path
+matching a given pattern, reads metadata and generates data model
+for each file in YAML format. the data model is written to the common
+registry.
+"""
+
 import logging
 import re
 import sys
@@ -32,6 +39,13 @@ from nsaph.pg_keywords import PG_INT_TYPE, PG_SERIAL_TYPE
 
 
 class SASIntrospector(MedicareSAS, MedicareRegistry):
+    """
+    Introspector that looks for all SAS 7BDAT files in a given path
+    matching a given pattern, reads metadata and generates data model
+    for each file in YAML format. the data model is written to the common
+    registry.
+    """
+
     @classmethod
     def process(cls, registry_path: str, pattern: str, root_dir:str = '.'):
         introspector = SASIntrospector(registry_path, root_dir)

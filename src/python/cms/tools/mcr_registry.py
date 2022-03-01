@@ -17,6 +17,10 @@
 #  limitations under the License.
 #
 
+"""
+Common content for the Medicare data model YAML file
+"""
+
 import os
 import yaml
 
