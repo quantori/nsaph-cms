@@ -21,6 +21,7 @@ import glob
 import os
 from typing import List
 
+from cms.mcr_data_loader import MedicareDataLoader
 from cms.registry import Registry
 
 from cms.create_schema_config import CMSSchema
@@ -43,6 +44,10 @@ class MedicareLoader:
         self.context.domain = "cms"
         self.context.set_empty_args()
         self.root_dir=self.context.data
+        self.context.data = [
+            os.path.dirname(f) if os.path.isfile(f) else f
+            for f in self.context.data
+        ]
         if not self.context.incremental and not self.context.sloppy:
             self.context.reset = True
         return
@@ -54,7 +59,10 @@ class MedicareLoader:
             dirs = [self.root_dir]
         files: List[str] = []
         for d in dirs:
-            files.extend(glob.glob(os.path.join(d, pattern), recursive=True))
+            if os.path.isfile(d):
+                files.append(d)
+            else:
+                files.extend(glob.glob(os.path.join(d, pattern), recursive=True))
         for f in files:
             self.handle(f)
         return
@@ -64,7 +72,6 @@ class MedicareLoader:
         _, ydir = os.path.split(basedir)
         year = int(ydir)
         f, ext = os.path.splitext(fts_path)
-        data_path = f + ".csv.gz"
         ttype = mcr_type(fname)
         ctxt = CMSSchema(None,
                          path=self.context.registry,
@@ -75,10 +82,27 @@ class MedicareLoader:
         reg.update()
         context = copy.deepcopy(self.context)
         context.table = "{}_{:d}".format(ttype, year)
+
+        if os.path.isfile(f + ".csv.gz"):
+            loader = self.loader_for_csv(context, f + ".csv.gz")
+        elif os.path.isfile(f + ".dat"):
+            loader = self.loader_for_fwf(context, fts_path)
+        else:
+            raise ValueError("Data file was not found: " + f)
+        loader.run()
+
+    @staticmethod
+    def loader_for_csv(context: LoaderConfig, data_path: str) -> DataLoader:
         context.pattern = [os.path.join("**", os.path.basename(data_path))]
         loader = DataLoader(context)
         loader.csv_delimiter = '\t'
-        loader.run()
+        return loader
+
+    @staticmethod
+    def loader_for_fwf(context: LoaderConfig, fts_path: str) -> DataLoader:
+        context.data = [fts_path]
+        loader = MedicareDataLoader(context)
+        return loader
 
 
 if __name__ == '__main__':

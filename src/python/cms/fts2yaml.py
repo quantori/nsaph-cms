@@ -24,11 +24,12 @@ from typing import List
 import yaml
 
 from nsaph import ORIGINAL_FILE_COLUMN
+from nsaph_utils.utils.fwf import FWFColumn, FWFMeta
 from nsaph_utils.utils.io_utils import fopen
 from nsaph.pg_keywords import *
 
 
-MEDICARE_FILE_TYPES = ["mbsf_ab", "mbsf_d", "mbsf_abcd", "medpar"]
+MEDICARE_FILE_TYPES = ["mbsf_abcd", "mbsf_ab", "mbsf_d", "medpar"]
 
 
 def mcr_type(file_name: str) -> str:
@@ -96,6 +97,7 @@ class FTSColumn:
         self.format = c_format
         self.width = c_width
         self.label = label
+        self.is_input = True
         self._attrs = [
             attr for attr in self.__dict__ if attr[0] != '_'
         ]
@@ -109,6 +111,9 @@ class FTSColumn:
             if getattr(self, attr) != getattr(o, attr):
                 return False
         return True
+
+    def __str__(self) -> str:
+        return "{:d}: {} [{}]".format(self.order, self.column, self.type)
 
     def analyze_format(self):
         if self.format is not None:
@@ -154,8 +159,15 @@ class FTSColumn:
             return PG_DATE_TYPE
         raise Exception("Unexpected column type: {}".format(t))
 
-    def __str__(self) -> str:
-        return "{:d}: {} [{}]".format(self.order, self.column, self.type)
+    def to_fwf_column(self, pos:int) -> FWFColumn:
+        _, scale, width = self.analyze_format()
+        return FWFColumn(
+            name=self.column,
+            type=self.type,
+            order=self.order,
+            start=pos,
+            width = (width, scale)
+        )
 
 
 class MedicaidFTSColumn(FTSColumn):
@@ -208,10 +220,11 @@ class CMSFTS:
         self.table_type = type_of_data.lower()
         self.table_name = None
         self.indices = self.common_indices
-        self.columns = None
+        self.columns: List[FTSColumn] = []
         self.pk = None
         self.constructor = None
         self.pattern = None
+        self.metadata = dict()
         return
 
     def init(self, path: str):
@@ -227,6 +240,9 @@ class CMSFTS:
             if line.startswith('---') and '------------------' in line:
                 column_reader = ColumnReader(self.constructor, line)
                 break
+            if ':' in line:
+                x = line.split(':', 1)
+                self.metadata[x[0].strip()] = x[1].strip()
             continue
 
         if 1 > i or i > len(lines) - 2:
@@ -270,6 +286,7 @@ class CMSFTS:
             c_width=None,
             label="Record number in the file"
         )
+        column.is_input = False
         columns.append(column)
 
     @staticmethod
@@ -282,6 +299,7 @@ class CMSFTS:
             c_width=128,
             label="RESDAC original file name"
         )
+        column.is_input = False
         columns.append(column)
 
     def column_to_dict(self, c: FTSColumn) -> dict:
@@ -318,6 +336,36 @@ class CMSFTS:
 
         table[tname] = t
         return table
+
+    @staticmethod
+    def v2i(v: str):
+        return int(v.strip().replace(',',''))
+
+    def to_fwf_meta(self, data_path: str) -> FWFMeta:
+        key = "Exact File Record Length (Bytes in Variable Block)"
+        if key in self.metadata:
+            record_len = self.v2i(self.metadata[key])
+        else:
+            raise AssertionError("Record Length is undefined")
+        key = "Exact File Size in Bytes with 512 Blocksize"
+        fsize = self.v2i(self.metadata.get(key, None))
+        key = "Exact File Quantity (Rows)"
+        nrows = self.v2i(self.metadata.get(key, None))
+        pos = 0
+        columns = []
+        for c in self.columns:
+            if not c.is_input:
+                continue
+            fwf_column = c.to_fwf_column(pos)
+            columns.append(fwf_column)
+            pos = fwf_column.end
+        return FWFMeta(
+            path=data_path,
+            record_len=record_len,
+            size=fsize,
+            number_of_rows=nrows,
+            columns=columns
+        )
 
     def print_yaml(self, root_dir: str = None):
         self.init(root_dir)
