@@ -116,7 +116,7 @@ class SASIntrospector(MedicareSAS, MedicareRegistry):
                         {
                             key: {
                                 "type": PG_INT_TYPE,
-                                "index": "true",
+                                "index": True,
                                 "source": {
                                     "type": "generated",
                                     "code": "GENERATED ALWAYS AS ({:d}) STORED"

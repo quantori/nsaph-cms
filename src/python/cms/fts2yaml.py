@@ -28,7 +28,7 @@ extract metadata
 
 import glob
 import os
-from typing import List
+from typing import List, Optional, Dict
 
 import yaml
 
@@ -40,6 +40,14 @@ from nsaph.pg_keywords import *
 
 MEDICARE_FILE_TYPES = ["mbsf_abcd", "mbsf_ab", "mbsf_d", "medpar"]
 '''Known medicare file types'''
+
+
+MEDICARE_KEY_COLUMNS = {
+    "BENE_ID": [],
+    "STATE": ["STATE_CD"],
+    "YEAR": ["RFRNC_YR", "MEDPAR_YR_NUM"],
+    "ZIP": ["BENE_ZIP", "ZIP_CD"]
+}
 
 
 def mcr_type(file_name: str) -> str:
@@ -202,6 +210,12 @@ class FTSColumn:
             return PG_DATE_TYPE
         raise Exception("Unexpected column type: {}".format(t))
 
+    def to_dict(self):
+        return {
+            "type": self.to_sql_type(),
+            "description": self.label
+        }
+
     def to_fwf_column(self, pos:int) -> FWFColumn:
         """
         Returns a description of a fixed width (fwf) column required to create
@@ -219,6 +233,25 @@ class FTSColumn:
             start=pos,
             width = (width, scale)
         )
+
+
+class AliasColumn(FTSColumn):
+    def __init__(self, alias: str, column: FTSColumn):
+        super().__init__(column.order, alias,
+                         column.type, column.format,
+                         column.width, column.label)
+        self.target = column.column
+        return
+
+    def to_dict(self):
+        d = super().to_dict()
+        d["index"] = True
+        d["source"] = {
+            "type": "generated",
+            "code": "GENERATED ALWAYS AS ({}) STORED"
+                .format(self.target)
+        }
+        return d
 
 
 class MedicaidFTSColumn(FTSColumn):
@@ -394,10 +427,7 @@ class CMSFTS:
         :return: dictionary
         """
 
-        d = {
-            "type": c.to_sql_type(),
-            "description": c.label
-        }
+        d = c.to_dict()
         if c.column in self.indices:
             d["index"] = True
         if c.column == ORIGINAL_FILE_COLUMN:
@@ -534,19 +564,11 @@ class MedicareFTS(CMSFTS):
         self.constructor = MedicareFTSColumn
         assert self.table_type in MEDICARE_FILE_TYPES
         self.pattern = "**/{}_*.fts".format(type_of_data)
+        self.key_columns: Dict[str, Optional[FTSColumn]] = {
+            key: None for key in MEDICARE_KEY_COLUMNS
+        }
         self.pk = ["FILE", "RECORD"]
-        if self.table_type.startswith("mbsf"):
-            year_column = "RFRNC_YR"
-        elif self.table_type == "medpar":
-            year_column = "MEDPAR_YR_NUM"
-        else:
-            raise ValueError(self.table_type)
-        self.indices += ["BENE_ID", year_column]
-        p_idx_columns = ["BENE_ID", year_column]
-        if self.table_type.startswith("mbsf_ab"):
-            self.indices.append("STATE_CD")
-            p_idx_columns.append("STATE_CD")
-        self.indices.append({"primary": {"columns": p_idx_columns}})
+        return
 
     def init(self, fts_path: str):
         ydir = os.path.basename(os.path.dirname(fts_path))
@@ -557,6 +579,45 @@ class MedicareFTS(CMSFTS):
     def on_after_read_file(self, columns: List[FTSColumn]):
         super().on_after_read_file(columns)
         self.add_record_column(columns)
+        self.check_key_columns(columns)
+        self.add_indices(columns)
+
+    def check_key_columns(self, columns: List[FTSColumn]):
+        for column in columns:
+            for key in MEDICARE_KEY_COLUMNS:
+                candidates = [key] + MEDICARE_KEY_COLUMNS[key]
+                if column.column.upper() in candidates:
+                    if self.key_columns[key] is not None:
+                        raise ValueError(
+                            "Duplicate column candidate for " + key
+                        )
+                    self.key_columns[key] = column
+        for key in ["BENE_ID", "YEAR"]:
+            if self.key_columns[key] is None:
+                raise ValueError("Missing {} column for {}".format(
+                    key,  self.table_type
+                ))
+        if self.table_type.startswith("mbsf_ab"):
+            for key in MEDICARE_KEY_COLUMNS:
+                if self.key_columns[key] is None:
+                    raise ValueError("Missing {} column for {}".format(
+                        key,  self.table_type
+                    ))
+        return
+
+    def add_indices(self, columns: List[FTSColumn]):
+        p_idx_columns = []
+        for key in MEDICARE_KEY_COLUMNS:
+            c = self.key_columns[key]
+            if key in ["BENE_ID", "YEAR"]:
+                p_idx_columns.append(key)
+            elif self.table_type.startswith("mbsf_ab") and key in ["STATE"]:
+                p_idx_columns.append(key)
+            if c.column.upper() == key:
+                self.indices.append(key)
+            elif c is not None:
+                columns.append(AliasColumn(key, c))
+        self.indices.append({"primary": {"columns": p_idx_columns}})
 
 
 if __name__ == '__main__':
