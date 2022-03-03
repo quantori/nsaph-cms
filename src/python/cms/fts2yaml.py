@@ -609,6 +609,8 @@ class MedicareFTS(CMSFTS):
         p_idx_columns = []
         for key in MEDICARE_KEY_COLUMNS:
             c = self.key_columns[key]
+            if c is None:
+                continue
             if key in ["BENE_ID", "YEAR"]:
                 p_idx_columns.append(key)
             elif self.table_type.startswith("mbsf_ab") and key in ["STATE"]:
