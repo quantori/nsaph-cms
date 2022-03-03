@@ -47,7 +47,7 @@ class MedicareLoader:
         loader.traverse(loader.pattern)
 
     def __init__(self):
-        self.pattern = "[1-2]*/*.fts"
+        self.pattern = "**/*.fts"
         self.context = LoaderConfig(__doc__)
         self.context.domain = "cms"
         self.context.set_empty_args()
