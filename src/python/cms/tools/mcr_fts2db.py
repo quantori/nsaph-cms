@@ -97,7 +97,9 @@ class MedicareLoader:
             loader = self.loader_for_fwf(context, fts_path)
         else:
             raise ValueError("Data file was not found: " + f)
-        if not self.context.dryrun:
+        if self.context.dryrun:
+            print("Dry run: " + fts_path)
+        else:
             loader.run()
 
     @staticmethod
