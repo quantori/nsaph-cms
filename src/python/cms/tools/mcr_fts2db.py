@@ -93,7 +93,7 @@ class MedicareLoader:
 
         if os.path.isfile(f + ".csv.gz"):
             loader = self.loader_for_csv(context, f + ".csv.gz")
-        elif os.path.isfile(f + ".dat"):
+        elif glob.glob("{}*.dat".format(f)):  #os.path.isfile(f + ".dat"):
             loader = self.loader_for_fwf(context, fts_path)
         else:
             raise ValueError("Data file was not found: " + f)
