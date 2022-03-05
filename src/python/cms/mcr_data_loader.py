@@ -16,6 +16,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+import glob
 import os
 from typing import List, Tuple, Any, Callable
 
@@ -26,9 +27,19 @@ from nsaph_utils.utils.fwf import FWFReader
 
 class MedicareDataLoader(DataLoader):
     @classmethod
-    def open(cls, name) -> FWFReader:
+    def dat4fts(cls, fts_path):
+        f, ext = os.path.splitext(fts_path)
+        assert ext.lower() == '.fts'
+        data_files = glob.glob("{}*.dat".format(f))
+        return data_files
+
+    @classmethod
+    def open(cls, name: str, dat_path: str = None) -> FWFReader:
         f, ext = os.path.splitext(name)
-        if ext.lower() == ".fts":
+        if dat_path is not None:
+            assert ext.lower() == '.fts'
+            fts_path = name
+        elif ext.lower() == ".fts":
             fts_path = name
             dat_path = f + ".dat"
         elif ext.lower() == ".dat":
@@ -47,8 +58,10 @@ class MedicareDataLoader(DataLoader):
 
     def get_files(self) -> List[Tuple[Any, Callable]]:
         objects = []
-        for path in self.context.data:
-            objects.append(self.open(path))
+        for fts_path in self.context.data:
+            dat_files = self.dat4fts(fts_path)
+            for dat_file in dat_files:
+                objects.append(self.open(fts_path, dat_file))
         return objects
 
 
