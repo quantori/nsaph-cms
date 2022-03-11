@@ -18,6 +18,7 @@
 #
 import copy
 import glob
+import logging
 import os
 from typing import List
 
@@ -72,7 +73,10 @@ class MedicareLoader:
             else:
                 files.extend(glob.glob(os.path.join(d, pattern), recursive=True))
         for f in files:
-            self.handle(f)
+            try:
+                self.handle(f)
+            except Exception as x:
+                logging.exception("Error handling {}. Ignoring.".format(str(f)))
         return
 
     def handle(self, fts_path: str):
