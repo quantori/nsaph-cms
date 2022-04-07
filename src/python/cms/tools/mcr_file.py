@@ -1,4 +1,4 @@
-#  Copyright (c) 2021. Harvard University
+#  Copyright (c) 2021-2022. Harvard University
 #
 #  Developed by Research Software Engineering,
 #  Faculty of Arts and Sciences, Research Computing (FAS RC)
@@ -15,11 +15,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-#
 
+import datetime
 import glob
 import gzip
 import os
+import shutil
+import traceback
 from collections import OrderedDict
 from dateutil import parser as date_parser
 import csv
@@ -91,14 +93,23 @@ class Column:
         self.desc = desc
         self.d = width[1]
 
+    def __str__(self) -> str:
+        return "{}: [{}]".format(super().__str__(), self.name)
 
 
-
-class Medpar:
-    def __init__(self, dir_path: str, name: str, year:str = None):
+class MedicareFile:
+    def __init__(self, dir_path: str, name: str,
+                 year:str = None, dest:str = None):
         self.dir = dir_path
-        self.fts = os.path.join(self.dir, '.'.join([name, "fts"]))
-        self.csv = os.path.join(self.dir, '.'.join([name, "csv.gz"]))
+        if dest:
+            if not os.path.exists(dest):
+                os.makedirs(dest, exist_ok=True)
+            self.dest = dest
+        else:
+            self.dest = self.dir
+        self.name = os.path.join(self.dir, name)
+        self.fts = '.'.join([self.name, "fts"])
+        self.csv = os.path.join(self.dest, '.'.join([name, "csv.gz"]))
         if not os.path.isfile(self.fts):
             raise Exception("Not found: " + self.fts)
 
@@ -109,7 +120,12 @@ class Medpar:
         self.metadata = dict()
         self.columns = OrderedDict()
         self.init()
-        self.block_size = int(self.metadata["Exact File Record Length (Bytes in Variable Block)"])
+        block_size = self.metadata["Exact File Record Length (Bytes in Variable Block)"]
+        block_size = block_size.strip()
+        if ',' in block_size:
+            print("[{}] Stripping commas: {}".format(self.fts, block_size))
+            block_size = block_size.replace(',','')
+        self.block_size = int(block_size)
         if not year:
             year = name[-4:]
         self.year = year
@@ -147,20 +163,26 @@ class Medpar:
         record = []
         for name in self.columns:
             column = self.columns[name]
-            s = pieces[name]
+            s = pieces[name].decode("utf-8")
             try:
                 if column.type == "NUM" and not column.d:
-                    record.append(int(s))
+                    val = s.strip()
+                    if val:
+                        record.append(int(val))
+                    else:
+                        record.append(None)
                 elif column.type == "DATE":
                     if s.strip():
                         record.append(date_parser.parse(s))
                     else:
                         record.append(None)
                 else:
-                    record.append(s.decode("utf-8") )
+                    record.append(s)
             except Exception as x:
-                log("{:d}: {}[{:d}]: - {}".format(ln, column.name, column.ord, str(x)))
-                record.append(s.decode("utf-8"))
+                log("{:d}: {}[{:d}]: - {}".format(
+                    ln, column.name, column.ord, str(x))
+                )
+                record.append(s)
                 exception_count += 1
                 if exception_count > 3:
                     log(data)
@@ -168,16 +190,88 @@ class Medpar:
         return record
 
     def validate(self, record):
-        assert record[self.columns["MEDPAR_YR_NUM"].ord - 1] == self.year
+        yc = None
+        if "BENE_ENROLLMT_REF_YR" in self.columns:
+            yc = "BENE_ENROLLMT_REF_YR"
+        if "MEDPAR_YR_NUM" in self.columns:
+            yc = "MEDPAR_YR_NUM"
+        if yc is None:
+            raise AssertionError("Year column was not found in FTS")
+        assert record[self.columns[yc].ord - 1] == self.year
+
+    def count_lines_in_source(self):
+        lines = 0
+        blocks = 0
+        bts = 0
+        t1 = datetime.datetime.now()
+        t0 = t1
+        for dat in self.dat:
+            print("{}: {}".format(t0.isoformat(), dat))
+            counter = 0
+            with open(dat, "rb") as source:
+                while source.readable():
+                    chunk = source.read(1024*1024)
+                    if len(chunk) < 1:
+                        break
+                    blocks += 1
+                    bts += len(chunk)
+                    n = chunk.count(b'\n')
+                    counter += n
+                    t2 = datetime.datetime.now()
+                    elapsed = t2 - t1
+                    if elapsed > datetime.timedelta(minutes=10):
+                        t1 = t2
+                        print(
+                            (
+                                "{} running for {}. Blocks = {:,}, lines = {:,}"
+                                + ", bytes = {:,}"
+                            ).format(dat, str(t2 - t0), blocks, counter, bts)
+                        )
+                print("{}: {:d}".format(os.path.basename(dat), counter))
+            lines += counter
+        print("{}[Total]: {:d}".format(self.name, lines))
+        return lines
+
+    def count_lines_in_dest(self):
+        lines = 0
+        if not os.path.isfile(self.csv):
+            return 0
+        with gzip.open(self.csv, "rt") as out:
+            for _ in out:
+                lines += 1
+        print("{}: {:d}".format(self.csv, lines))
+        return lines
+
+    def status(self) -> str:
+        try:
+            if not os.path.isfile(self.csv):
+                return "NONE"
+            l2 = self.count_lines_in_dest()
+            if l2 < 1:
+                return "EMPTY"
+            l1 = self.count_lines_in_source()
+            if l1 != l2:
+                return "MISMATCH: {:d}=>{:d}".format(l1, l2)
+            return "READY"
+        except Exception as x:
+            print(self.fts)
+            traceback.print_exception(type(x), x, None)
+            return "ERROR: " + str(x)
+
+    def status_message(self):
+        return "{}: {}".format(self.fts, self.status())
 
     def export(self):
+        if self.dir != self.dest:
+            shutil.copy(self.fts, self.dest)
+        t1 = datetime.datetime.now()
+        t0 = t1
         with gzip.open(self.csv, "wt") as out:
             writer = csv.writer(out, quoting=csv.QUOTE_MINIMAL, delimiter='\t')
             for dat in self.dat:
                 print(dat)
                 counter = 0
                 good = 0
-                bad = 0
                 bad_lines = 0
                 remainder = b''
                 with open(dat, "rb") as source:
@@ -193,7 +287,6 @@ class Medpar:
                             writer.writerow(record)
                             good += 1
                         except MedparParseException as x:
-                            bad += 1
                             log("Line = " + str(counter) + ':' + str(x.pos))
                             bad_lines += 1
                             log(x)
@@ -204,28 +297,34 @@ class Medpar:
                             log("Line = " + str(counter))
                             bad_lines += 1
                             log(x)
-                        while block[idx] in [10, 13]:
+                        while idx < len(block) and block[idx] in [10, 13]:
                             idx += 1
                         remainder = block[idx:]
                         block = None
                         counter += 1
-                        if (counter%10000) == 0:
-                            print("{:d}/{:d}/{:d}".format(counter, good, bad))
-                print("File processed. Bad lines: " + str(bad_lines))
+                        if (counter%100000) == 0:
+                            t2 = datetime.datetime.now()
+                            t1 = t2
+                            print("{}[{}]: {:,}/{:,}/{:,}".format(
+                                dat, str(t2 - t0),
+                                counter, good, bad_lines
+                            ))
+                print("{} processed. Bad lines: {:,}"
+                      .format(self.fts, bad_lines))
 
+    def info(self):
+        for s in [
+            "Columns in File",
+            "Exact File Record Length (Bytes in Variable Block)"
+        ]:
+            print("{}: {}".format(s, self.metadata[s]))
 
-
-
-#def dat2csv(dat_path, csv_path)
+        for name in self.columns:
+            c = self.columns[name]
+            print("{:d} - {} - {} - {:d}".format(c.ord, c.name, c.type, c.start))
 
 
 if __name__ == '__main__':
-    m = Medpar(os.curdir, "medpar_all_file_res000017155_req007087_2015")
-    for s in ["Columns in File", "Exact File Record Length (Bytes in Variable Block)"]:
-        print("{}: {}".format(s, m.metadata[s]))
-
-    for name in m.columns:
-        c = m.columns[name]
-        print("{:d} - {} - {} - {:d}".format(c.ord, c.name, c.type, c.start))
-
+    m = MedicareFile(os.curdir, "medpar_all_file_res000017155_req007087_2015")
+    m.info()
     m.export()

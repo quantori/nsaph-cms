@@ -63,6 +63,11 @@ inputs:
     default: false
     inputBinding:
       prefix: --incremental
+  force:
+    type:  boolean
+    default: false
+    inputBinding:
+      prefix: --force
   depends_on:
     type: File?
     doc: a special field used to enforce dependencies and execution order

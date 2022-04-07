@@ -228,6 +228,11 @@ medicaid:
         - year
         - state
         - month
+      indices:
+        eligibility_ys_idx:
+          columns:
+          - state
+          - year
 
       children:
         admissions:
@@ -279,6 +284,11 @@ medicaid:
             - bene_id
             - admission_date
             - discharge_date
+          indices:
+            adm_ys_idx:
+              columns:
+              - state
+              - year
           source_columns:
             - BENE_ID
             - MSIS_ID

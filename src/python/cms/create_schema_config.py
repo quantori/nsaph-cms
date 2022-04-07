@@ -43,9 +43,27 @@ class CMSSchema(Context):
             cardinality = Cardinality.single
         )
 
-    def __init__(self, doc):
-        self.output = None
+    _type = Argument("type",
+            help = "Type of data: medicare or medicaid",
+            type = str,
+            default = 'medicaid',
+            cardinality = Cardinality.single
+        )
+
+    _reset = Argument("reset",
+                      help = "Reset content of the data model",
+                      type = bool,
+                      default = False
+    )
+
+    def __init__(self, doc, path: str = None, inpt: str = None, tp = None,
+                 reset = False):
+        self.output = path
         ''' Output path for schema '''
-        self.input = None
+        self.input = inpt
         ''' Path to directory containing FTS files '''
+        self.type = tp
+        '''Type of data: medicare or medicaid'''
+        self.reset = reset
+        '''Reset content of the data model'''
         super().__init__(CMSSchema, doc, include_default = False)
