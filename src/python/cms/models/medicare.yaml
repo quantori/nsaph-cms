@@ -1,0 +1,66 @@
+medicare:
+  reference: ""
+  header: false
+  quoting: 3
+  index: "unless excluded"
+  schema: "medicare"
+  schema.audit: "medicaid_audit"
+  description: "Data model for Medicare"
+  tables:
+    ps:
+      create:
+        type: view
+        from:
+          - cms.mbsf_ab*
+          - cms.mcr_bene_*
+      columns:
+        - bene_id
+        - year
+        - state
+        - zip:
+            type: "character varying"
+            cast:
+              numeric: "to_char({}, '000000000')"
+        - file
+        - record
+        - dob:
+            type: date
+            cast:
+              "character varying": "to_date({}, 'YYYYMMDD')"
+              numeric: "to_date(to_char({}, '00000000'), 'YYYYMMDD')"
+            source:
+              - dob
+              - bene_dob
+              - bene_birth_dt
+        - dod:
+            type: date
+            cast:
+              "character varying": "to_date({}, 'YYYYMMDD')"
+              numeric: "to_date(to_char({}, '00000000'), 'YYYYMMDD')"
+            source:
+              - death_dt
+              - bef_dod
+              - bene_death_dt
+        - fips3:
+            optional: true
+            source:
+              - cnty_cd
+              - bene_county_cd
+        - sex:
+            source:
+              - sex
+              - bene_sex_ident_cd
+        - race:
+            source:
+              - bene_race_cd
+              - race
+        - dod_ndi:
+            description: This variable is the date of death as reported on the Beneficiary’s death certificate.
+            reference: https://resdac.org/cms-data/variables/ndi-date-deathmbsf
+            optional: true
+            source:  ndi_death_dt
+        - race_rti:
+            description: Research Triangle Institute (RTI) Race Code
+            reference: https://resdac.org/cms-data/variables/research-triangle-institute-rti-race-code
+            optional: true
+            source: rti_race_cd
