@@ -4,7 +4,7 @@ medicare:
   quoting: 3
   index: "unless excluded"
   schema: "medicare"
-  schema.audit: "medicaid_audit"
+  schema.audit: "medicare_audit"
   description: "Data model for Medicare"
   tables:
     ps:
@@ -64,3 +64,51 @@ medicare:
             reference: https://resdac.org/cms-data/variables/research-triangle-institute-rti-race-code
             optional: true
             source: rti_race_cd
+    _beneficiaries:
+      create:
+        type: view
+        from: medicare.ps
+        group by:
+          - bene_id
+      columns:
+        - bene_id
+        - dob:
+            source: "MIN(dob)"
+            identifier: true
+        - dod:
+            source: "MAX(dod)"
+            identifier: true
+        - race:
+            description: "https://resdac.org/cms-data/variables/raceethnicity-msis"
+            source: "string_agg(distinct race, ',')"
+            identifier: true
+        - sex:
+            source: "string_agg(distinct sex, ',')"
+            identifier: true
+        - duplicates:
+            source: "COUNT(distinct {identifiers})"
+            description: "number of duplicate records for the beneficiary"
+        - dob_latest:
+            source: |
+              CASE
+                WHEN MAX(dob) <> MIN(dob) THEN  MAX(dob)
+              END
+        - dod_earliest:
+            source: |
+              CASE
+                WHEN MIN(dod) <> MAX(dod) THEN MIN(dod)
+              END
+    beneficiaries:
+      create:
+        type: table
+        select: "*"
+        from: _beneficiaries
+      primary_key:
+        - bene_id
+      indices:
+        bene_rsd_idx:
+          columns:
+            - race
+            - sex
+            - duplicates
+
