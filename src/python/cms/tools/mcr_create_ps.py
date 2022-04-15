@@ -49,6 +49,17 @@ class MedicarePatientSummaryTable:
             self.generate_sql()
         print(self.sql)
 
+    def execute(self):
+        if not self.sql:
+            self.generate_sql()
+        with Connection(self.context.db,
+                        self.context.connection) as cnxn:
+            with cnxn.cursor() as cursor:
+                cursor.execute(self.sql)
+            cnxn.commit()
+        print("All Done")
+
+
     def generate_sql(self):
         with Connection(self.context.db,
                         self.context.connection) as cnxn:
@@ -61,6 +72,10 @@ class MedicarePatientSummaryTable:
 
     def get_tables(self, cursor):
         tables: List[str] = self.table["create"]["from"]
+        if "exclude" in self.table["create"]:
+            exclusions = set(self.table["create"]["exclude"])
+        else:
+            exclusions = set()
         if isinstance(tables, str):
             tables = [tables]
         sql = """
@@ -81,7 +96,7 @@ class MedicarePatientSummaryTable:
         sql = sql.format(" OR ".join(cc))
         logging.debug(sql)
         cursor.execute(sql)
-        return [(t[0], t[1]) for t in cursor]
+        return [(t[0], t[1]) for t in cursor if t[1] not in exclusions]
 
     def table_sql(self, cursor, qtable: Tuple) -> str:
         schema, table = qtable
@@ -110,13 +125,19 @@ class MedicarePatientSummaryTable:
             else:
                 src = [n]
             if isinstance(src, str):
-                src = [src]
+                if src.strip()[0] != '(':
+                    src = [src]
+                else:
+                    columns.append((n, src))
+                    continue
             if "type" in c and "cast" in c:
                 ctype = (c["type"], c["cast"])
             else:
                 ctype = None
             source_column = self.get_column(cursor, table, src, ctype)
-            if not opt and src is None:
+            # if "clean" in c:
+            #     source_column = c["clean"].format(n=source_column)
+            if (not opt) and (source_column is None):
                 raise ValueError("{}.{}".format(table, n))
             columns.append((n, source_column))
         return columns
@@ -137,7 +158,7 @@ class MedicarePatientSummaryTable:
         for c in cursor:
             if ctype is not None and c[1] != ctype[0]:
                 cast = ctype[1][c[1]]
-                cols.append(cast.format(c[0]))
+                cols.append(cast.format(column_name=c[0]))
             else:
                 cols.append(c[0])
         if len(cols) > 1:
@@ -153,4 +174,5 @@ if __name__ == '__main__':
     init_logging()
     mpst = MedicarePatientSummaryTable()
     mpst.print_sql()
+    mpst.execute()
 

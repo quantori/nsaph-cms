@@ -13,21 +13,28 @@ medicare:
         from:
           - cms.mbsf_ab*
           - cms.mcr_bene_*
+        exclude:
+          - mbsf_ab_2015
       columns:
         - bene_id
-        - year
-        - state
+        - file
+        - record
+        - year:
+            source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN 20 < "year" AND "year" < 100 THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
+        - state:
+            source: '(SELECT state_id FROM public.us_states as s WHERE s.fips2 = "state")'
+            optional: true
+        - fips2:
+            source: state
         - zip:
             type: "character varying"
             cast:
-              numeric: "to_char({}, '000000000')"
-        - file
-        - record
+              numeric: "to_char({column_name}, '000000000')"
         - dob:
             type: date
             cast:
-              "character varying": "to_date({}, 'YYYYMMDD')"
-              numeric: "to_date(to_char({}, '00000000'), 'YYYYMMDD')"
+              "character varying": "to_date({column_name}, 'YYYYMMDD')"
+              numeric: "to_date(to_char({column_name}, '00000000'), 'YYYYMMDD')"
             source:
               - dob
               - bene_dob
@@ -35,11 +42,12 @@ medicare:
         - dod:
             type: date
             cast:
-              "character varying": "to_date({}, 'YYYYMMDD')"
-              numeric: "to_date(to_char({}, '00000000'), 'YYYYMMDD')"
+              "character varying": "to_date({column_name}, 'YYYYMMDD')"
+              numeric: "(CASE WHEN {column_name} < 19000000 THEN NULL ELSE to_date(to_char({column_name}, '00000000'), 'YYYYMMDD') END)"
             source:
               - death_dt
               - bef_dod
+              - bene_dod
               - bene_death_dt
         - fips3:
             optional: true
