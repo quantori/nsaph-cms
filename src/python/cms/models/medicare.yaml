@@ -20,16 +20,23 @@ medicare:
         - file
         - record
         - year:
-            source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN 20 < "year" AND "year" < 100 THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
+            source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN (20 < "year" AND "year" < 100) THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
         - state:
             source: '(SELECT state_id FROM public.us_states as s WHERE s.fips2 = "state")'
             optional: true
         - fips2:
             source: state
         - zip:
-            type: "character varying"
+            type: INT
             cast:
-              numeric: "to_char({column_name}, '000000000')"
+              numeric: "(CASE WHEN {column_name} < 100000 THEN {column_name}::int ELSE ({column_name}/10000)::INT END)"
+              "character varying": "SUBSTRING({column_name} FROM 1 FOR 5)::INT"
+        - zip4:
+            type: INT
+            source: zip
+            cast:
+              numeric: "(CASE WHEN {column_name} < 100000 THEN NULL ELSE ({column_name}%10000)::INT END)"
+              "character varying": "(CASE WHEN LENGTH({column_name}) < 6 THEN NULL ELSE SUBSTRING({column_name} FROM 6 FOR 4)::INT END)"
         - dob:
             type: date
             cast:
@@ -42,7 +49,7 @@ medicare:
         - dod:
             type: date
             cast:
-              "character varying": "to_date({column_name}, 'YYYYMMDD')"
+              "character varying": "(CASE WHEN {column_name} = '00000000' THEN NULL ELSE to_date({column_name}, 'YYYYMMDD') END)"
               numeric: "(CASE WHEN {column_name} < 19000000 THEN NULL ELSE to_date(to_char({column_name}, '00000000'), 'YYYYMMDD') END)"
             source:
               - death_dt
