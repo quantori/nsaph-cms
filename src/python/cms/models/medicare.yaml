@@ -22,10 +22,12 @@ medicare:
         - year:
             source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN (20 < "year" AND "year" < 100) THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
         - state:
-            source: '(SELECT state_id FROM public.us_states as s WHERE s.fips2 = "state")'
+            source: '(SELECT state_id FROM public.us_states as s WHERE s.ssa2 = "state")'
             optional: true
-        - fips2:
+        - ssa2:
             source: state
+        - fips2:
+            source: '(SELECT fips2 FROM public.us_states as s WHERE s.ssa2 = "state")'
         - zip:
             type: INT
             cast:
@@ -56,7 +58,7 @@ medicare:
               - bef_dod
               - bene_dod
               - bene_death_dt
-        - fips3:
+        - ssa3:
             optional: true
             source:
               - cnty_cd

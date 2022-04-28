@@ -21,23 +21,14 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-baseCommand: [python, -m, nsaph.loader.data_loader]
-requirements:
-  InlineJavascriptRequirement: {}
+baseCommand: [python, -m, cms.tools.mcr_create_ps]
 
 doc: |
-  This tool executes DDL to drop and recreate
-  creates a table, a view or a materialized view in the database.
-  It is assumed it is run for Medicaid domain
+  This tool combines disparate tables with raw Medicare data into a single
+  view, transforming common columns to uniform type and format
 
 
 inputs:
-  #$import: db.yaml
-  table:
-    type: string
-    doc: the name of the table to be created
-    inputBinding:
-      prefix: --table
   database:
     type: File
     doc: Path to database connection file, usually database.ini
@@ -48,24 +39,9 @@ inputs:
     doc: The name of the section in the database.ini file
     inputBinding:
       prefix: --connection
-  sloppy:
-    type: boolean
-    default: false
-    inputBinding:
-      prefix: --sloppy
-  domain:
-    type: string
-    default:  "medicaid"
-    inputBinding:
-      prefix: --domain
-
   depends_on:
     type: File?
     doc: a special field used to enforce dependencies and execution order
-
-arguments:
-    - valueFrom: "--reset"
-
 
 outputs:
   log:
@@ -75,5 +51,5 @@ outputs:
   errors:
     type: stderr
 
-stderr: $("create_" + inputs.table + ".err")
+stderr: mcr_create_ps.err
 

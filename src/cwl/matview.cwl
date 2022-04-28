@@ -57,6 +57,7 @@ steps:
     doc: Execute DDL
     in:
       table: table
+      domain: domain
       database: database
       connection_name: connection_name
       sloppy: incremental

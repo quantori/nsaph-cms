@@ -1,0 +1,120 @@
+#!/usr/bin/env cwl-runner
+### Medicare in-database processing pipeline
+#  Copyright (c) 2022. Harvard University
+#
+#  Developed by Research Software Engineering,
+#  Faculty of Arts and Sciences, Research Computing (FAS RC)
+#  Author: Michael A Bouzinier
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+cwlVersion: v1.2
+class: Workflow
+
+requirements:
+  SubworkflowFeatureRequirement: {}
+  StepInputExpressionRequirement: {}
+  InlineJavascriptRequirement: {}
+
+doc: |
+  This workflow processes raw Medicare data. The assumed initial state
+  is that raw data is already in the database. We assume that the data
+  for each year is in a separate set of tables consisting of at least
+  two tables: patient summary and inpatient admissions. The first step
+  combines these disparate tables into a single view, creating uniform
+  columns.
+
+inputs:
+  database:
+    type: File
+    doc: Path to database connection file, usually database.ini
+  connection_name:
+    type: string
+    doc: The name of the section in the database.ini file
+
+steps:
+  create_ps:
+    run: medicare_ps.cwl
+    doc: >
+      Combines patient summaries from disparate summary tables
+      (one table per year) into a single view
+    in:
+      database: database
+      connection_name: connection_name
+    out:  [ log, errors ]
+
+  create_bene_view:
+    run: create.cwl
+    doc: Execute DDL
+    in:
+      table:
+        valueFrom: "_beneficiaries"
+      database: database
+      connection_name: connection_name
+      domain:
+        valueFrom: "medicare"
+      depends_on: create_ps/log
+    out: [ log, errors ]
+
+  create_bene_table:
+    run: matview.cwl
+    doc: Creates `Beneficiaries` Table
+    in:
+      depends_on: create_bene_view/log
+      table:
+        valueFrom: "beneficiaries"
+      domain:
+         valueFrom: "medicare"
+      database: database
+      connection_name: connection_name
+    out:
+      - create_log
+      - index_log
+      - vacuum_log
+      - create_err
+      - index_err
+      - vacuum_err
+
+outputs:
+  ps_create_log:
+    type: File
+    outputSource: create_ps/log
+  ps_create_err:
+    type: File
+    outputSource: create_ps/errors
+  bene_view_log:
+    type: File
+    outputSource: create_bene_view/log
+  bene_view_err:
+    type: File
+    outputSource: create_bene_view/errors
+  bene_table_create_log:
+    type: File
+    outputSource: create_bene_table/create_log
+  bene_table_index_log:
+    type: File
+    outputSource: create_bene_table/index_log
+  bene_table_vacuum_log:
+    type: File
+    outputSource: create_bene_table/vacuum_log
+  bene_table_create_err:
+    type: File
+    outputSource: create_bene_table/create_err
+  bene_table_index_err:
+    type: File
+    outputSource: create_bene_table/index_err
+  bene_table_vacuum_err:
+    type: File
+    outputSource: create_bene_table/vacuum_err
+  

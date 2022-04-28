@@ -16,6 +16,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+
+"""
+This utility combines Medicare Patient Summary data, that is originally
+in the form of one table per year into a single view.
+
+It takes care of different types and format of the most common columns,
+such as: year, state, DO[B/D], zip codes, state and county codes.
+
+The actual schema is defined in ../models/medicare.yaml
+"""
+
 import logging
 import os
 from pathlib import Path
