@@ -81,6 +81,14 @@ medicare:
             reference: https://resdac.org/cms-data/variables/research-triangle-institute-rti-race-code
             optional: true
             source: rti_race_cd
+    _ps:
+      create:
+        type: view
+        select: |
+          *,
+          CASE WHEN year > 2010 THEN (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year)
+              ELSE (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year) END AS fips3
+        from: ps
     _beneficiaries:
       create:
         type: view
@@ -115,6 +123,47 @@ medicare:
               CASE
                 WHEN MIN(dod) <> MAX(dod) THEN MIN(dod)
               END
+    _enrollments:
+      create:
+        type: view
+        from: medicare._ps
+        group by:
+          - bene_id
+          - year
+          - state
+      columns:
+        - year
+        - state
+        - state_iso:
+            source: "('US-' || state) "
+        - fips3:
+            source: MAX(fips3)
+        - residence_county:
+            source: MAX(fips3)
+        - residence_counties:
+            source: "string_agg(distinct fips3, ',')"
+        - fips5:
+            source: "(MAX(fips2) || MAX(fips3)"
+        - zip:
+            source: "MAX(zip)"
+        - zips:
+            source: "string_agg(distinct zip::varchar, ',')"
+        - state_count:
+            source: |
+              (
+                SELECT COUNT(distinct state)
+                FROM medicare.ps AS ps2
+                WHERE
+                  medicare.ps.bene_id = ps2.bene_id
+                  AND medicare.ps.year = ps2.year
+              )
+        - died:
+            source: |
+              CASE EXTRACT (YEAR from MAX(dod))
+                WHEN year THEN TRUE
+                ELSE FALSE
+              END
+
     beneficiaries:
       create:
         type: table
