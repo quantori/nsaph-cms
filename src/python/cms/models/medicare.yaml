@@ -86,8 +86,8 @@ medicare:
         type: view
         select: |
           *,
-          CASE WHEN year > 2010 THEN (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year)
-              ELSE (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year) END AS fips3
+          CASE WHEN year > 2010 THEN (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year and ps.fips2 = s.fips2)
+              ELSE (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2) END AS fips3
         from: ps
     _beneficiaries:
       create:
@@ -102,7 +102,6 @@ medicare:
             identifier: true
         - dod:
             source: "MAX(dod)"
-            identifier: true
         - race:
             description: "https://resdac.org/cms-data/variables/raceethnicity-msis"
             source: "string_agg(distinct race, ',')"
@@ -111,7 +110,9 @@ medicare:
             source: "string_agg(distinct sex, ',')"
             identifier: true
         - duplicates:
-            source: "COUNT(distinct {identifiers})"
+            source: >
+              COUNT(distinct {identifiers}) +
+              CASE (COUNT(DISTINCT dod) FILTER (WHERE dod is not null)) WHEN 0 THEN 0 ELSE COUNT(DISTINCT dod) FILTER (WHERE dod is not null) - 1 END
             description: "number of duplicate records for the beneficiary"
         - dob_latest:
             source: |
@@ -132,10 +133,13 @@ medicare:
           - year
           - state
       columns:
+        - bene_id
         - year
         - state
         - state_iso:
             source: "('US-' || state) "
+        - fips2:
+            source: MAX(fips2)
         - fips3:
             source: MAX(fips3)
         - residence_county:
@@ -143,7 +147,7 @@ medicare:
         - residence_counties:
             source: "string_agg(distinct fips3, ',')"
         - fips5:
-            source: "(MAX(fips2) || MAX(fips3)"
+            source: "(MAX(fips2) || MAX(fips3))"
         - zip:
             source: "MAX(zip)"
         - zips:
@@ -154,8 +158,8 @@ medicare:
                 SELECT COUNT(distinct state)
                 FROM medicare.ps AS ps2
                 WHERE
-                  medicare.ps.bene_id = ps2.bene_id
-                  AND medicare.ps.year = ps2.year
+                  _ps.bene_id = ps2.bene_id
+                  AND _ps.year = ps2.year
               )
         - died:
             source: |
@@ -169,6 +173,12 @@ medicare:
         type: table
         select: "*"
         from: _beneficiaries
+      columns:
+        - bene:
+            type: HLL_HASHVAL
+            source:
+              type: "generated"
+              code: "GENERATED ALWAYS AS (hll_hash_text(bene_id)) STORED"
       primary_key:
         - bene_id
       indices:
@@ -177,4 +187,43 @@ medicare:
             - race
             - sex
             - duplicates
+      children:
+        enrollments:
+          create:
+            type: table
+            select: "*"
+            from: _enrollments
+          columns:
+            - bene:
+                type: HLL_HASHVAL
+                source:
+                  type: "generated"
+                  code: "GENERATED ALWAYS AS (hll_hash_text(bene_id)) STORED"
+          primary_key:
+            - bene_id
+            - year
+            - state
+          indices:
+            bsy_idx:
+              columns:
+                - bene_id
+                - state
+                - year
+            sy_idx:
+              columns:
+                - state
+                - year
+            fips_idx:
+              columns:
+                - fips2
+                - fips3
+            zc_idx:
+              columns:
+                - zip
+                - fips5
+            scz_idx:
+              columns:
+                - state
+                - fips3
+                - zip
 

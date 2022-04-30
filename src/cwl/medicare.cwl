@@ -54,6 +54,19 @@ steps:
       connection_name: connection_name
     out:  [ log, errors ]
 
+  create__ps_view:
+    run: create.cwl
+    doc: Execute DDL
+    in:
+      table:
+        valueFrom: "_ps"
+      database: database
+      connection_name: connection_name
+      domain:
+        valueFrom: "medicare"
+      depends_on: create_ps/log
+    out: [ log, errors ]
+
   create_bene_view:
     run: create.cwl
     doc: Execute DDL
@@ -86,6 +99,38 @@ steps:
       - index_err
       - vacuum_err
 
+  create_enrlm_view:
+    run: create.cwl
+    doc: Execute DDL
+    in:
+      table:
+        valueFrom: "_enrollments"
+      database: database
+      connection_name: connection_name
+      domain:
+        valueFrom: "medicare"
+      depends_on: create_ps/log
+    out: [ log, errors ]
+
+  create_enrlm_table:
+    run: matview.cwl
+    doc: Creates `Enrollments` Table
+    in:
+      depends_on: create_bene_table/vacuum_log
+      table:
+        valueFrom: "enrollments"
+      domain:
+         valueFrom: "medicare"
+      database: database
+      connection_name: connection_name
+    out:
+      - create_log
+      - index_log
+      - vacuum_log
+      - create_err
+      - index_err
+      - vacuum_err
+
 outputs:
   ps_create_log:
     type: File
@@ -93,12 +138,21 @@ outputs:
   ps_create_err:
     type: File
     outputSource: create_ps/errors
+  ps2_create_log:
+    type: File
+    outputSource: create__ps_view/log
+  ps2_create_err:
+    type: File
+    outputSource: create__ps_view/errors
+
+  # bene_view
   bene_view_log:
     type: File
     outputSource: create_bene_view/log
   bene_view_err:
     type: File
     outputSource: create_bene_view/errors
+  # bene_table  
   bene_table_create_log:
     type: File
     outputSource: create_bene_table/create_log
@@ -117,4 +171,33 @@ outputs:
   bene_table_vacuum_err:
     type: File
     outputSource: create_bene_table/vacuum_err
+
+  # enrollments view
+  enrlm_view_log:
+    type: File
+    outputSource: create_enrlm_view/log
+  enrlm_view_err:
+    type: File
+    outputSource: create_enrlm_view/errors
+
+  # enrollments table
+  enrlm_table_create_log:
+    type: File
+    outputSource: create_enrlm_table/create_log
+  enrlm_table_index_log:
+    type: File
+    outputSource: create_enrlm_table/index_log
+  enrlm_table_vacuum_log:
+    type: File
+    outputSource: create_enrlm_table/vacuum_log
+  enrlm_table_create_err:
+    type: File
+    outputSource: create_enrlm_table/create_err
+  enrlm_table_index_err:
+    type: File
+    outputSource: create_enrlm_table/index_err
+  enrlm_table_vacuum_err:
+    type: File
+    outputSource: create_enrlm_table/vacuum_err
+
   
