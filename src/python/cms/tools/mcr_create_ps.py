@@ -77,7 +77,7 @@ class MedicarePatientSummaryTable:
             cursor = cnxn.cursor()
             tables = self.get_tables(cursor)
             tt = [self.table_sql(cursor, t) for t in tables]
-            sql = "DROP VIEW IF EXISTS {}.{};\n".format(self.schema, "ps")
+            sql = "DROP VIEW IF EXISTS {}.{} CASCADE;\n".format(self.schema, "ps")
             sql += "CREATE VIEW {}.{} AS \n".format(self.schema, "ps")
             sql += "\nUNION\n".join(tt)
         self.sql = sql
