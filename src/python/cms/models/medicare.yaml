@@ -59,10 +59,10 @@ medicare:
               - bene_dod
               - bene_death_dt
         - ssa3:
-            optional: true
             source:
               - cnty_cd
               - bene_county_cd
+              - ssa_county
         - sex:
             source:
               - sex
@@ -86,8 +86,10 @@ medicare:
         type: view
         select: |
           *,
+          CASE WHEN year > 2010 THEN (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year and ps.fips2 = s.fips2 ORDER BY 1 DESC LIMIT 1)
+              ELSE (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2 ORDER BY 1 DESC LIMIT 1) END AS fips3,
           CASE WHEN year > 2010 THEN (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year and ps.fips2 = s.fips2)
-              ELSE (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2) END AS fips3
+              ELSE (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2) END AS fips3_list
         from: ps
     _beneficiaries:
       create:
@@ -142,10 +144,18 @@ medicare:
             source: MAX(fips2)
         - fips3:
             source: MAX(fips3)
+        - ssa2:
+            source: MAX(ssa2)
+        - ssa3:
+            source: MAX(ssa3)
+        - ssa2_list:
+            source: "string_agg(distinct ssa2, ',')"
+        - ssa3_list:
+            source: "string_agg(distinct ssa3, ',')"
         - residence_county:
             source: MAX(fips3)
         - residence_counties:
-            source: "string_agg(distinct fips3, ',')"
+            source: "string_agg(distinct fips3_list, ',')"
         - fips5:
             source: "(MAX(fips2) || MAX(fips3))"
         - zip:
