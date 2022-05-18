@@ -86,8 +86,20 @@ medicare:
         type: view
         select: |
           *,
-          CASE WHEN year > 2010 THEN (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year and ps.fips2 = s.fips2 ORDER BY 1 DESC LIMIT 1)
-              ELSE (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2 ORDER BY 1 DESC LIMIT 1) END AS fips3,
+          CASE WHEN ssa3 is NOT NULL THEN
+            CASE WHEN year > 2010 THEN
+                (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year and ps.fips2 = s.fips2 ORDER BY 1 DESC LIMIT 1)
+              ELSE
+                (SELECT fips3 from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2 ORDER BY 1 DESC LIMIT 1)
+            END
+          ELSE
+            (SELECT public.zip_to_fips3(year, zip))
+          END AS fips3,
+          CASE WHEN ssa3 is NOT NULL THEN
+              False
+            ELSE
+              (SELECT NOT public.is_zip_to_fips_exact(year, zip))
+          END AS fips3_is_approximated,
           CASE WHEN year > 2010 THEN (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and ps.year = s.year and ps.fips2 = s.fips2)
               ELSE (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2) END AS fips3_list
         from: ps
@@ -144,6 +156,10 @@ medicare:
             source: MAX(fips2)
         - fips3:
             source: MAX(fips3)
+        - fips3_is_approximated:
+            source: MAX(fips3_is_approximated)
+        - fips3_valdiated:
+            source: public.validate_zip_fips(MAX(zip), MAX(fips2), MAX(fips3))
         - ssa2:
             source: MAX(ssa2)
         - ssa3:
