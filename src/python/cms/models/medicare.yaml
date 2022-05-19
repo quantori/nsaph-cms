@@ -23,7 +23,6 @@ medicare:
             source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN (20 < "year" AND "year" < 100) THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
         - state:
             source: '(SELECT state_id FROM public.us_states as s WHERE s.ssa2 = "state")'
-            optional: true
         - ssa2:
             source: state
         - fips2:
@@ -59,6 +58,7 @@ medicare:
               - bene_dod
               - bene_death_dt
         - ssa3:
+            optional: true
             source:
               - cnty_cd
               - bene_county_cd
@@ -157,7 +157,7 @@ medicare:
         - fips3:
             source: MAX(fips3)
         - fips3_is_approximated:
-            source: MAX(fips3_is_approximated)
+            source: every(fips3_is_approximated)
         - fips3_valdiated:
             source: public.validate_zip_fips(MAX(zip), MAX(fips2), MAX(fips3))
         - ssa2:
