@@ -80,6 +80,8 @@ class SASIntrospector(MedicareSAS, MedicareRegistry):
                       year: int):
         introspector = Introspector(file_path)
         introspector.introspect()
+        introspector.append_file_column()
+        introspector.append_record_column()
         columns = introspector.get_columns()
         specials = {
             "bene_id":  (None, ["bene_id", "intbid", "qid", "bid_5333*"]),
@@ -146,26 +148,6 @@ class SASIntrospector(MedicareSAS, MedicareRegistry):
                 }
             )
         
-        columns.append({
-            "FILE": {
-                "description": "original file name",
-                "index": {
-                    "required_before_loading_data": True
-                },
-                "source": {
-                    "type": "file"
-                },
-                "type": "VARCHAR(128)"
-            }
-        })
-        columns.append({
-            "RECORD": {
-                "description": "Record (line) number in the file",
-                "index": True,
-                "type": PG_SERIAL_TYPE
-            }
-        })
-
         self.registry[self.domain]["tables"][table] = {
             "columns": columns,
             "primary_key": [
