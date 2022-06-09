@@ -23,6 +23,7 @@ from typing import List, Tuple, Any, Callable
 from cms.fts2yaml import mcr_type, MedicareFTS
 from nsaph.loader.data_loader import DataLoader
 from nsaph_utils.utils.fwf import FWFReader
+from utils.io_utils import fopen
 
 
 class MedicareDataLoader(DataLoader):
@@ -61,7 +62,7 @@ class MedicareDataLoader(DataLoader):
         for fts_path in self.context.data:
             dat_files = self.dat4fts(fts_path)
             for dat_file in dat_files:
-                objects.append(self.open(fts_path, dat_file))
+                objects.append((self.open(fts_path, dat_file), fopen))
         return objects
 
 
