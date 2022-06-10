@@ -81,6 +81,57 @@ medicare:
             reference: https://resdac.org/cms-data/variables/research-triangle-institute-rti-race-code
             optional: true
             source: rti_race_cd
+    ip:
+      create:
+        type: view
+        from:
+          - cms.medpar_*
+          - cms.mcr_ip_*
+        exclude:
+          - medpar_2015
+      columns:
+        - bene_id
+        - file
+        - record
+        - year:
+            source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN (20 < "year" AND "year" < 100) THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
+        - state:
+            source: '(SELECT state_id FROM public.us_states as s WHERE s.ssa2 = "state")'
+        - ssa2:
+            source: state
+        - fips2:
+            source: '(SELECT fips2 FROM public.us_states as s WHERE s.ssa2 = "state")'
+        - zip:
+            type: INT
+            cast:
+              numeric: "(CASE WHEN {column_name} < 100000 THEN {column_name}::int ELSE ({column_name}/10000)::INT END)"
+              "character varying": "SUBSTRING({column_name} FROM 1 FOR 5)::INT"
+        - zip4:
+            type: INT
+            source: zip
+            cast:
+              numeric: "(CASE WHEN {column_name} < 100000 THEN NULL ELSE ({column_name}%10000)::INT END)"
+              "character varying": "(CASE WHEN LENGTH({column_name}) < 6 THEN NULL ELSE SUBSTRING({column_name} FROM 6 FOR 4)::INT END)"
+        - admission_date:
+            type: DATE
+            source:
+              - medpar_admsn_dt
+              - admsn_dt
+              - admsndt
+
+        - discharge_date:
+            type: DATE
+            source:
+              - medpar_dschrg_dt
+              - dschrg_dt
+              - dschrgdt
+
+#        - diag[$n=1:25]:
+#            type: varchar
+#            source:
+#              - medpar_dgns_cd_$n
+#              - dgns_$n_cd
+#              - dgnscd$n
     _ps:
       create:
         type: view

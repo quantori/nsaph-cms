@@ -18,7 +18,8 @@
 #
 
 """
-This utility combines Medicare Patient Summary data, that is originally
+This utility combines Medicare Patient Summary or Inpatient Admissions data,
+that is originally
 in the form of one table per year into a single view.
 
 It takes care of different types and format of the most common columns,
@@ -39,19 +40,31 @@ from nsaph.data_model.utils import split
 
 from nsaph.db import Connection
 
-from nsaph.loader.common import DBConnectionConfig
+from nsaph.loader.common import DBTableConfig
 
 
-class MedicarePatientSummaryTable:
-    def __init__(self, context: DBConnectionConfig = None):
+class MedicareCombinedView:
+    ps = "ps"
+    ip = "ip"
+    supported_tables = [ps, ip]
+
+    def __init__(self, context: DBTableConfig = None):
         if not context:
-            context = DBConnectionConfig(None, __doc__).instantiate()
+            context = DBTableConfig(None, __doc__).instantiate()
         self.context = context
+        if not self.context.table:
+            raise ValueError("'--table' is a required option")
+        self.view = self.context.table.lower()
+        if self.view not in self.supported_tables:
+            raise ValueError(
+                "The only supported options are: " +
+                ", ".join(self.supported_tables)
+            )
         src = Path(__file__).parents[1]
         rp = os.path.join(src, "models", "medicare.yaml")
         with open(rp) as f:
             content = yaml.safe_load(f)
-        self.table = content["medicare"]["tables"]["ps"]
+        self.table = content["medicare"]["tables"][self.view]
         self.schema = content["medicare"]["schema"]
         self.sql = ""
 
@@ -61,6 +74,9 @@ class MedicarePatientSummaryTable:
         print(self.sql)
 
     def execute(self):
+        if self.context.dryrun:
+            print("Dry run: nothing is done")
+            return
         if not self.sql:
             self.generate_sql()
         with Connection(self.context.db,
@@ -70,15 +86,16 @@ class MedicarePatientSummaryTable:
             cnxn.commit()
         print("All Done")
 
-
     def generate_sql(self):
         with Connection(self.context.db,
                         self.context.connection) as cnxn:
             cursor = cnxn.cursor()
             tables = self.get_tables(cursor)
             tt = [self.table_sql(cursor, t) for t in tables]
-            sql = "DROP VIEW IF EXISTS {}.{} CASCADE;\n".format(self.schema, "ps")
-            sql += "CREATE VIEW {}.{} AS \n".format(self.schema, "ps")
+            sql = "DROP VIEW IF EXISTS {}.{} CASCADE;\n".format(
+                self.schema, self.view
+            )
+            sql += "CREATE VIEW {}.{} AS \n".format(self.schema, self.view)
             sql += "\nUNION\n".join(tt)
         self.sql = sql
 
@@ -154,7 +171,8 @@ class MedicarePatientSummaryTable:
             columns.append((n, source_column))
         return columns
 
-    def get_column(self, cursor, table: str,
+    @staticmethod
+    def get_column(cursor, table: str,
                    candidates: List[str], ctype: Tuple) -> Optional[str]:
         sql = """
         SELECT column_name, data_type
@@ -180,11 +198,9 @@ class MedicarePatientSummaryTable:
         return cols[0]
 
 
-
-
 if __name__ == '__main__':
     init_logging()
-    mpst = MedicarePatientSummaryTable()
+    mpst = MedicareCombinedView()
     mpst.print_sql()
     mpst.execute()
 
