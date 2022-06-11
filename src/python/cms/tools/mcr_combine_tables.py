@@ -36,6 +36,7 @@ from typing import List, Tuple, Optional
 import yaml
 
 from nsaph import init_logging
+from nsaph.data_model.domain import Domain
 from nsaph.data_model.utils import split
 
 from nsaph.db import Connection
@@ -143,7 +144,8 @@ class MedicareCombinedView:
 
     def get_columns(self, cursor, table: str) -> List[Tuple]:
         columns: List[Tuple] = []
-        for clmn in self.table["columns"]:
+        column_defs = Domain.get_columns(self.table)
+        for clmn in column_defs:
             n, c = split(clmn)
             if "optional" in c and c["optional"]:
                 opt = True
@@ -186,7 +188,7 @@ class MedicareCombinedView:
         cursor.execute(sql)
         cols = []
         for c in cursor:
-            if ctype is not None and c[1] != ctype[0]:
+            if ctype is not None and c[1].upper() != ctype[0].upper():
                 cast = ctype[1][c[1]]
                 cols.append(cast.format(column_name=c[0]))
             else:

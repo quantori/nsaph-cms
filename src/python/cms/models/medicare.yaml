@@ -20,7 +20,7 @@ medicare:
         - file
         - record
         - year:
-            source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN (20 < "year" AND "year" < 100) THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
+            source: '(CASE WHEN "year"::int < 20 THEN (2000 + "year"::int) WHEN (20 < "year"::int AND "year"::int < 100) THEN (1900 + "year"::int) WHEN "year" IS NULL THEN 2000 ELSE "year"::int END)'
         - state:
             source: '(SELECT state_id FROM public.us_states as s WHERE s.ssa2 = "state")'
         - ssa2:
@@ -94,7 +94,7 @@ medicare:
         - file
         - record
         - year:
-            source: '(CASE WHEN "year" < 20 THEN (2000 + "year"::integer) WHEN (20 < "year" AND "year" < 100) THEN (1900 + "year"::integer) WHEN "year" IS NULL THEN 2000 ELSE "year"::integer END)'
+            source: '(CASE WHEN "year"::int < 20 THEN (2000 + "year"::int) WHEN (20 < "year"::int AND "year"::int < 100) THEN (1900 + "year"::int) WHEN "year" IS NULL THEN 2000 ELSE "year"::int END)'
         - state:
             source: '(SELECT state_id FROM public.us_states as s WHERE s.ssa2 = "state")'
         - ssa2:
@@ -114,6 +114,9 @@ medicare:
               "character varying": "(CASE WHEN LENGTH({column_name}) < 6 THEN NULL ELSE SUBSTRING({column_name} FROM 6 FOR 4)::INT END)"
         - admission_date:
             type: DATE
+            cast:
+              "character varying": "to_date({column_name}, 'YYYYMMDD')"
+              numeric: "to_date(to_char({column_name}, '99999999'), 'YYYYMMDD')"
             source:
               - medpar_admsn_dt
               - admsn_dt
@@ -121,17 +124,23 @@ medicare:
 
         - discharge_date:
             type: DATE
+            cast:
+              "character varying": "to_date({column_name}, 'YYYYMMDD')"
+              numeric: "to_date(to_char({column_name}, '99999999'), 'YYYYMMDD')"
             source:
               - medpar_dschrg_dt
               - dschrg_dt
               - dschrgdt
 
-#        - diag[$n=1:25]:
-#            type: varchar
-#            source:
-#              - medpar_dgns_cd_$n
-#              - dgns_$n_cd
-#              - dgnscd$n
+        - diag[$n=1:25]:
+            type: varchar
+            optional: true
+            source:
+              - medpar_dgns_cd_$n
+              - dgns_cd0$n
+              - dgns_cd$n
+              - dgns_$n_cd
+              - dgnscd$n
     _ps:
       create:
         type: view
