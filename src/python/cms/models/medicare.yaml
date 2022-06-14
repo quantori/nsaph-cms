@@ -8,6 +8,9 @@ medicare:
   description: "Data model for Medicare"
   tables:
     ps:
+      description: |
+        Patient Summary view. Combines multiple patient summary (aka MBSF)
+        files into a single view, transforming columns to the same type
       create:
         type: view
         from:
@@ -25,21 +28,28 @@ medicare:
             source: '(SELECT state_id FROM public.us_states as s WHERE s.ssa2 = "state")'
         - ssa2:
             source: state
+            description: Social Security Administration (SSA) two digit code for state
+            reference: https://www.nber.org/research/data/ssa-federal-information-processing-series-fips-state-and-county-crosswalk
         - fips2:
             source: '(SELECT fips2 FROM public.us_states as s WHERE s.ssa2 = "state")'
+            description: 2 digit state FIPS, see https://en.wikipedia.org/wiki/Federal_Information_Processing_Standard_state_code
+            reference:  https://www.census.gov/library/reference/code-lists/ansi.html#state
         - zip:
             type: INT
+            description: US Postal ZIP code, the first 5 digits of it
             cast:
               numeric: "(CASE WHEN {column_name} < 100000 THEN {column_name}::int ELSE ({column_name}/10000)::INT END)"
               "character varying": "SUBSTRING({column_name} FROM 1 FOR 5)::INT"
         - zip4:
             type: INT
+            description: Additional 4 digits for US zip 5+4 code, when provided
             source: zip
             cast:
               numeric: "(CASE WHEN {column_name} < 100000 THEN NULL ELSE ({column_name}%10000)::INT END)"
               "character varying": "(CASE WHEN LENGTH({column_name}) < 6 THEN NULL ELSE SUBSTRING({column_name} FROM 6 FOR 4)::INT END)"
         - dob:
             type: date
+            description: Date of birth
             cast:
               "character varying": "to_date({column_name}, 'YYYYMMDD')"
               numeric: "to_date(to_char({column_name}, '00000000'), 'YYYYMMDD')"
@@ -49,6 +59,7 @@ medicare:
               - bene_birth_dt
         - dod:
             type: date
+            description: Date of beneficiary death, if available
             cast:
               "character varying": "(CASE WHEN {column_name} = '00000000' THEN NULL ELSE to_date({column_name}, 'YYYYMMDD') END)"
               numeric: "(CASE WHEN {column_name} < 19000000 THEN NULL ELSE to_date(to_char({column_name}, '00000000'), 'YYYYMMDD') END)"
@@ -59,15 +70,19 @@ medicare:
               - bene_death_dt
         - ssa3:
             optional: true
+            description: Social Security Administration (SSA) three digit code for county
+            reference: https://www.nber.org/research/data/ssa-federal-information-processing-series-fips-state-and-county-crosswalk
             source:
               - cnty_cd
               - bene_county_cd
               - ssa_county
         - sex:
+            reference: https://resdac.org/cms-data/variables/sex-beneficiary-0
             source:
               - sex
               - bene_sex_ident_cd
         - race:
+            reference: https://resdac.org/cms-data/variables/beneficiary-race-code-ffs
             source:
               - bene_race_cd
               - race
@@ -82,6 +97,10 @@ medicare:
             optional: true
             source: rti_race_cd
     ip:
+      description: |
+        Inpatient Adminissions view. Combines multiple inpatient admissions
+        files (aka MedPar) into a single view, transforming columns
+        to the same type
       create:
         type: view
         from:
@@ -115,8 +134,8 @@ medicare:
         - admission_date:
             type: DATE
             cast:
-              "character varying": "to_date({column_name}, 'YYYYMMDD')"
-              numeric: "to_date(to_char({column_name}, '99999999'), 'YYYYMMDD')"
+              "character varying": "public.parse_date({column_name})"
+              numeric: "public.parse_date({column_name})"
             source:
               - medpar_admsn_dt
               - admsn_dt
@@ -125,12 +144,22 @@ medicare:
         - discharge_date:
             type: DATE
             cast:
-              "character varying": "to_date({column_name}, 'YYYYMMDD')"
-              numeric: "to_date(to_char({column_name}, '99999999'), 'YYYYMMDD')"
+              "character varying": "public.parse_date({column_name})"
+              numeric: "public.parse_date({column_name})"
             source:
               - medpar_dschrg_dt
               - dschrg_dt
               - dschrgdt
+
+        - adm_day_of_week:
+            type: INT
+            cast:
+              "character varying": "{column_name}::INT"
+              numeric: "{column_name}::INT"
+            source:
+              - medpar_admsn_day_cd
+              - admsn_day_cd
+              - admsnday
 
         - diag[$n=1:25]:
             type: varchar
@@ -142,6 +171,7 @@ medicare:
               - dgns_$n_cd
               - dgnscd$n
     _ps:
+      description: internal intermediate view adding some data conversions
       create:
         type: view
         select: |
@@ -164,6 +194,7 @@ medicare:
               ELSE (SELECT string_agg(distinct fips3::varchar, ',') from public.ssa as s where ps.ssa3 = s.ssa3 and 2003 = s.year and ps.fips2 = s.fips2) END AS fips3_list
         from: ps
     _beneficiaries:
+      description: internal intermediate view adding some data conversions
       create:
         type: view
         from: medicare.ps
@@ -177,7 +208,7 @@ medicare:
         - dod:
             source: "MAX(dod)"
         - race:
-            description: "https://resdac.org/cms-data/variables/raceethnicity-msis"
+            reference: "https://resdac.org/cms-data/variables/raceethnicity-msis"
             source: "string_agg(distinct race, ',')"
             identifier: true
         - sex:
@@ -199,6 +230,9 @@ medicare:
                 WHEN MIN(dod) <> MAX(dod) THEN MIN(dod)
               END
     _enrollments:
+      description: |
+        Internal intermediate view of beneficiary enrollments into
+        Medicare program, by year and state of enrollment
       create:
         type: view
         from: medicare._ps
@@ -255,6 +289,9 @@ medicare:
               END
 
     beneficiaries:
+      description: |
+        Cleaned up and unified Medicare beneficiaries table,
+        indexed and optimized for efficient queries
       create:
         type: table
         select: "*"
@@ -262,6 +299,12 @@ medicare:
       columns:
         - bene:
             type: HLL_HASHVAL
+            description: |
+              HLL hash (see https://en.wikipedia.org/wiki/HyperLogLog).
+              Can be sued to calculate number of beneficiaries
+              satisfying a certain given condition
+              Use #(hll_add_agg(bene)) or hll_cardinality(hll_add_agg(bene)) aggregator
+            reference: https://github.com/citusdata/postgresql-hll/blob/master/REFERENCE.md#basic-operational-functions
             source:
               type: "generated"
               code: "GENERATED ALWAYS AS (hll_hash_text(bene_id)) STORED"
@@ -275,6 +318,10 @@ medicare:
             - duplicates
       children:
         enrollments:
+          description: |
+            Cleaned up and unified Medicare beneficiaries enrollments table,
+            by satte and year. This table is indexed and optimized
+            for efficient queries
           create:
             type: table
             select: "*"
@@ -282,6 +329,12 @@ medicare:
           columns:
             - bene:
                 type: HLL_HASHVAL
+                description: |
+                  HLL hash (see https://en.wikipedia.org/wiki/HyperLogLog).
+                  Can be sued to calculate number of beneficiaries
+                  satisfying a certain given condition
+                  Use #(hll_add_agg(bene)) or hll_cardinality(hll_add_agg(bene)) aggregator
+                reference: https://github.com/citusdata/postgresql-hll/blob/master/REFERENCE.md#basic-operational-functions
                 source:
                   type: "generated"
                   code: "GENERATED ALWAYS AS (hll_hash_text(bene_id)) STORED"
