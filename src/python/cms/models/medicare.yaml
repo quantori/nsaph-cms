@@ -365,4 +365,106 @@ medicare:
                 - state
                 - fips3
                 - zip
+          children:
+            admissions:
+              description: |
+                Medicare inpatient admissions
+              invalid.records:
+                action: "INSERT"
+                target:
+                  schema: $schema.audit
+              create:
+                type: table
+                select: |
+                  bene_id,
+                  file,
+                  record,
+                  YEAR,
+                  state,
+                  ssa2,
+                  fips2,
+                  zip,
+                  zip4,
+                  admission_date,
+                  discharge_date,
+                  adm_day_of_week,
+                  diag1 As primary_diagnosis,
+                  array_remove(ARRAY[diag1,
+                  diag2,
+                  diag3,
+                  diag4,
+                  diag5,
+                  diag6,
+                  diag7,
+                  diag8,
+                  diag9,
+                  diag10,
+                  diag11,
+                  diag12,
+                  diag13,
+                  diag14,
+                  diag15,
+                  diag16,
+                  diag17,
+                  diag18,
+                  diag19,
+                  diag20,
+                  diag21,
+                  diag22,
+                  diag23,
+                  diag24,
+                  diag25], NULL) As diagnoses
+                from: ip
+              columns:
+                - year:
+                    type: "INT"
+                    source:
+                      type: "generated"
+                      code: "GENERATED ALWAYS AS (EXTRACT (YEAR FROM admission_date)) STORED"
+                - diagnoses:
+                    type: "VARCHAR(12)[10]"
+                    source: None
+                - bene:
+                    type: HLL_HASHVAL
+                    description: |
+                      HLL hash (see https://en.wikipedia.org/wiki/HyperLogLog).
+                      Can be sued to calculate number of beneficiaries
+                      satisfying a certain given condition
+                      Use #(hll_add_agg(bene)) or hll_cardinality(hll_add_agg(bene)) aggregator
+                    reference: https://github.com/citusdata/postgresql-hll/blob/master/REFERENCE.md#basic-operational-functions
+                    source:
+                      type: "generated"
+                      code: "GENERATED ALWAYS AS (hll_hash_text(bene_id)) STORED"
+                    index: false
+                - pd_hll_hash:
+                    type: HLL_HASHVAL
+                    source:
+                      type: "generated"
+                      code: "GENERATED ALWAYS AS (hll_hash_text(primary_diagnosis)) STORED"
+                    index: false
+                - icd_hll:
+                    type: HLL
+                    source:
+                      type: "generated"
+                      code: "GENERATED ALWAYS AS (hll_arr_agg(diagnoses)) STORED"
+                    index: false
+              primary_key:
+                - bene_id
+                - year
+                - state
+                - admission_date
+                - discharge_date
+              indices:
+                adm_ys_idx:
+                  columns:
+                    - state
+                    - year
+                adm_ysdz_idx:
+                  columns:
+                    - state
+                    - year
+                    - zip
+                    - primary_diagnosis
+
+
 

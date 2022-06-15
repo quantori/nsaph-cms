@@ -21,7 +21,7 @@
 CREATE OR REPLACE FUNCTION public.parse_date (
     dstr character varying
 )  RETURNS DATE
-  VOLATILE
+    IMMUTABLE
 AS $body$
 DECLARE ystr varchar; mstr varchar; daystr varchar; s varchar;
 BEGIN
@@ -55,7 +55,7 @@ $body$ LANGUAGE plpgsql
 CREATE OR REPLACE FUNCTION public.parse_date (
     istr numeric
 )  RETURNS DATE
-  VOLATILE
+    IMMUTABLE
 AS $body$
 BEGIN
     RETURN public.parse_date(TRIM(to_char(istr, '999999999')));
