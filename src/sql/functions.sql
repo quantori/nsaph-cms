@@ -48,6 +48,8 @@ BEGIN
         END IF;
         RETURN to_date(ystr || mstr || daystr, 'YYYYMMDD');
     END IF;
+EXCEPTION
+    WHEN OTHERS THEN RETURN NULL;
 END;
 $body$ LANGUAGE plpgsql
 ;

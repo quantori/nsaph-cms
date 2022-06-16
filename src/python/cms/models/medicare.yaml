@@ -416,7 +416,7 @@ medicare:
                   diag25], NULL) As diagnoses
                 from: ip
               columns:
-                - year:
+                - admission_year:
                     type: "INT"
                     source:
                       type: "generated"
