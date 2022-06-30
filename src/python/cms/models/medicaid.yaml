@@ -164,8 +164,18 @@ medicaid:
                 source: "string_agg(distinct el_rsdnc_cnty_cd_ltst, ',')"
             - fips5:
                 source: "(SELECT fips2 FROM public.us_states as s WHERE s.state_id = ps.state_cd) || MAX(el_rsdnc_cnty_cd_ltst)"
-            - zip:
+            - zip9:
                 source: "MAX(el_rsdnc_zip_cd_ltst)"
+#             Manipulations
+#             ALTER TABLE medicaid.enrollments RENAME column zip to zip9;
+#             ALTER TABLE medicaid.enrollments ADD column zip int
+#             GENERATED ALWAYS AS (
+#             CASE WHEN year < 2005 THEN
+#                 SUBSTRING(zip9 FROM 1 FOR 5)::int
+#             ELSE
+#                 SUBSTRING(zip9 FROM 5)::int
+#             END
+#             ) STORED;
             - zips:
                 source: "string_agg(distinct el_rsdnc_zip_cd_ltst, ',')"
             - months_eligible:
