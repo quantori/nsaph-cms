@@ -7,6 +7,8 @@
 
 > Querying by diagnoses might be expensive. 
 > Use EXPLAIN to understand and optimize your queries
+> See 
+> [SampleQuery](../../core-platform/doc/SampleQuery.html#using-explain-to-optimize-queries).
                           
 ### Listing patients
 
