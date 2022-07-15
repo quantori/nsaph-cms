@@ -90,4 +90,22 @@ extarcted by the parser is used to:
 * Generate data model (database schema)
 * Generate metadata for the FWF Reader
 
-                                              
+## Combining raw files into a single view
+
+Once all raw files are ingested into teh database they are combined 
+into two views:
+
+1. Patient summary (aka MBSF, aka Beneficiary summary)
+2. Inpatient Admissions (aka hospitalizations, aka medpar)
+
+### Creating Federated Patient Summary
+        
+The federated patient summary is created in two steps.
+The division into two steps is purely because of technical reasons
+given some limitations of readability in SQL.
+
+The first step creates a view called `medicare.ps`. The following 
+[CWL tool](../src/cwl/medicare_ps.cwl)
+is responsible to perform it.
+
+At the second step, a view called `medicare._ps` is created.
