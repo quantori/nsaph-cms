@@ -1,5 +1,8 @@
 # Medicare Files Handling
 
+<!--TOC-->
+<!--TOC-->
+
 ## Ingesting Raw Files
 
 ### Overview
@@ -104,8 +107,81 @@ The federated patient summary is created in two steps.
 The division into two steps is purely because of technical reasons
 given some limitations of readability in SQL.
 
-The first step creates a view called `medicare.ps`. The following 
+
+#### First step: Initial in-database data conditioning
+
+The first step creates a view called `medicare.ps`. 
+        
+This step technically combines all `cms.mbsf_ab*` and `cms.mcr_bene_*`
+tables into a single view using `CREATE VIEW` SQL statement.
+
+It also cleanses and conditions data from teh following columns:
+
+* `year` 
+  * If it is a string in original file, it is converted to integer
+  * If it is two-digit, it is converted to 4 digit
+* `state`: added a column with text state id
+* `fips2`: added a column with two digit state FIPS code
+* `zip`: if original file uses 9-digit zip code, it is split
+  into two separate columns, 5 digit `zip` and 4-digit `zip4`.
+  The value is also converted to integer value.
+* `zip4`: added, when available - the last four digits of 9-digit
+  zip code
+* `dob`: converted to SQL `DATE` type, from either character or
+  SAS numeric form
+* `dod` (date of death): converted to SQL `DATE` type,
+  from either character or SAS numeric form
+* 
+
+
+The following 
 [CWL tool](../src/cwl/medicare_ps.cwl)
 is responsible to perform it.
 
-At the second step, a view called `medicare._ps` is created.
+#### Second step: Mapping to county FIPS codes
+
+At the second step, a view called `medicare._ps` is created.  
+The only difference between  `medicare.ps` and `medicare._ps`
+is that the latter has county FIPS code (`fips3` column)
+inferred either SSA county code (`ssa3` column), if it is
+available or from the zip code (`zip` column)
+if SSA county code is absent. The reason this has to happen
+in a separate second step is that both `ssa3` and `zip` are
+being cleansed in the first step.
+
+The second step is performed by a general loader utility
+based on the 
+[Medicare data model definition](../src/python/cms/models/medicare.yaml).
+
+### Creating Beneficiaries table
+
+This is also a two steps operation. The first step
+creates an SQL view and the second step stores the data
+as a real table.
+
+Essentially it is a `medicare.ps` view grouped by beneficiary id
+(`bene_id` column). This step also takes care of documenting any
+discrepancies in the data related to:
+
+* dob
+* dod
+* race
+* sex
+
+If there is any discrepancy for a given `bene_id`, then:
+
+* The earliest _**DOB**_ is selected as `dob`
+* The latest _**DOD**_ (date of death) is selected  as `dod`
+* A comma-separated string containing all race codes is used for `race`
+* comma-separated string containing all sex codes is used for `sex`
+
+The following columns are added:
+
+* `duplciates`: a numeric column showing the number of inconsistent
+  values for this beneficiary. If it is greater than 1, it means
+  there is a discrepancy in the data for this beneficiary
+* `dob_latest`: the latest DOB found in the records for this 
+  beneficiary. The value of this column is NULL for consistent records
+* `dod_earliest`: the earliest DOD found in the records for this 
+  beneficiary. The value of this column is NULL for consistent records
+
