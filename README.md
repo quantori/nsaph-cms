@@ -14,8 +14,18 @@
 <!-- tocstop -->
 
 ## Overview
+                                               
+Data processing pipelines included in this package
+create a data warehouse with health data (Medicare and Medicaid).
+They perform ingestion of raw data into teh database, data 
+cleansing and deduplication , when possible, data quality analysis
+and optimization of the tables for efficient queries.
 
-See [Medicaid](doc/Medicaid.md) master document.
+Please see the following documents for details:
+
+* Data model and processing of [Medicaid](doc/Medicaid.md) data
+* Data model and processing of [Medicare](doc/Medicare.md) data
+* Tips on [querying of Medicaid data](doc/QueringMedicaid.md)
 
 ## Project Structure
 
@@ -45,7 +55,9 @@ Each processing step of CMS data is packaged as a
 standalone tool that can be run individually. 
 Each tool is individually documented.
 The tools are combined into a workflow represented by
-medicaid.cwl file.
+[medicaid.cwl](doc/pipeline/medicaid.md)
+and 
+[medicare.cwl](doc/pipeline/medicare.md) files.
 
 ### Python 
 
