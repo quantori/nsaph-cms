@@ -107,7 +107,8 @@ often hours but is much faster than importing raw data.
 
 ### Beneficiaries
 **Pipeline step**: [load_ps](pipeline/load_ps.md)
-                                   
+                                       
+See also [creating Medicare Beneficiaries table](Medicare.md#creating-beneficiaries-table)
 
 #### BENE_ID column
 
@@ -196,6 +197,8 @@ We can establish actual rules for NSAPH projects later at a SOP level.
 > this data.
 
 ### Enrollments                             
+                          
+See also [Medicare Enrollments](Medicare.md#creating-enrollments-table) table.
 
 `Enrollments` table summarizes enrollments of
 beneficiaries in medicaid in specific states 

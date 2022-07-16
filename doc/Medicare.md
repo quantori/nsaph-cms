@@ -1,6 +1,17 @@
 # Medicare Files Handling
 
 <!--TOC-->
+
+- [Ingesting Raw Files](#ingesting-raw-files)
+  - [Overview](#overview)
+  - [Storing in the Database](#storing-in-the-database)
+  - [Files for 1999 to 2010](#files-for-1999-to-2010)
+  - [Files for Years 2011 and later](#files-for-years-2011-and-later)
+- [Combining raw files into a single view](#combining-raw-files-into-a-single-view)
+  - [Creating Federated Patient Summary](#creating-federated-patient-summary)
+  - [Creating Beneficiaries table](#creating-beneficiaries-table)
+  - [Creating Enrollments table](#creating-enrollments-table)
+
 <!--TOC-->
 
 ## Ingesting Raw Files
@@ -155,6 +166,8 @@ based on the
 
 ### Creating Beneficiaries table
 
+See also [creating Medicaid Beneficiaries table](Medicaid.md#beneficiaries)
+
 This is also a two steps operation. The first step
 creates an SQL view and the second step stores the data
 as a real table.
@@ -184,4 +197,120 @@ The following columns are added:
   beneficiary. The value of this column is NULL for consistent records
 * `dod_earliest`: the earliest DOD found in the records for this 
   beneficiary. The value of this column is NULL for consistent records
+
+This topic is discussed in more details in the 
+[Medicaid documentation](Medicaid.md#deduplication-and-data-cleansing)
+
+
+### Creating Enrollments table
+
+#### Enrollments overview
+
+Enrollments table contains information about yearly beneficiaries
+enrollments in different states and tracks changes in eligibility
+(i.e. beginning of the eligibility and beneficiaries death) and
+changes in states and addresses.
+
+See also [Medicaid Enrollments](Medicaid.md#enrollments) and
+[Medicaid Eligibility](Medicaid.md#eligibility) tables. Please note, that
+since Medicare eligibility is not as volatile as Medicaid eligibility,
+i.e. it does not usually change month to month, there is no direct analog to
+[Medicaid Eligibility](Medicaid.md#eligibility) table.
+
+As most of the other tables, **Enrollments** table is created in two steps.
+The first step
+creates an SQL view and the second step stores the data
+as a real table, adds primary key and builds indices to make queries
+more efficient.
+                           
+#### Enrollments Primary key (unique identifier)
+
+- bene_id
+- year
+- state
+
+In other words, a record in the table describes a given beneficiary
+leaving in a given state during a given year. If beneficiary has moved
+from one state to another during the year, more than one record for such
+a beneficiary will be created in the table. This is consistent with 
+[Medicaid Enrollments](Medicaid.md#enrollments), though, arguably,
+makes less sense for Medicare.
+
+                    
+#### Enrollments data cleansing
+                  
+Beneficiaries can move during a year therefore address columns can have 
+multiple values. These columns are:
+
+* `fips2`: state FIPS code
+* `fips3`: county FIPS code
+* `ssa2`: SSA state code
+* `ssa3`: SSA county code
+* `zip`: beneficiary address zip code
+
+The policy for all of this columns is the following:
+
+* For corresponding column in the enrollments table, an arbitrary but
+  deterministic value is selected
+* An additional column is added, containing the list of all encountered
+  values
+
+The additional columns are:
+
+* `ssa2_list`
+* `ssa3_list`
+* `residence_counties`
+* `zips`
+
+Additional columns reflecting data quality and cleansing are added to
+the **Enrollments** tables:
+
+* `state_count`: Number of states associated with the given beneficiary
+  in a given year
+* `fips3_is_approximated`: A boolean column, indicating whether the value 
+  was taken from original record as is or approximated. 
+  If true, it means that there was no valid county code in the original
+  ResDac record, hence, the county code was inferred from other data
+  (in most cases, zip code)
+* `fips3_valdiated`: A boolean column indicating that the value
+  of county code is consistent with the values of state code and zip code.
+
+#### Enrollments columns definitions
+
+The following columns are created for Enrollments:
+                     
+
+* `ssa2`: SSA state code
+* `ssa3`: SSA county code
+* `ssa2_list`: list of all SSA county codes 
+* state_iso: ISO code of the state, used for mapping
+* residence_county: one of the "latest" residence 
+  counties where 
+  the beneficiary was registered, latest in 
+  alphabetical order
+* residence_counties: comma separated list of all 
+  "latest" residence counties, where a beneficiary was
+  registered during the year
+* fips5: 5 digit FIPS code of the `residence_county`
+* zip: one of the "latest" zip codes where 
+  the beneficiary was registered, latest in 
+  numerical order
+* zips: comma separated list of all 
+  "latest" zip codes, where a beneficiary was
+  registered during the year
+* state_count: number of states, where the beneficiary
+  was enrolled in medicaid during the year. Note,
+  this is also the number of records for this beneficiary and this year
+  in the Enrollments` table.
+* died: a boolean flag indicating that the beneficiary has 
+  died during this year while being registered
+  for medicaid in this state.
+* `fips3_is_approximated`: A boolean column, indicating whether the value 
+  was taken from original record as is or approximated. 
+  If true, it means that there was no valid county code in the original
+  ResDac record, hence, the county code was inferred from other data
+  (in most cases, zip code)
+* `fips3_valdiated`: A boolean column indicating that the value
+  of county code is consistent with the values of state code and zip code.
+
 
