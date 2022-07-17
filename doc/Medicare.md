@@ -9,8 +9,14 @@
   - [Files for Years 2011 and later](#files-for-years-2011-and-later)
 - [Combining raw files into a single view](#combining-raw-files-into-a-single-view)
   - [Creating Federated Patient Summary](#creating-federated-patient-summary)
+    - [First step: Initial in-database data conditioning](#first-step-initial-in-database-data-conditioning)
+    - [Second step: Mapping to county FIPS codes](#second-step-mapping-to-county-fips-codes)
   - [Creating Beneficiaries table](#creating-beneficiaries-table)
   - [Creating Enrollments table](#creating-enrollments-table)
+    - [Enrollments overview](#enrollments-overview)
+    - [Enrollments Primary key (unique identifier)](#enrollments-primary-key-unique-identifier)
+    - [Enrollments data cleansing](#enrollments-data-cleansing)
+    - [Enrollments columns definitions](#enrollments-columns-definitions)
 
 <!--TOC-->
 
