@@ -107,7 +107,7 @@ often hours but is much faster than importing raw data.
 
 ### Beneficiaries
 **Pipeline step**: [load_ps](pipeline/load_ps.md)
-                                       
+
 See also [creating Medicare Beneficiaries table](Medicare.md#creating-beneficiaries-table)
 
 #### BENE_ID column
@@ -314,4 +314,3 @@ See [Medicaid workflow](pipeline/medicaid.md) for details
 ## Sample user request: 
 
 See [Jenny Lee Request from February 2021](https://github.com/NSAPH/data_requests/tree/master/request_projects/feb2021_jenny_medicaid_resp)
-

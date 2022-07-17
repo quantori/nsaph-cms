@@ -28,7 +28,6 @@ author = 'Michael A Bouzinier'
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
 
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -43,7 +42,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx_paramlinks',
     'sphinx.ext.autosectionlabel',
-    'recommonmark',
+    'nsaph_utils.docutils.recommonmark',
     'sphinx_markdown_tables'
 ]
 
