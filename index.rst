@@ -1,6 +1,8 @@
 NSAPH CMS Processing Pipelines
 ==========================================================
 
+`Documentation Home <../home.html>`_
+
 .. toctree::
    :glob:
    :maxdepth: 4
