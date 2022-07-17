@@ -26,6 +26,7 @@ Log file displays real-time progress of building indices
 |database|File| |Path to database connection file, usually database.ini|
 |connection_name|string| |The name of the section in the database.ini file|
 |incremental|boolean|`False`| |
+|force|boolean|`False`| |
 |depends_on|File| |a special field used to enforce dependencies and execution order|
 
 ## Outputs

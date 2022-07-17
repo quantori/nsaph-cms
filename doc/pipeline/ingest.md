@@ -1,4 +1,4 @@
-# Materialized View Creator
+# Workflow to load health data from files
 **Workflow**
 
 **Source**: [ingest.cwl](../../src/cwl/ingest.cwl)

@@ -10,6 +10,7 @@
   - [Python](#python)
     - [Package cms](#package-cms)
       - [Subpackage with miscellaneous tools for handling CMS data](#subpackage-with-miscellaneous-tools-for-handling-cms-data)
+  - [SQL](#sql)
 
 <!--TOC-->
 
@@ -91,3 +92,19 @@ for CMS medicaid data by parsing FTS files.
 This package contains code that was written to try to extract
 corrupted medicare data for 2015. Ultimately, this attempt
 was unsuccessful.
+
+### SQL
+
+File [procedures](src/sql/procedures.sql) 
+addresses the problem that creating 
+[Medicaid eligibility table](doc/Medicaid.md#eligibility)
+in a single transaction requires too much time and memory.
+The stored procedures in this file split populating this table
+with data either by beneficiary or by year and state. Splitting by beneficiary
+(i.e. using one database transaction per beneficiary) works best.
+
+File [functions](src/sql/functions.sql) contain helper functions
+to parse dates in non-standard formats that are encountered in 
+raw medicare files that we have.
+
+
