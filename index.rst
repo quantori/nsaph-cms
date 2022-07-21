@@ -1,7 +1,7 @@
 NSAPH CMS Processing Pipelines
 ==========================================================
 
-`Documentation Home <../home.html>`_
+`Documentation Home <../../home.html>`_
 
 .. toctree::
    :glob:

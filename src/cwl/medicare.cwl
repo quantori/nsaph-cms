@@ -56,7 +56,7 @@ steps:
 
   create__ps_view:
     run: create.cwl
-    doc: Execute DDL
+    doc: Create _ps view from ps 
     in:
       table:
         valueFrom: "_ps"
@@ -69,7 +69,7 @@ steps:
 
   create_bene_view:
     run: create.cwl
-    doc: Execute DDL
+    doc: Creates preliminary beneficiaries view
     in:
       table:
         valueFrom: "_beneficiaries"
@@ -82,7 +82,7 @@ steps:
 
   create_bene_table:
     run: matview.cwl
-    doc: Creates `Beneficiaries` Table
+    doc: Creates `Beneficiaries` Table from the view
     in:
       depends_on: create_bene_view/log
       table:
@@ -101,7 +101,7 @@ steps:
 
   create_enrlm_view:
     run: create.cwl
-    doc: Execute DDL
+    doc: Creates preliminary _enrollments view
     in:
       table:
         valueFrom: "_enrollments"
@@ -114,7 +114,7 @@ steps:
 
   create_enrlm_table:
     run: matview.cwl
-    doc: Creates `Enrollments` Table
+    doc: Creates `Enrollments` Table from the view
     in:
       depends_on: create_bene_table/vacuum_log
       table:

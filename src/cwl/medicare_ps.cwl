@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-### Medicaid Table/View Initializer
+### Medicare raw data federation tool
 #  Copyright (c) 2021. Harvard University
 #
 #  Developed by Research Software Engineering,
