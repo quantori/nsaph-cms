@@ -379,7 +379,7 @@ medicare:
                   bene_id,
                   file,
                   record,
-                  YEAR,
+                  year,
                   state,
                   ssa2,
                   fips2,
@@ -415,6 +415,7 @@ medicare:
                   diag24,
                   diag25], NULL) As diagnoses
                 from: ip
+                populate: false
               columns:
                 - admission_year:
                     type: "INT"
