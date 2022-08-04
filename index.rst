@@ -11,6 +11,7 @@ NSAPH CMS Processing Pipelines
    README
    doc/Medicaid.md
    doc/pipeline/medicaid.md
+   doc/autosql
 
 .. toctree::
    :glob:

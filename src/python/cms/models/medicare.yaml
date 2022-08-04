@@ -131,6 +131,14 @@ medicare:
             cast:
               numeric: "(CASE WHEN {column_name} < 100000 THEN NULL ELSE ({column_name}%10000)::INT END)"
               "character varying": "(CASE WHEN LENGTH({column_name}) < 6 THEN NULL ELSE SUBSTRING({column_name} FROM 6 FOR 4)::INT END)"
+        - admission_date_raw:
+            type: VARCHAR
+            cast:
+              numeric: "TRIM(to_char({column_name}, '999999999'))"
+            source:
+              - medpar_admsn_dt
+              - admsn_dt
+              - admsndt
         - admission_date:
             type: DATE
             cast:
@@ -141,6 +149,14 @@ medicare:
               - admsn_dt
               - admsndt
 
+        - discharge_date_raw:
+            type: VARCHAR
+            cast:
+              numeric: "TRIM(to_char({column_name}, '999999999'))"
+            source:
+              - medpar_dschrg_dt
+              - dschrg_dt
+              - dschrgdt
         - discharge_date:
             type: DATE
             cast:
