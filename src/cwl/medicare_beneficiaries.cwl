@@ -45,7 +45,7 @@ inputs:
 
 steps:
   create_ps:
-    run: medicare_ps.cwl
+    run: medicare_combine_tables.cwl
     doc: >
       Combines patient summaries from disparate summary tables
       (one table per year) into a single view

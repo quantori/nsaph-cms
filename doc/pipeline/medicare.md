@@ -1,7 +1,7 @@
 # Medicare in-database processing pipeline
 **Workflow**
 
-**Source**: [medicare.cwl](../../src/cwl/medicare.cwl)
+**Source**: [medicare.cwl](../../src/cwl/medicare_beneficiaries.cwl)
 
 <!-- toc -->
 

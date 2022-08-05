@@ -58,6 +58,10 @@ inputs:
     default:  "medicaid"
     inputBinding:
       prefix: --domain
+  action:
+    type: string?
+    inputBinding:
+      prefix: --action
 
   depends_on:
     type: File?

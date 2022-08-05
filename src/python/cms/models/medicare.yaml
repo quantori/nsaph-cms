@@ -401,6 +401,8 @@ medicare:
                   fips2,
                   zip,
                   zip4,
+                  admission_date_raw,
+                  discharge_date_raw,
                   admission_date,
                   discharge_date,
                   adm_day_of_week,

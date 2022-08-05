@@ -152,7 +152,7 @@ It also cleanses and conditions data from teh following columns:
 
 
 The following 
-[CWL tool](../src/cwl/medicare_ps.cwl)
+[CWL tool](../src/cwl/medicare_combine_tables.cwl)
 is responsible to perform it.
 
 #### Second step: Mapping to county FIPS codes
