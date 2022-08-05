@@ -42,6 +42,9 @@ inputs:
   connection_name:
     type: string
     doc: The name of the section in the database.ini file
+  limit:
+    type: string?
+    doc: limit number of records processed (for debugging)
 
 steps:
   create_ip:
@@ -81,6 +84,7 @@ steps:
       action:
         valueFrom: "insert"
       database: database
+      limit: limit
       connection_name: connection_name
     out: [ log, errors ]
 
