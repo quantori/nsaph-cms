@@ -135,6 +135,7 @@ medicare:
             type: VARCHAR
             cast:
               numeric: "TRIM(to_char({column_name}, '999999999'))"
+              '*': "{column_name}::VARCHAR"
             source:
               - medpar_admsn_dt
               - admsn_dt
@@ -153,6 +154,7 @@ medicare:
             type: VARCHAR
             cast:
               numeric: "TRIM(to_char({column_name}, '999999999'))"
+              '*': "{column_name}::VARCHAR"
             source:
               - medpar_dschrg_dt
               - dschrg_dt

@@ -187,9 +187,25 @@ class MedicareCombinedView:
         logging.debug(sql)
         cursor.execute(sql)
         cols = []
+        if ctype is not None:
+            casts = ctype[1]
+            target_type = ctype[0]
+        else:
+            casts = None
+            target_type = None
         for c in cursor:
-            if ctype is not None and c[1].upper() != ctype[0].upper():
-                cast = ctype[1][c[1]]
+            if ctype is not None and c[1].upper() != target_type.upper():
+                if c[1] in casts:
+                    cast = casts[c[1]]
+                elif '*' in casts:
+                    cast = casts['*']
+                else:
+                    raise ValueError(
+                        "Column {}.{}: cast from {} to {} is not defined"
+                        .format(
+                            table, c[0], c[1], target_type
+                        )
+                    )
                 cols.append(cast.format(column_name=c[0]))
             else:
                 cols.append(c[0])
