@@ -152,7 +152,7 @@ It also cleanses and conditions data from teh following columns:
 
 
 The following 
-[CWL tool](../src/cwl/medicare_ps.cwl)
+[CWL tool](/docs/common/cms/src/cwl/medicare_ps.html)
 is responsible to perform it.
 
 #### Second step: Mapping to county FIPS codes
@@ -168,7 +168,7 @@ being cleansed in the first step.
 
 The second step is performed by a general loader utility
 based on the 
-[Medicare data model definition](../src/python/cms/models/medicare.yaml).
+[Medicare data model definition](/common/cms/src/python/cms/models/medicare.yaml).
 
 ### Creating Beneficiaries table
 

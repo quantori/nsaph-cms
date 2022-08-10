@@ -1,7 +1,7 @@
 # FTS Parser
-**Tool** 	[cms.registry](../../src/python/cms/registry.py)
+**Tool** 	[cms.registry](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/python/cms/registry.py)
 
-**Source**: [parse_fts.cwl](../../src/cwl/parse_fts.cwl)
+**Source**: [parse_fts.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/parse_fts.cwl)
 
 <!-- toc -->
 

@@ -1,7 +1,7 @@
 # Full Medicaid Processing Pipeline
 **Workflow**
 
-**Source**: [medicaid.cwl](../../src/cwl/medicaid.cwl)
+**Source**: [medicaid.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/medicaid.cwl)
 
 <!-- toc -->
 
@@ -94,16 +94,16 @@ information.
 
 ## Steps
 
-| Name | Runs | Description |
-|------|------|-------------|
-|states|[ensure_resource.cwl](ensure_resource.md)|Ensures the presence of `us_states` table in the database. The table contains mapping between state names, ids (two letter abbreviations), FIPS codes and [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2) |
-|iso|[ensure_resource.cwl](ensure_resource.md)|Ensures the presence of `us_iso` table in the database. The table provides a mapping between states, counties and zip codes. It contains FIPS and [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2) |
-|fts|[parse_fts.cwl](parse_fts.md)| |
-|load_ps|[ingest.cwl](ingest.md)|Loads Patient Summaries|
-|load_ip|[ingest.cwl](ingest.md)|Loads inpatient admissions|
-|create_beneficiaries|[matview.cwl](matview.md)|Creates `Beneficiaries` Table|
-|create_monthly_view|[matview.cwl](matview.md)|Creates internally used `Monthly View`|
-|create_enrollments|[matview.cwl](matview.md)|Creates `Enrollment` Table|
-|prepare_eligibility|[create.cwl](create.md)|Creates `_Eligibility` View, prerequisit for creation of Eligibility table |
-|create_eligibility|[matview.cwl](matview.md)|Creates `Eligibility` Table|
-|load_admissions|[ingest.cwl](ingest.md)|Processes and loads inpatient admissions|
+| Name | Runs                                                               | Description |
+|------|--------------------------------------------------------------------|-------------|
+|states| [ensure_resource.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/ensure_resource.cwl) |Ensures the presence of `us_states` table in the database. The table contains mapping between state names, ids (two letter abbreviations), FIPS codes and [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2) |
+|iso| [ensure_resource.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/ensure_resource.cwl)                          |Ensures the presence of `us_iso` table in the database. The table provides a mapping between states, counties and zip codes. It contains FIPS and [ISO-3166-2 codes](https://en.wikipedia.org/wiki/ISO_3166-2) |
+|fts| [parse_fts.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/parse_fts.cwl)                                      | |
+|load_ps| [ingest.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/ingest.cwl)                                            |Loads Patient Summaries|
+|load_ip| [ingest.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/ingest.cwl)                                            |Loads inpatient admissions|
+|create_beneficiaries| [matview.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/matview.cwl)                                          |Creates `Beneficiaries` Table|
+|create_monthly_view| [matview.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/matview.cwl)                                          |Creates internally used `Monthly View`|
+|create_enrollments| [matview.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/matview.cwl)                                          |Creates `Enrollment` Table|
+|prepare_eligibility| [create.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/create.cwl)                                            |Creates `_Eligibility` View, prerequisit for creation of Eligibility table |
+|create_eligibility| [matview.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/matview.cwl)                                          |Creates `Eligibility` Table|
+|load_admissions| [ingest.cwl](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/cwl/ingest.cwl)                                            |Processes and loads inpatient admissions|

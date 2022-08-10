@@ -95,7 +95,7 @@ was unsuccessful.
 
 ### SQL
 
-File [procedures](src/sql/procedures.sql) 
+File [procedures](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/master/src/sql/procedures.sql) 
 addresses the problem that creating 
 [Medicaid eligibility table](doc/Medicaid.md#eligibility)
 in a single transaction requires too much time and memory.
@@ -103,7 +103,7 @@ The stored procedures in this file split populating this table
 with data either by beneficiary or by year and state. Splitting by beneficiary
 (i.e. using one database transaction per beneficiary) works best.
 
-File [functions](src/sql/functions.sql) contain helper functions
+File [functions](https://github.com/NSAPH-Data-Platform/nsaph-cms/blob/develop/src/sql/functions.sql) contain helper functions
 to parse dates in non-standard formats that are encountered in 
 raw medicare files that we have.
 
