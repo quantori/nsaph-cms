@@ -14,7 +14,7 @@
 
 ## Description
 This workflow prcoesses already ingested Medicaid data
-See [documentation](../Medicaid.md) for detailed
+See [documentation](../members/Medicaid.md) for detailed
 information.
 
 
