@@ -53,7 +53,7 @@ starting positions, the length and the generic format of
 each of the column (such as character, numeric or date)  
 
 Parsing FTS is done by running module 
-[create_schema_config](../../src/python/cms/create_schema_config.py).
+[create_schema_config](members/create_schema_config).
                                                        
     pyhton -m nsaph.cms.create_schema_config
 
@@ -69,7 +69,7 @@ by running the following command:
 ## Data Model
 
 The resulting data model for Medicaid domain is defined by 
-[medicaid.yaml](../../src/python/cms/models/medicaid.yaml)
+[medicaid.yaml](members/medicaid.yaml)
 
 Four main tables are used to fulfill user requests:
 

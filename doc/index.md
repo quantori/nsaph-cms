@@ -1,18 +1,12 @@
 # CMS Manipulation Package 
+
 **Pipelines to process CMS data: Medicaid and Medicare**
 
-<!--TOC-->
-
-- [Overview](#overview)
-- [Project Structure](#project-structure)
-  - [Software Sources](#software-sources)
-  - [CWL](#cwl)
-  - [Python](#python)
-    - [Package cms](#package-cms)
-      - [Subpackage with miscellaneous tools for handling CMS data](#subpackage-with-miscellaneous-tools-for-handling-cms-data)
-  - [SQL](#sql)
-
-<!--TOC-->
+```{contents}
+---
+local:
+---
+```
 
 ## Overview
                                                
@@ -47,6 +41,7 @@ The directories under sources are:
     - python
 
 ### CWL 
+
 CWL folder contains reusable workflows, packaged as tools 
 that can and should be used by
 all NSAPH pipelines.
