@@ -1,7 +1,7 @@
 # Materialized View Creator
 **Workflow**
 
-**Source**: [matview.cwl](../../src/cwl/matview.cwl)
+**Source**: [matview.cwl](../members/matview_cwl.md)
 
 <!-- toc -->
 

@@ -1,7 +1,9 @@
 # Index Builder
 **Tool** 	[nsaph.loader.index_builder](../../../../platform/doc/members/index_builder.html)
 
-**Source**: [index.cwl](../../src/cwl/index.cwl)
+[//]: # (TODO: use intersphinx)
+
+**Source**: [index.cwl](../members/index_cwl.md)
 
 <!-- toc -->
 

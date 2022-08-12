@@ -1,7 +1,7 @@
 # Index Builder
-**Tool** 	[cms.aggregates](../../src/python/cms/aggregates.py)
+**Tool** 	[cms.aggregates](../members/aggregates.md)
 
-**Source**: [verify.cwl](../../src/cwl/verify.cwl)
+**Source**: [verify.cwl](../members/verify_cwl.md)
 
 <!-- toc -->
 

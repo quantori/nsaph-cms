@@ -1,0 +1,7 @@
+# verify.cwl
+
+```{literalinclude} ../../src/cwl/verify.cwl
+---
+language: yaml
+---
+```

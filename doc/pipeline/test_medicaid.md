@@ -1,7 +1,7 @@
 # Full Medicaid Processing Pipeline
 **Workflow**
 
-**Source**: [test_medicaid.cwl](../../src/cwl/test_medicaid.cwl)
+**Source**: [test_medicaid.cwl](../members/test_medicaid_cwl.md)
 
 <!-- toc -->
 

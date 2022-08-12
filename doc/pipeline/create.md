@@ -1,7 +1,7 @@
 # Medicaid Table/View Initializer
 **Tool** 	[nsaph.loader.data_loader](../../../../platform/doc/members/data_loader.html)
 
-**Source**: [create.cwl](../../src/cwl/create.cwl)
+**Source**: [create.cwl](../members/create_cwl.md)
 
 <!-- toc -->
 

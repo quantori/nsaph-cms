@@ -41,6 +41,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx_paramlinks',
     'sphinx.ext.autosectionlabel',
+    'sphinx.ext.intersphinx',
     'myst_parser',
 ]
 

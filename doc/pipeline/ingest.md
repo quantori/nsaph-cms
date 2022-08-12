@@ -1,7 +1,7 @@
 # Workflow to load health data from files
 **Workflow**
 
-**Source**: [ingest.cwl](../../src/cwl/ingest.cwl)
+**Source**: [ingest.cwl](../members/ingest_cwl.md)
 
 <!-- toc -->
 

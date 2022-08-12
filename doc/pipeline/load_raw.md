@@ -1,7 +1,9 @@
 # Patient Summary Loader
 **Tool** 	[nsaph.loader.data_loader](../../../../platform/doc/members/data_loader.html)
 
-**Source**: [load_raw.cwl](../../src/cwl/load_raw.cwl)
+[//]: # (TODO: use intersphinx)
+
+**Source**: [load_raw.cwl](../members/load_raw_cwl.md)
 
 <!-- toc -->
 

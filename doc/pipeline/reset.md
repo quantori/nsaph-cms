@@ -1,7 +1,10 @@
 # Generic Table (View/Materialized View) Initializer
 **Tool** 	[nsaph.loader.data_loader](../../../../platform/doc/members/data_loader.html)
 
-**Source**: [reset.cwl](../../src/cwl/reset.cwl)
+[//]: # (TODO: use intersphinx)
+
+
+**Source**: [reset.cwl](../members/reset_cwl.md)
 
 <!-- toc -->
 

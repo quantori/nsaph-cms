@@ -1,7 +1,7 @@
 # FTS Parser
-**Tool** 	[cms.registry](../../src/python/cms/registry.py)
+**Tool** 	[cms.registry](../members/registry_py.md)
 
-**Source**: [parse_fts.cwl](../../src/cwl/parse_fts.cwl)
+**Source**: [parse_fts.cwl](../members/parse_fts_cwl.md)
 
 <!-- toc -->
 

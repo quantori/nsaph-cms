@@ -1,7 +1,9 @@
 # Index Builder
-**Tool** 	[nsaph.loader.vacuum](../../../../platform/doc/members/vacuum.html)
+**Tool** 	[nsaph.loader.vacuum](../../../../platform/doc/members/vacuum.html) 
 
-**Source**: [vacuum.cwl](../../src/cwl/vacuum.cwl)
+[//]: # (TODO: use intersphinx)
+
+**Source**: [vacuum.cwl](../members/vacuum_cwl.md)
 
 <!-- toc -->
 
