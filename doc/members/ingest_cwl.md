@@ -1,4 +1,4 @@
-# Source
+# Ingest.cwl
 
 ```{literalinclude} ../../src/cwl/ingest.cwl
 ---

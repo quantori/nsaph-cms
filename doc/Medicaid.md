@@ -1,5 +1,17 @@
 # Handling Medicaid data
 
+```{toctree}
+---
+maxdepth: 4
+hidden:
+---
+pipeline/parse_fts.md
+members/create_schema_config.rst
+members/medicaid_yaml.md
+pipeline/load_ps.md
+pipeline/medicaid.md
+```
+
 ```{contents}
 ---
 local:

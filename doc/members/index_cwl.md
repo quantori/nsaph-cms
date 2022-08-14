@@ -1,4 +1,4 @@
-# Source
+# Index.cwl
 
 ```{literalinclude} ../../src/cwl/index.cwl
 ---

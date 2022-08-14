@@ -6,13 +6,13 @@
 ```{toctree}
 ---
 maxdepth: 4
+glob: true
 hidden: 
 ---
-LegacyMedicaid
-Medicaid
-Medicare
-QueryingMedicaid
-
+LegacyMedicaid.md
+Medicaid.md
+Medicare.md
+QueringMedicaid.md
 ```
 
 ```{contents}
