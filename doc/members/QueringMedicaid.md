@@ -1,7 +1,10 @@
 # Querying Medicaid Data
 
-<!-- toc -->
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Querying diagnoses
 
@@ -10,6 +13,9 @@
 > See 
 > [SampleQuery](../../core-platform/doc/SampleQuery.html#using-explain-to-optimize-queries).
                           
+[//]: # (TODO: use intersphinx)
+
+
 ### Listing patients
 
 The following sample lists all patient hospitalized with specified diagnosis 

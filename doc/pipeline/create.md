@@ -3,13 +3,11 @@
 
 **Source**: [create.cwl](../members/create_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool executes DDL to drop and recreate

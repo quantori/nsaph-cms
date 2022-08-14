@@ -5,13 +5,11 @@
 
 **Source**: [index.cwl](../members/index_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool builds all indices for the specified table.

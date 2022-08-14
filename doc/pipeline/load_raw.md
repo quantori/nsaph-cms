@@ -5,13 +5,11 @@
 
 **Source**: [load_raw.cwl](../members/load_raw_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool loads patient summary data into a database.

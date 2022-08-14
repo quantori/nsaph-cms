@@ -3,13 +3,11 @@
 
 **Source**: [parse_fts.cwl](../members/parse_fts_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool examines a directory with raw CMS data, looking

@@ -3,13 +3,11 @@
 
 **Source**: [verify.cwl](../members/verify_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool verifies correct counts for a random selection of

@@ -5,13 +5,11 @@
 
 **Source**: [vacuum.cwl](../members/vacuum_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool runs VACUUM Aanalyze to make subsequent queries

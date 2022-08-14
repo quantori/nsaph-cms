@@ -1,35 +1,10 @@
 # Importing Medicaid Data Processed by the Legacy Pipeline
 
-<!-- toc -->
-
-- [Status of this Document](#status-of-this-document)
-- [Links to Legacy Documentation](#links-to-legacy-documentation)
-  * [main document, describing the data model](#main-document-describing-the-data-model)
-  * [Demographics](#demographics)
-    + [Data Path](#data-path)
-      - [File](#file)
-      - [NSAPH VM](#nsaph-vm)
-      - [RCE](#rce)
-    + [Description of columns](#description-of-columns)
-  * [Enrollments](#enrollments)
-    + [Documentation](#documentation)
-    + [Data Path](#data-path-1)
-      - [Files](#files)
-      - [NSAPH VM](#nsaph-vm-1)
-      - [RCE](#rce-1)
-    + [Description of columns](#description-of-columns-1)
-  * [Admissions](#admissions)
-    + [Data Path](#data-path-2)
-      - [Files](#files-1)
-      - [NSAPH VM](#nsaph-vm-2)
-      - [RCE](#rce-2)
-    + [Description of columns](#description-of-columns-2)
-- [Examples of ingestion of processed data:](#examples-of-ingestion-of-processed-data)
-  * [Demographics:](#demographics)
-  * [Enrollments (yearly) and Eligibility (monthly)](#enrollments-yearly-and-eligibility-monthly)
-  * [Admissions](#admissions-1)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Status of this Document
 This document describes an abandoned attempt to load

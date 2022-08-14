@@ -62,7 +62,7 @@ This package contains modules to generate YAML schema for CMS
 data from FTS files provided with CMS medicaid and medicare 
 export (raw data).
 
-Module [fts2yaml](members/fts2yaml) is a generic
+Module [fts2yaml](members/fts2yaml_py.md) is a generic
 parser for FTS format for both Medicaid and Medicare.
 
 File transfer summary (FTS) document contains information about 

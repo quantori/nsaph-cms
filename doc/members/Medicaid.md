@@ -1,22 +1,10 @@
 # Handling Medicaid data
 
-<!-- toc -->
-
-- [Introduction](#introduction)
-- [Legacy Pipeline](#legacy-pipeline)
-- [Importing raw data](#importing-raw-data)
-  * [Parsing FTS files to generate schema](#parsing-fts-files-to-generate-schema)
-- [Processing data](#processing-data)
-- [Data Model](#data-model)
-  * [Beneficiaries](#beneficiaries)
-    + [BENE_ID column](#bene_id-column)
-    + [Deduplication and data cleansing](#deduplication-and-data-cleansing)
-  * [Enrollments](#enrollments)
-  * [Eligibility](#eligibility)
-- [Pipeline](#pipeline)
-- [Sample user request:](#sample-user-request)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Introduction
 
@@ -53,7 +41,7 @@ starting positions, the length and the generic format of
 each of the column (such as character, numeric or date)  
 
 Parsing FTS is done by running module 
-[create_schema_config](members/create_schema_config).
+[create_schema_config](create_schema_config.rst).
                                                        
     pyhton -m nsaph.cms.create_schema_config
 
@@ -62,14 +50,14 @@ Once the schema is generated, the
 by running the following command:
 
     nohup python -u -m nsaph.loader.data_loader --domain cms -t ps --domain cms --incremental --data /data/incoming/rce/ci3_d_medicaid/original_data/cms_medicaid-max/data/  -t ps --pattern "**/maxdata_*_ps_*.csv*"  --threads 4 --page 1000 --log 100000 2>&1 > ps-2021-09-25--21-37.log&
-
+[//]: # (TODO: unknown file 'data_loader.py')
 
 ## Processing data
 
 ## Data Model
 
 The resulting data model for Medicaid domain is defined by 
-[medicaid.yaml](members/medicaid.yaml)
+[medicaid.yaml](medicaid_yaml.md)
 
 Four main tables are used to fulfill user requests:
 

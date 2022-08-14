@@ -6,13 +6,11 @@
 
 **Source**: [reset.cwl](../members/reset_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool drops the tables and deletes all previous data from the database

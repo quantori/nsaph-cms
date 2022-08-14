@@ -5,13 +5,11 @@
 
 **Source**: [ensure_resource.cwl](../members/ensure_resource_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool ensures that resources required by

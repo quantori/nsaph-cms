@@ -3,14 +3,11 @@
 
 **Source**: [medicare.cwl](../members/medicare_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [Steps](#steps)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This workflow processes raw Medicare data. The assumed initial state

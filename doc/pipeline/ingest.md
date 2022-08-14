@@ -3,14 +3,11 @@
 
 **Source**: [ingest.cwl](../members/ingest_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [Steps](#steps)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool is a shortcut to ingest CMS raw data

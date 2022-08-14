@@ -1,24 +1,10 @@
 # Medicare Files Handling
 
-<!--TOC-->
-
-- [Ingesting Raw Files](#ingesting-raw-files)
-  - [Overview](#overview)
-  - [Storing in the Database](#storing-in-the-database)
-  - [Files for 1999 to 2010](#files-for-1999-to-2010)
-  - [Files for Years 2011 and later](#files-for-years-2011-and-later)
-- [Combining raw files into a single view](#combining-raw-files-into-a-single-view)
-  - [Creating Federated Patient Summary](#creating-federated-patient-summary)
-    - [First step: Initial in-database data conditioning](#first-step-initial-in-database-data-conditioning)
-    - [Second step: Mapping to county FIPS codes](#second-step-mapping-to-county-fips-codes)
-  - [Creating Beneficiaries table](#creating-beneficiaries-table)
-  - [Creating Enrollments table](#creating-enrollments-table)
-    - [Enrollments overview](#enrollments-overview)
-    - [Enrollments Primary key (unique identifier)](#enrollments-primary-key-unique-identifier)
-    - [Enrollments data cleansing](#enrollments-data-cleansing)
-    - [Enrollments columns definitions](#enrollments-columns-definitions)
-
-<!--TOC-->
+```{contents}
+---
+local:
+---
+```
 
 ## Ingesting Raw Files
 
@@ -94,8 +80,8 @@ names and types. We use this metadata to generate appropriate database schema.
 
 See the code for handling these files:
 
-* [Metadata and data model](../../src/python/cms/tools/mcr_sas2yaml.py)
-* [Ingesting data](../../src/python/cms/tools/mcr_sas2db.py)
+* [Metadata and data model](mcr_sas2yaml_py.md)
+* [Ingesting data](mcr_sas2db_py.md)
 
 ### Files for Years 2011 and later
 
@@ -103,7 +89,7 @@ These files are original files from Resdac. They come in Fixed Width Format
 (FWF). For each file the structure is described in File Transfer 
 Summary (FTS) file. Unfortunately these files are intended for reading by 
 a human and is difficult to parse automatically. A 
-[partial parser](../../src/python/cms/fts2yaml.py) that
+[partial parser](fts2yaml_py.md) that
 relies on a known file type is implemented in Python. The information 
 extarcted by the parser is used to:
 
@@ -152,7 +138,7 @@ It also cleanses and conditions data from teh following columns:
 
 
 The following 
-[CWL tool](../../src/cwl/medicare_ps.cwl)
+[CWL tool](medicare_ps_cwl.md)
 is responsible to perform it.
 
 #### Second step: Mapping to county FIPS codes
@@ -168,7 +154,7 @@ being cleansed in the first step.
 
 The second step is performed by a general loader utility
 based on the 
-[Medicare data model definition](../../src/python/cms/models/medicare.yaml).
+[Medicare data model definition](medicare_yaml.md).
 
 ### Creating Beneficiaries table
 

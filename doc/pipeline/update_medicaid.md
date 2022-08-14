@@ -3,14 +3,11 @@
 
 **Source**: [update_medicaid.cwl](../members/update_medicaid_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [Steps](#steps)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This workflow prcoesses already ingested Medicaid data
@@ -28,36 +25,36 @@ information.
 
 ## Outputs
 
-| Name | Type | Description |
-|------|------|-------------|
-|ps_index_log|File| |
-|ps_vacuum_log|File| |
-|ben_create_log|File| |
-|ben_index_log|File| |
-|ben_vacuum_log|File| |
-|mnth_create_log|File| |
-|mnth_index_log|File| |
-|mnth_vacuum_log|File| |
-|enrlm_create_log|File| |
-|enrlm_index_log|File| |
-|enrlm_vacuum_log|File| |
-|elgb_create_log|File| |
-|elgb_index_log|File| |
-|elgb_vacuum_log|File| |
-|ps_index_err|File| |
-|ps_vacuum_err|File| |
-|ben_create_err|File| |
-|ben_index_err|File| |
-|ben_vacuum_err|File| |
-|mnth_create_err|File| |
-|mnth_index_err|File| |
-|mnth_vacuum_err|File| |
-|enrlm_create_err|File| |
-|enrlm_index_err|File| |
-|enrlm_vacuum_err|File| |
-|elgb_create_err|File| |
-|elgb_index_err|File| |
-|elgb_vacuum_err|File| |
+| Name             | Type | Description |
+|------------------|------|-------------|
+| ps_index_log     | File |             |
+| ps_vacuum_log    | File |             |
+| ben_create_log   | File |             |
+| ben_index_log    | File |             |
+| ben_vacuum_log   | File |             |
+| mnth_create_log  | File |             |
+| mnth_index_log   | File |             |
+| mnth_vacuum_log  | File |             |
+| enrlm_create_log | File |             |
+| enrlm_index_log  | File |             |
+| enrlm_vacuum_log | File |             |
+| elgb_create_log  | File |             |
+| elgb_index_log   | File |             |
+| elgb_vacuum_log  | File |             |
+| ps_index_err     | File |             |
+| ps_vacuum_err    | File |             |
+| ben_create_err   | File |             |
+| ben_index_err    | File |             |
+| ben_vacuum_err   | File |             |
+| mnth_create_err  | File |             |
+| mnth_index_err   | File |             |
+| mnth_vacuum_err  | File |             |
+| enrlm_create_err | File |             |
+| enrlm_index_err  | File |             |
+| enrlm_vacuum_err | File |             |
+| elgb_create_err  | File |             |
+| elgb_index_err   | File |             |
+| elgb_vacuum_err  | File |             |
 
 ## Steps
 

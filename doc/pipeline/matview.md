@@ -3,14 +3,11 @@
 
 **Source**: [matview.cwl](../members/matview_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [Steps](#steps)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool is a shortcut to create a materialized view and build

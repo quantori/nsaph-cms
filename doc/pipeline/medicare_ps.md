@@ -6,13 +6,11 @@
 
 **Source**: [medicare_ps.cwl](../members/medicare_ps_cwl.md)
 
-<!-- toc -->
-
-- [Description](#description)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Description
 This tool combines disparate tables with raw Medicare data into a single
