@@ -80,8 +80,8 @@ names and types. We use this metadata to generate appropriate database schema.
 
 See the code for handling these files:
 
-* [Metadata and data model](mcr_sas2yaml_py.md)
-* [Ingesting data](mcr_sas2db_py.md)
+* [Metadata and data model](members/mcr_sas2yaml_py.md)
+* [Ingesting data](members/mcr_sas2db_py.md)
 
 ### Files for Years 2011 and later
 
@@ -89,7 +89,7 @@ These files are original files from Resdac. They come in Fixed Width Format
 (FWF). For each file the structure is described in File Transfer 
 Summary (FTS) file. Unfortunately these files are intended for reading by 
 a human and is difficult to parse automatically. A 
-[partial parser](fts2yaml_py.md) that
+[partial parser](members/fts2yaml_py.md) that
 relies on a known file type is implemented in Python. The information 
 extarcted by the parser is used to:
 
@@ -138,7 +138,7 @@ It also cleanses and conditions data from teh following columns:
 
 
 The following 
-[CWL tool](medicare_ps_cwl.md)
+[CWL tool](members/medicare_ps_cwl.md)
 is responsible to perform it.
 
 #### Second step: Mapping to county FIPS codes
@@ -154,7 +154,7 @@ being cleansed in the first step.
 
 The second step is performed by a general loader utility
 based on the 
-[Medicare data model definition](medicare_yaml.md).
+[Medicare data model definition](members/medicare_yaml.md).
 
 ### Creating Beneficiaries table
 

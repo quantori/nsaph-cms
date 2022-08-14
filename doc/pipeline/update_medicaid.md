@@ -11,7 +11,7 @@ local:
 
 ## Description
 This workflow prcoesses already ingested Medicaid data
-See [documentation](../members/Medicaid.md) for detailed
+See [documentation](../Medicaid.md) for detailed
 information.
 
 

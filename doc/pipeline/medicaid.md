@@ -18,7 +18,7 @@ Medicaid Analytic eXtract (MAX) data.
 The workflow parses File transfer summary (FTS) files,
 loads the raw data into a PostgreSQL DBMS and then processes
 the data to prepare it for using by NSAPH researches.
-See [documentation](../members/Medicaid.md) for detailed
+See [documentation](../Medicaid.md) for detailed
 information.
 
 

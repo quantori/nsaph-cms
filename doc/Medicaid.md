@@ -26,7 +26,7 @@ See [documentation and path references](LegacyMedicaid.md#links-to-legacy-docume
 ## Importing raw data   
                                        
 ### Parsing FTS files to generate schema
-**Pipeline step**: [parse_fts](../pipeline/parse_fts.md)
+**Pipeline step**: [parse_fts](pipeline/parse_fts.md)
 
 The first step is to parse File transfer summary (FTS)
 included with the data and generate YAML schema for
@@ -41,7 +41,7 @@ starting positions, the length and the generic format of
 each of the column (such as character, numeric or date)  
 
 Parsing FTS is done by running module 
-[create_schema_config](create_schema_config.rst).
+[create_schema_config](members/create_schema_config.rst).
                                                        
     pyhton -m nsaph.cms.create_schema_config
 
@@ -57,7 +57,7 @@ by running the following command:
 ## Data Model
 
 The resulting data model for Medicaid domain is defined by 
-[medicaid.yaml](medicaid_yaml.md)
+[medicaid.yaml](members/medicaid_yaml.md)
 
 Four main tables are used to fulfill user requests:
 
@@ -94,7 +94,7 @@ often hours but is much faster than importing raw data.
 
 
 ### Beneficiaries
-**Pipeline step**: [load_ps](../pipeline/load_ps.md)
+**Pipeline step**: [load_ps](pipeline/load_ps.md)
 
 See also [creating Medicare Beneficiaries table](Medicare.md#creating-beneficiaries-table)
 
@@ -239,7 +239,7 @@ enrollments in medicaid.
 
 ## Pipeline
 
-See [Medicaid workflow](../pipeline/medicaid.md) for details
+See [Medicaid workflow](pipeline/medicaid.md) for details
 
     ┌────────────────────────────────────┐
     │ Initialize and prepare the database│

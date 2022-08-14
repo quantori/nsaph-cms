@@ -2,11 +2,25 @@
 
 **Pipelines to process CMS data: Medicaid and Medicare**
 
+
+```{toctree}
+---
+maxdepth: 4
+hidden: 
+---
+LegacyMedicaid
+Medicaid
+Medicare
+QueryingMedicaid
+
+```
+
 ```{contents}
 ---
 local:
 ---
 ```
+
 
 ## Overview
                                                
@@ -18,8 +32,8 @@ and optimization of the tables for efficient queries.
 
 Please see the following documents for details:
 
-* Data model and processing of [Medicaid](members/Medicaid.md) data
-* Tips on [querying of Medicaid data](members/QueringMedicaid.md)
+* Data model and processing of [Medicaid](Medicaid.md) data
+* Tips on [querying of Medicaid data](QueringMedicaid.md)
 
 ## Project Structure
 
@@ -76,7 +90,7 @@ each of the column (such as character, numeric or date)
 Module 
 [create_schema_config](members/create_schema_config) 
 generates 
-[YAML schema](members/Medicaid.md#parsing-fts-files-to-generate-schema) 
+[YAML schema](Medicaid.md#parsing-fts-files-to-generate-schema) 
 for CMS medicaid data by parsing FTS files.
 
 ##### Subpackage with miscellaneous tools for handling CMS data 
@@ -91,7 +105,7 @@ was unsuccessful.
 
 File [procedures](members/procedures.md) 
 addresses the problem that creating 
-[Medicaid eligibility table](members/Medicaid.md#eligibility)
+[Medicaid eligibility table](Medicaid.md#eligibility)
 in a single transaction requires too much time and memory.
 The stored procedures in this file split populating this table
 with data either by beneficiary or by year and state. Splitting by beneficiary
