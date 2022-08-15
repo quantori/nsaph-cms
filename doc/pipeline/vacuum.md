@@ -1,5 +1,5 @@
 # Index Builder
-**Tool** 	[nsaph.loader.vacuum](../../../../platform/doc/members/vacuum.html) 
+**Tool** 	[nsaph.loader.vacuum](../../../core-platform/doc/members/vacuum)
 
 [//]: # (TODO: use intersphinx)
 
