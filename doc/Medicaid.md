@@ -58,7 +58,7 @@ Parsing FTS is done by running module
     pyhton -m nsaph.cms.create_schema_config
 
 Once the schema is generated, the 
-[Universal Data Loader](../../core-platform/src/python/nsaph/loader/data_loader) can import it
+[Universal Data Loader](../../core-platform/sdoc/members/data_loader) can import it
 by running the following command:
 
     nohup python -u -m nsaph.loader.data_loader --domain cms -t ps --domain cms --incremental --data /data/incoming/rce/ci3_d_medicaid/original_data/cms_medicaid-max/data/  -t ps --pattern "**/maxdata_*_ps_*.csv*"  --threads 4 --page 1000 --log 100000 2>&1 > ps-2021-09-25--21-37.log&
