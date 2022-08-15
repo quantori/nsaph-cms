@@ -7,7 +7,7 @@ hidden:
 ---
 members/mcr_sas2yaml_py.md
 members/mcr_sas2db_py.md
-members/fts2yaml_py.md
+members/fts2yaml.rst
 members/medicare_ps_cwl.md
 members/medicare_yaml.md
 Medicaid.md
@@ -103,7 +103,7 @@ These files are original files from Resdac. They come in Fixed Width Format
 (FWF). For each file the structure is described in File Transfer 
 Summary (FTS) file. Unfortunately these files are intended for reading by 
 a human and is difficult to parse automatically. A 
-[partial parser](members/fts2yaml_py.md) that
+[partial parser](members/fts2yaml.rst) that
 relies on a known file type is implemented in Python. The information 
 extarcted by the parser is used to:
 
