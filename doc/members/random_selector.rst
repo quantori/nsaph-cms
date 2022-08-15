@@ -4,7 +4,7 @@
 The random_selector Module
 ============================================================================
 
-.. automodule:: python.cms.random_selector
+.. automodule:: cms.random_selector
    :members:
    :undoc-members:
 

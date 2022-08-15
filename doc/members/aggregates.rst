@@ -6,6 +6,6 @@
 The aggregates Module
 ============================================================================
 
-.. automodule:: python.cms.aggregates
+.. automodule:: cms.aggregates
    :members:
    :undoc-members:

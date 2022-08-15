@@ -4,6 +4,6 @@
 The registry Module
 ============================================================================
 
-.. automodule:: python.cms.registry
+.. automodule:: cms.registry
    :members:
    :undoc-members:
