@@ -3,7 +3,7 @@ orphan: true
 ---
 # Medicaid Table/View Initializer
 
-**Source**: [medicare_ps.cwl](../members/medicare_ps_cwl.md)
+**Source**: [medicare_ps.cwl](../members/medicare_combine_tables_cwl.md)
 
 ```{contents}
 ---

@@ -4,7 +4,7 @@ orphan: true
 # Medicare in-database processing pipeline
 **Workflow**
 
-**Source**: [medicare.cwl](../members/medicare_cwl.md)
+**Source**: [medicare.cwl](../members/medicare_beneficiaries_cwl.md)
 
 ```{contents}
 ---

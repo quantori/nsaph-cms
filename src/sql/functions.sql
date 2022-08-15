@@ -18,6 +18,20 @@
 --
 
 
+/*
+ Parameters:
+ dstr | VARCHAR | A string representing date
+
+ Return: DATE
+ Purpose:
+     Medicare files are obtained as export from SAS and contain
+     dates in different formats. A few examples are:
+     YYYYMMDD
+     YYYYDDD
+     Numeric
+     This function looks for the type of format and converts the
+     value to a valid date
+ */
 CREATE OR REPLACE FUNCTION public.parse_date (
     dstr character varying
 )  RETURNS DATE
@@ -32,21 +46,7 @@ BEGIN
     ELSEIF LENGTH(dstr) < 6 THEN
         raise EXCEPTION 'Invalid date, len < 6 %', dstr;
     ELSE
-        ystr := SUBSTRING(dstr, 1, 4);
-        s := SUBSTRING(dstr, 5);
-        IF LENGTH(s) = 2 THEN
-            mstr := '0' || SUBSTRING(s, 1, 1);
-            daystr := '0' || SUBSTRING(s, 2, 1);
-        ELSE -- = 3
-            IF SUBSTRING(s, 1,1) = '0' OR (SUBSTRING(s, 1, 2)::INT < 13) THEN
-                mstr := SUBSTRING(s, 1, 2);
-                daystr := '0' || SUBSTRING(s, 3, 1);
-            ELSE
-                mstr := '0' || SUBSTRING(s, 1, 1);
-                daystr := SUBSTRING(s, 2, 2);
-            END IF;
-        END IF;
-        RETURN to_date(ystr || mstr || daystr, 'YYYYMMDD');
+        RETURN to_date(dstr, 'YYYYDDD');
     END IF;
 EXCEPTION
     WHEN OTHERS THEN RETURN NULL;
@@ -64,3 +64,20 @@ BEGIN
 END;
 $body$ LANGUAGE plpgsql
 
+
+-- Wrong code for parsing strings
+--     ystr := SUBSTRING(dstr, 1, 4);
+--     s := SUBSTRING(dstr, 5);
+--     IF LENGTH(s) = 2 THEN
+--         mstr := '0' || SUBSTRING(s, 1, 1);
+--         daystr := '0' || SUBSTRING(s, 2, 1);
+--     ELSE -- = 3
+--         IF SUBSTRING(s, 1,1) = '0' OR (SUBSTRING(s, 1, 2)::INT < 13) THEN
+--             mstr := SUBSTRING(s, 1, 2);
+--             daystr := '0' || SUBSTRING(s, 3, 1);
+--         ELSE
+--             mstr := '0' || SUBSTRING(s, 1, 1);
+--             daystr := SUBSTRING(s, 2, 2);
+--         END IF;
+--     END IF;
+--     RETURN to_date(ystr || mstr || daystr, 'YYYYMMDD');

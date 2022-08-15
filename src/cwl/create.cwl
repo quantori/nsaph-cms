@@ -58,6 +58,14 @@ inputs:
     default:  "medicaid"
     inputBinding:
       prefix: --domain
+  action:
+    type: string?
+    inputBinding:
+      prefix: --action
+  limit:
+    type: string?
+    inputBinding:
+      prefix: --limit
 
   depends_on:
     type: File?

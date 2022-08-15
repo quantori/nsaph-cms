@@ -21,7 +21,7 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-baseCommand: [python, -m, cms.tools.mcr_create_ps]
+baseCommand: [python, -m, cms.tools.mcr_combine_tables]
 
 doc: |
   This tool combines disparate tables with raw Medicare data into a single
@@ -39,6 +39,11 @@ inputs:
     doc: The name of the section in the database.ini file
     inputBinding:
       prefix: --connection
+  table:
+    type: string
+    doc: the name of the table to be created
+    inputBinding:
+      prefix: --table
   depends_on:
     type: File?
     doc: a special field used to enforce dependencies and execution order
@@ -51,5 +56,5 @@ outputs:
   errors:
     type: stderr
 
-stderr: mcr_create_ps.err
+stderr: mcr_combine_tables.err
 
