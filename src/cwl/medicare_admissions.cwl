@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-### Process Medicare admissions in-database
+### Process Medicare inpatient admissions data inside the database
 #  Copyright (c) 2022. Harvard University
 #
 #  Developed by Research Software Engineering,

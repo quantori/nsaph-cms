@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-### Medicare in-database processing pipeline
+### Medicare Beneficiaries data in-database processing pipeline
 #  Copyright (c) 2022. Harvard University
 #
 #  Developed by Research Software Engineering,
@@ -28,10 +28,10 @@ requirements:
   InlineJavascriptRequirement: {}
 
 doc: |
-  This workflow processes raw Medicare data. The assumed initial state
+  This workflow processes raw Medicare beneficiaries summary data.
+  The assumed initial state
   is that raw data is already in the database. We assume that the data
-  for each year is in a separate set of tables consisting of at least
-  two tables: patient summary and inpatient admissions. The first step
+  for each year is in a separate table. The first step
   combines these disparate tables into a single view, creating uniform
   columns.
 
@@ -52,6 +52,8 @@ steps:
     in:
       database: database
       connection_name: connection_name
+      table:
+        valueFrom: "ps"
     out:  [ log, errors ]
 
   create__ps_view:
