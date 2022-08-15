@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Ensure_resource.cwl
 
 ```{literalinclude} ../../src/cwl/ensure_resource.cwl

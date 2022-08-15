@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Index.cwl
 
 ```{literalinclude} ../../src/cwl/index.cwl

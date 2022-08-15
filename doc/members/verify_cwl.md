@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # verify.cwl
 
 ```{literalinclude} ../../src/cwl/verify.cwl

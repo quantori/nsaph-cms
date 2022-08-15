@@ -4,7 +4,7 @@
 The duplicates Module
 ============================================================================
 
-.. automodule:: cms.duplicates
+.. automodule:: python.cms.duplicates
    :members:
    :undoc-members:
 

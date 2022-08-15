@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Tool
 
 ```{literalinclude} ../../src/cwl/vacuum.cwl

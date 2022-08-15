@@ -4,7 +4,7 @@
 The medpar Module
 ============================================================================
 
-.. automodule:: cms.tools.cms.medpar
+.. automodule:: python.cms.tools.medpar
    :members:
    :undoc-members:
 

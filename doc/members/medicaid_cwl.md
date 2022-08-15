@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Medicaid.cwl
 
 ```{literalinclude} ../../src/cwl/medicaid.cwl

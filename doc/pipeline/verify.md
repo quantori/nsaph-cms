@@ -1,5 +1,5 @@
 # Index Builder
-**Tool** 	[cms.aggregates](../members/aggregates.md)
+**Tool** 	[cms.aggregates](../members/aggregates.rst)
 
 **Source**: [verify.cwl](../members/verify_cwl.md)
 

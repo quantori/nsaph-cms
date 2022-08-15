@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # vacuum.cwl
 
 ```{literalinclude} ../../src/cwl/vacuum.cwl

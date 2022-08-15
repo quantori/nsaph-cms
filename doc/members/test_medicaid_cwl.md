@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Test_medicaid.cwl
 
 ```{literalinclude} ../../src/cwl/test_medicaid.cwl

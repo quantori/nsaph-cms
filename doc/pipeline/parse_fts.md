@@ -1,5 +1,5 @@
 # FTS Parser
-**Tool** 	[cms.registry](../members/registry_py.md)
+**Tool** 	[cms.registry](../members/registry.rst)
 
 **Source**: [parse_fts.cwl](../members/parse_fts_cwl.md)
 
