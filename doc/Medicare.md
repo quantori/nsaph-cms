@@ -5,9 +5,10 @@
 maxdepth: 4
 hidden:
 ---
-members/mcr_sas2yaml_py.md
-members/mcr_sas2db_py.md
-members/fts2yaml_py.md
+members/mcr_sas2yaml.rst
+members/mcr_sas2db.rst
+members/fts2yaml.rst
+members/medicare_ps_cwl.md
 members/medicare_yaml.md
 Medicaid.md
 ```
@@ -93,8 +94,8 @@ names and types. We use this metadata to generate appropriate database schema.
 
 See the code for handling these files:
 
-* [Metadata and data model](members/mcr_sas2yaml_py.md)
-* [Ingesting data](members/mcr_sas2db_py.md)
+* [Metadata and data model](members/mcr_sas2yaml.rst)
+* [Ingesting data](members/mcr_sas2db.rst)
 
 ### Files for Years 2011 and later
 
@@ -102,7 +103,7 @@ These files are original files from Resdac. They come in Fixed Width Format
 (FWF). For each file the structure is described in File Transfer 
 Summary (FTS) file. Unfortunately these files are intended for reading by 
 a human and is difficult to parse automatically. A 
-[partial parser](members/fts2yaml_py.md) that
+[partial parser](members/fts2yaml.rst) that
 relies on a known file type is implemented in Python. The information 
 extarcted by the parser is used to:
 
