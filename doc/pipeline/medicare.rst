@@ -3,3 +3,4 @@
 medicare.cwl
 ============================
 
+.. cwldirective:: medicare
