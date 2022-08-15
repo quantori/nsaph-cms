@@ -2,10 +2,6 @@
 orphan: true
 ---
 # Medicaid Table/View Initializer
-**Tool** 	[cms.tools.mcr_create_ps](../../src/python/cms/tools/mcr_create_ps.py)
-
-[//]: # (TODO: unknown file 'mcr_create_ps.py')
-
 
 **Source**: [medicare_ps.cwl](../members/medicare_ps_cwl.md)
 

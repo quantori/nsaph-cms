@@ -2,7 +2,7 @@
 orphan: true
 ---
 # Medicaid Table/View Initializer
-**Tool** 	[nsaph.loader.data_loader](../../../core-platform/src/python/nsaph/loader/data_loader)
+**Tool** 	[nsaph.loader.data_loader](../../../core-platform/doc/members/data_loader)
 
 **Source**: [create.cwl](../members/create_cwl.md)
 
