@@ -1,3 +1,6 @@
+---
+orphan: true
+---
 # FTS Parser
 **Tool** 	[cms.registry](../members/registry.rst)
 
@@ -21,15 +24,15 @@ are compatible.
 
 ## Inputs
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-|input|Directory| |A path to directory, containing unpacked CMS files. The tool will recursively look in subdirectories for FTS files |
-|output|string|`cms.yaml`|A path to a file name with resulting data model|
+| Name   | Type      | Default    | Description                                                                                                        |
+|--------|-----------|------------|--------------------------------------------------------------------------------------------------------------------|
+| input  | Directory |            | A path to directory, containing unpacked CMS files. The tool will recursively look in subdirectories for FTS files |
+| output | string    | `cms.yaml` | A path to a file name with resulting data model                                                                    |
 
 ## Outputs
 
-| Name | Type | Description |
-|------|------|-------------|
-|log|File| |
-|model|File| |
-|errors|stderr| |
+| Name   | Type   | Description |
+|--------|--------|-------------|
+| log    | File   |             |
+| model  | File   |             |
+| errors | stderr |             |

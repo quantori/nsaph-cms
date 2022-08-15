@@ -1,3 +1,6 @@
+---
+orphan: true
+---
 # Full Medicaid Processing Pipeline
 **Workflow**
 
@@ -16,11 +19,11 @@ and verifies counts
 
 ## Inputs
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-|database|File|`{'class': 'File', 'location': '/opt/airflow/project/database.ini'}`|Path to database connection file, usually database.ini|
-|connection_name|string|`nsaph_test`|The name of the section in the database.ini file|
-|input|Directory|`{'class': 'Directory', 'location': '/data/incoming/medicaid/mini_random_data/'}`| |
+| Name            | Type      | Default                                                                           | Description                                            |
+|-----------------|-----------|-----------------------------------------------------------------------------------|--------------------------------------------------------|
+| database        | File      | `{'class': 'File', 'location': '/opt/airflow/project/database.ini'}`              | Path to database connection file, usually database.ini |
+| connection_name | string    | `nsaph_test`                                                                      | The name of the section in the database.ini file       |
+| input           | Directory | `{'class': 'Directory', 'location': '/data/incoming/medicaid/mini_random_data/'}` |                                                        |
 
 ## Outputs
 
@@ -85,7 +88,7 @@ and verifies counts
 
 ## Steps
 
-| Name | Runs | Description |
-|------|------|-------------|
-|process|[medicaid.cwl](medicaid.md)| |
-|verify|[verify.cwl](verify.md)| |
+| Name    | Runs                        | Description |
+|---------|-----------------------------|-------------|
+| process | [medicaid.cwl](medicaid.md) |             |
+| verify  | [verify.cwl](verify.md)     |             |

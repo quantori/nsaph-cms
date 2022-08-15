@@ -1,3 +1,6 @@
+---
+orphan: true
+---
 # Full Medicaid Processing Pipeline
 **Workflow**
 
@@ -17,11 +20,11 @@ information.
 
 ## Inputs
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-|database|File| |Path to database connection file, usually database.ini|
-|connection_name|string| |The name of the section in the database.ini file|
-|registry|File| | |
+| Name            | Type   | Default | Description                                            |
+|-----------------|--------|---------|--------------------------------------------------------|
+| database        | File   |         | Path to database connection file, usually database.ini |
+| connection_name | string |         | The name of the section in the database.ini file       |
+| registry        | File   |         |                                                        |
 
 ## Outputs
 
@@ -58,11 +61,11 @@ information.
 
 ## Steps
 
-| Name | Runs | Description |
-|------|------|-------------|
-|index_ps|[index.cwl](index.md)| |
-|vacuum_ps|[vacuum.cwl](vacuum.md)| |
-|create_beneficiaries|[matview.cwl](matview.md)|Creates `Beneficiaries` Table|
-|create_monthly_view|[matview.cwl](matview.md)|Creates internally used `Monthly View`|
-|create_enrollments|[matview.cwl](matview.md)|Creates `Enrollment` Table|
-|create_eligibility|[matview.cwl](matview.md)|Creates `Eligibility` Table|
+| Name                 | Runs                      | Description                            |
+|----------------------|---------------------------|----------------------------------------|
+| index_ps             | [index.cwl](index.md)     |                                        |
+| vacuum_ps            | [vacuum.cwl](vacuum.md)   |                                        |
+| create_beneficiaries | [matview.cwl](matview.md) | Creates `Beneficiaries` Table          |
+| create_monthly_view  | [matview.cwl](matview.md) | Creates internally used `Monthly View` |
+| create_enrollments   | [matview.cwl](matview.md) | Creates `Enrollment` Table             |
+| create_eligibility   | [matview.cwl](matview.md) | Creates `Eligibility` Table            |

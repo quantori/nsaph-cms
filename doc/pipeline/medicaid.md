@@ -1,3 +1,6 @@
+---
+orphan: true
+---
 # Full Medicaid Processing Pipeline
 **Workflow**
 
