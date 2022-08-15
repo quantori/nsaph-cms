@@ -5,8 +5,8 @@
 maxdepth: 4
 hidden:
 ---
-members/mcr_sas2yaml_py.md
-members/mcr_sas2db_py.md
+members/mcr_sas2yaml.rst
+members/mcr_sas2db.rst
 members/fts2yaml.rst
 members/medicare_ps_cwl.md
 members/medicare_yaml.md
@@ -94,8 +94,8 @@ names and types. We use this metadata to generate appropriate database schema.
 
 See the code for handling these files:
 
-* [Metadata and data model](members/mcr_sas2yaml_py.md)
-* [Ingesting data](members/mcr_sas2db_py.md)
+* [Metadata and data model](members/mcr_sas2yaml.rst)
+* [Ingesting data](members/mcr_sas2db.rst)
 
 ### Files for Years 2011 and later
 
