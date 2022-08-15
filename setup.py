@@ -24,7 +24,8 @@ setup(
         "License :: Harvard University :: Development",
         "Operating System :: OS Independent"],
     install_requires=[
-        'nsaph>=0.0.3.0'
+        'nsaph>=0.0.3.0',
+        'nsaph_utils >= 0.0.4.2',
     ],
     package_data = {
         '': ["**/*.yaml"]
