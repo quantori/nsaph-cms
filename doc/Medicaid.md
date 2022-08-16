@@ -1,22 +1,23 @@
 # Handling Medicaid data
 
-<!-- toc -->
+```{toctree}
+---
+maxdepth: 4
+hidden:
+glob:
+---
+pipeline/parse_fts
+members/create_schema_config.rst
+members/medicaid_yaml.md
+pipeline/ingest
+pipeline/medicaid
+```
 
-- [Introduction](#introduction)
-- [Legacy Pipeline](#legacy-pipeline)
-- [Importing raw data](#importing-raw-data)
-  * [Parsing FTS files to generate schema](#parsing-fts-files-to-generate-schema)
-- [Processing data](#processing-data)
-- [Data Model](#data-model)
-  * [Beneficiaries](#beneficiaries)
-    + [BENE_ID column](#bene_id-column)
-    + [Deduplication and data cleansing](#deduplication-and-data-cleansing)
-  * [Enrollments](#enrollments)
-  * [Eligibility](#eligibility)
-- [Pipeline](#pipeline)
-- [Sample user request:](#sample-user-request)
-
-<!-- tocstop -->
+```{contents}
+---
+local:
+---
+```
 
 ## Introduction
 
@@ -53,23 +54,22 @@ starting positions, the length and the generic format of
 each of the column (such as character, numeric or date)  
 
 Parsing FTS is done by running module 
-[create_schema_config](../src/python/cms/create_schema_config.py).
+[create_schema_config](members/create_schema_config.rst).
                                                        
     pyhton -m nsaph.cms.create_schema_config
 
 Once the schema is generated, the 
-[Universal Data Loader](../../../nsaph/src/python/nsaph/loader/data_loader.py) can import it
+[Universal Data Loader](../../core-platform/doc/members/data_loader) can import it
 by running the following command:
 
     nohup python -u -m nsaph.loader.data_loader --domain cms -t ps --domain cms --incremental --data /data/incoming/rce/ci3_d_medicaid/original_data/cms_medicaid-max/data/  -t ps --pattern "**/maxdata_*_ps_*.csv*"  --threads 4 --page 1000 --log 100000 2>&1 > ps-2021-09-25--21-37.log&
-
 
 ## Processing data
 
 ## Data Model
 
 The resulting data model for Medicaid domain is defined by 
-[medicaid.yaml](../src/python/cms/models/medicaid.yaml)
+[medicaid.yaml](members/medicaid_yaml.md)
 
 Four main tables are used to fulfill user requests:
 
@@ -106,7 +106,7 @@ often hours but is much faster than importing raw data.
 
 
 ### Beneficiaries
-**Pipeline step**: [load_ps](pipeline/load_ps.md)
+**Pipeline step**: [ingest](pipeline/ingest)
 
 See also [creating Medicare Beneficiaries table](Medicare.md#creating-beneficiaries-table)
 
@@ -251,7 +251,7 @@ enrollments in medicaid.
 
 ## Pipeline
 
-See [Medicaid workflow](pipeline/medicaid.md) for details
+See [Medicaid workflow](pipeline/medicaid.rst) for details
 
     ┌────────────────────────────────────┐
     │ Initialize and prepare the database│
