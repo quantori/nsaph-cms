@@ -114,3 +114,8 @@ with data either by beneficiary or by year and state. Splitting by beneficiary
 File [functions](members/functions.md) contain helper functions
 to parse dates in non-standard formats that are encountered in 
 raw medicare files that we have.
+
+## Indices and tables
+
+* [](genindex)
+* [](modindex)
