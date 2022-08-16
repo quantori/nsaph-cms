@@ -8,7 +8,6 @@ hidden:
 members/mcr_sas2yaml.rst
 members/mcr_sas2db.rst
 members/fts2yaml.rst
-members/medicare_ps_cwl.md
 members/medicare_yaml.md
 Medicaid.md
 ```

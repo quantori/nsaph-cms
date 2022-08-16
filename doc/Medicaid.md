@@ -4,12 +4,13 @@
 ---
 maxdepth: 4
 hidden:
+glob:
 ---
-pipeline/parse_fts.md
+pipeline/parse_fts
 members/create_schema_config.rst
 members/medicaid_yaml.md
-pipeline/load_ps.md
-pipeline/medicaid.md
+pipeline/ingest
+pipeline/medicaid
 ```
 
 ```{contents}
@@ -105,7 +106,7 @@ often hours but is much faster than importing raw data.
 
 
 ### Beneficiaries
-**Pipeline step**: [load_ps](pipeline/load_ps.md)
+**Pipeline step**: [ingest](pipeline/ingest)
 
 See also [creating Medicare Beneficiaries table](Medicare.md#creating-beneficiaries-table)
 
@@ -250,7 +251,7 @@ enrollments in medicaid.
 
 ## Pipeline
 
-See [Medicaid workflow](pipeline/medicaid.md) for details
+See [Medicaid workflow](pipeline/medicaid.rst) for details
 
     ┌────────────────────────────────────┐
     │ Initialize and prepare the database│
