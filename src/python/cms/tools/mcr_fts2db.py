@@ -1,3 +1,12 @@
+"""
+Command line utility to load raw Medicare data into the database.
+
+Used for 2011 and later years. Looks for FTS files, parses them to generate
+database model and extract
+metadata required to read DAT files. Then loads data into the database.
+"""
+
+
 #  Copyright (c) 2022. Harvard University
 #
 #  Developed by Research Software Engineering,
@@ -39,7 +48,7 @@ class MedicareLoader:
     for 2011 and later years.
 
     Looks for FTS files, parses them to generate database model and extract
-    metadata required to read DAT files. Then loads data into teh database.
+    metadata required to read DAT files. Then loads data into the database.
     """
 
     @classmethod

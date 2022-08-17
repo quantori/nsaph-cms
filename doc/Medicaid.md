@@ -244,10 +244,16 @@ Quoted "latest" points to the fact that multiple
 "latest" counties or zip codes signal data inconsistency
 rather than a simple fact that a beneficiary could have
 moved during the year.                          
+
 ### Eligibility
 
 This is in fact a monthly detalization of beneficiaries
 enrollments in medicaid. 
+                                                   
+### Inpatient Admissions
+
+Table with all inpatient admissions billed to Medicaid with 
+admission and discharge dates and ICD codes.
 
 ## Pipeline
 

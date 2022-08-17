@@ -1,3 +1,9 @@
+"""
+Simple converter for CMS Medicare Fixed Width Format (FWF) files to CSV.
+DOes not do any validation.
+"""
+
+
 #  Copyright (c) 2022. Harvard University
 #
 #  Developed by Research Software Engineering,

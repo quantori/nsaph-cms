@@ -27,6 +27,11 @@ from utils.io_utils import fopen
 
 
 class MedicareDataLoader(DataLoader):
+    """
+    Subclass of generic Data Loader aware of the raw Medicare CMS
+    data structure. Matches FTS and DAT files.
+    """
+
     @classmethod
     def dat4fts(cls, fts_path):
         f, ext = os.path.splitext(fts_path)

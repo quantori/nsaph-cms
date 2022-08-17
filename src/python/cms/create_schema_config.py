@@ -24,7 +24,9 @@ class CMSSchema(Context):
     """
     Configuration object to configure parsing
     File Transfer Summary files and creating
-    YAML data model
+    YAML data model.
+
+    Automatically parses command line parameters
     """
 
     _output = Argument("output",

@@ -1,3 +1,7 @@
+"""
+Module used for converting CMS DAT files to CSV
+"""
+
 #  Copyright (c) 2021-2022. Harvard University
 #
 #  Developed by Research Software Engineering,
@@ -23,6 +27,8 @@ import os
 import shutil
 import traceback
 from collections import OrderedDict
+from typing import List
+
 from dateutil import parser as date_parser
 import csv
 
@@ -40,12 +46,20 @@ def width(s:str):
 
 
 class MedparParseException(Exception):
+    """
+    Exception raised if data in a DAT file cannot be parsed
+    """
+
     def __init__(self, msg:str, pos:int):
         super(MedparParseException, self).__init__(msg, pos)
         self.pos = pos
 
 
 class ColumnAttribute:
+    """
+    Attribute of a column as described in the FTS file
+    """
+
     def __init__(self, start:int, end:int, conv):
         self.start = start
         self.end = end
@@ -59,6 +73,10 @@ class ColumnAttribute:
 
 
 class ColumnDef:
+    """
+    Column definition as described in the FTS file
+    """
+
     def __init__(self, pattern):
         fields = pattern.split(' ')
         assert len(fields) == 7
@@ -82,6 +100,11 @@ class ColumnDef:
 
 
 class Column:
+    """
+    Class representing column metadata required for generating
+    database schema
+    """
+
     def __init__(self, ord:int, long_name:str, short_name:str, type:str, start:int, width, desc:str):
         self.name = short_name
         self.long_name = long_name
@@ -98,6 +121,10 @@ class Column:
 
 
 class MedicareFile:
+    """
+    Class to manipulate a single CMS DAT file
+    """
+
     def __init__(self, dir_path: str, name: str,
                  year:str = None, dest:str = None):
         self.dir = dir_path
@@ -154,7 +181,15 @@ class MedicareFile:
                 column = cdef.read(line)
                 self.columns[column.name] = column
 
-    def read_record(self, data, ln):
+    def read_record(self, data, ln) -> List:
+        """
+        Reads one record from DAT file
+
+        :param data: a slice of raw data from DAT file
+        :param ln:  line number, used for reporting
+        :return: Record data as list
+        """
+
         exception_count = 0
         pieces = {}
         for name in self.columns:
@@ -190,6 +225,14 @@ class MedicareFile:
         return record
 
     def validate(self, record):
+        """
+        Asserts that the given record is consistent with
+        the file from which it is read. 
+
+        :param record: Record
+        :return:   None
+        """
+
         yc = None
         if "BENE_ENROLLMT_REF_YR" in self.columns:
             yc = "BENE_ENROLLMT_REF_YR"
@@ -200,6 +243,12 @@ class MedicareFile:
         assert record[self.columns[yc].ord - 1] == self.year
 
     def count_lines_in_source(self):
+        """
+        Counts number of lines in the original DAT file
+
+        :return: number of lines
+        """
+
         lines = 0
         blocks = 0
         bts = 0
@@ -233,6 +282,12 @@ class MedicareFile:
         return lines
 
     def count_lines_in_dest(self):
+        """
+        Counts number of lines in the resulting CSV file
+
+        :return: number of lines
+        """
+
         lines = 0
         if not os.path.isfile(self.csv):
             return 0
@@ -243,6 +298,12 @@ class MedicareFile:
         return lines
 
     def status(self) -> str:
+        """
+        Checks if a given DAT file has been successfully converted to CSV
+
+        :return: Value of the status of the conversion
+        """
+
         try:
             if not os.path.isfile(self.csv):
                 return "NONE"
@@ -259,9 +320,19 @@ class MedicareFile:
             return "ERROR: " + str(x)
 
     def status_message(self):
+        """
+        Checks if a given DAT file has been successfully converted to CSV
+
+        :return: Message, containing the status of the conversion
+        """
+
         return "{}: {}".format(self.fts, self.status())
 
     def export(self):
+        """
+        Performs actual conversion
+        """
+
         if self.dir != self.dest:
             shutil.copy(self.fts, self.dest)
         t1 = datetime.datetime.now()
@@ -313,6 +384,10 @@ class MedicareFile:
                       .format(self.fts, bad_lines))
 
     def info(self):
+        """
+        Prints info about the DAT file (metadata) to standard output
+        """
+
         for s in [
             "Columns in File",
             "Exact File Record Length (Bytes in Variable Block)"

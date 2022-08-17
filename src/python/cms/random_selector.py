@@ -68,6 +68,16 @@ def select(pattern: str, destination: str, threshold: float):
 
 
 def args():
+    """
+    Parses command line arguments
+
+      --in INPUT           pattern to select incoming files
+      --out OUT            Directory to output the random selection
+      --selector SELECTOR  A float value specifying the share of data to be
+                           selected
+
+    :return: arguments as dictionary
+    """
     parser = ArgumentParser ("Random records selector")
     parser.add_argument("--in",
                         help="pattern to select incoming files",

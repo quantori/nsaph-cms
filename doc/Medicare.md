@@ -131,7 +131,7 @@ The first step creates a view called `medicare.ps`.
 This step technically combines all `cms.mbsf_ab*` and `cms.mcr_bene_*`
 tables into a single view using `CREATE VIEW` SQL statement.
 
-It also cleanses and conditions data from teh following columns:
+It also cleanses and conditions data from the following columns:
 
 * `year` 
   * If it is a string in original file, it is converted to integer
@@ -147,7 +147,7 @@ It also cleanses and conditions data from teh following columns:
   SAS numeric form
 * `dod` (date of death): converted to SQL `DATE` type,
   from either character or SAS numeric form
-* 
+ 
 
 
 The following 
@@ -318,4 +318,34 @@ The following columns are created for Enrollments:
 * `fips3_valdiated`: A boolean column indicating that the value
   of county code is consistent with the values of state code and zip code.
 
+### Creating Federated Admissions view
+
+This step technically combines all `cms.medpar*` and `cms.mcr_ip_*`
+tables into a single view using `CREATE VIEW` SQL statement.
+
+It also cleanses and conditions data from teh following columns:
+
+* `year` 
+  * If it is a string in original file, it is converted to integer
+  * If it is two-digit, it is converted to 4 digit
+* `state`: added a column with text state id
+* `fips2`: added a column with two digit state FIPS code
+* `zip`: if original file uses 9-digit zip code, it is split
+  into two separate columns, 5 digit `zip` and 4-digit `zip4`.
+  The value is also converted to integer value.
+* `zip4`: added, when available - the last four digits of 9-digit
+  zip code
+* `admission_date`: converted to SQL `DATE` type, from either character or
+  SAS numeric form
+* `discharge_date`: converted to SQL `DATE` type,
+  from either character or SAS numeric form
+* `adm_day_of_week`: converted to `integer`
+* Diagnoses: separate columns combined into a single `ARRAY` column
+  (read more about [PostgreSQL Arrays](https://www.postgresql.org/docs/current/arrays.html))
+
+
+### Creating Inpatient Admissions table
+
+Table with all inpatient admissions billed to Medicare with 
+admission and discharge dates and ICD codes.
 
