@@ -23,7 +23,7 @@ from typing import List, Tuple, Any, Callable
 from cms.fts2yaml import mcr_type, MedicareFTS
 from nsaph.loader.data_loader import DataLoader
 from nsaph_utils.utils.fwf import FWFReader
-from utils.io_utils import fopen
+from nsaph_utils.utils.io_utils import fopen
 
 
 class MedicareDataLoader(DataLoader):

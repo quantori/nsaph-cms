@@ -104,15 +104,15 @@ on NSAPH GitHub and on the
 
 All paths are on `nsaph-sandbox01.rc.fas.harvard.edu`
 
-### Demographics:
+### Ingest demographics:
 
     python -u -m nsaph.model2 /data/incoming/rce/ci3_d_medicaid/processed_data/cms_medicaid-max/csv/maxdata_demographics.csv.gz
 
-### Enrollments (yearly) and Eligibility (monthly)
+### Ingest enrollments (yearly) and eligibility (monthly)
 
     nohup python -u -m nsaph.data_model.model2 --data /data/incoming/rce/ci3_d_medicaid/processed_data/cms_medicaid-max/data_cms_medicaid-max-ps_patient-year/medicaid_mortality_2005.fst -t enrollments_year --threads 4 --page 5000 &
 
-### Admissions
+### Ingest admissions
 
     for f in /data/incoming/rce/ci3_d_medicaid/processed_data/cms_medicaid-max/data_cms_medicaid-max-ip_patient-admission-date/maxdata_*_ip_${year}.fst ; do 
 	    date
