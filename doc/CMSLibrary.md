@@ -12,7 +12,7 @@
 * [random_selector](members/random_selector.rst) Selects random lines
   from a CSV-like file
 * [medicare data loader](members/mcr_data_loader.rst)  Subclass of generic 
-    [Data Loader](../../nsaph-core-platform/doc/members/data_loader.rst) 
+    [Data Loader](../../core-platform/doc/members/data_loader.rst) 
     aware of the raw Medicare CMS
     data structure. Matches FTS and DAT files.
 
@@ -36,7 +36,7 @@
 * [mcr_sas2db](members/mcr_sas2db.rst) Loader looks for SAS 7BDAT files
 * [mcr_sas2yaml](members/mcr_sas2yaml.rst) Introspector for SAS 7BDAT
     files, generating 
-    [YAML data model](../../nsaph-core-platform/doc/Datamodels.md) for each file
+    [YAML data model](../../core-platform/doc/Datamodels.md) for each file
 
 This package contains code that was written to try to extract
 corrupted medicare data for 2015. Ultimately, this attempt
