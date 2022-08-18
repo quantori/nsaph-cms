@@ -1,6 +1,6 @@
 :orphan:
 
-medicare.cwl
-============================
+Medicare in-database processing pipeline
+========================================
 
 .. cwldirective:: medicare
