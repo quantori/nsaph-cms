@@ -128,7 +128,8 @@ File [functions](members/functions.md) contain helper functions
 to parse dates in non-standard formats that are encountered in 
 raw medicare files that we have.
 
-## Indices {#cms-indices-and-tables}
+(cms-indices-and-tables)=
+## Documentation Indices 
 
 * [](genindex)
 * [](modindex)
