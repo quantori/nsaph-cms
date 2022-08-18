@@ -21,21 +21,21 @@ See [documentation](Medicaid.md) about the new pipeline.
 https://github.com/NSAPH/data_model
 
 ### Demographics
-#### Data Path
+#### Demographics Data Path
 
-##### File
+##### Demographics File name
 
     maxdata_demographics.fst
 
-##### NSAPH VM
+##### Demographics data on NSAPH VM
 
     /data/incoming/rce/ci3_d_medicaid/processed_data/cms_medicaid-max/data_cms_medicaid-max-demographics_patient/maxdata_demographics.fst
       
-##### RCE
+##### Demographics data on RCE
 
     /nfs/nsaph_ci3/data/ci3_d_medicaid/processed_data/cms_medicaid-max/data_cms_medicaid-max-demographics_patient/maxdata_demographics.fst
 
-#### Description of columns
+#### Demographics: Description of columns
 
 The most information about columns used in the legacy data model can be 
 obtained from the R script 
@@ -43,29 +43,29 @@ obtained from the R script
 on NSAPH GitHub. The script is also available in the 
 [Internal GitLab](https://gitlab-int.rc.fas.harvard.edu/rse/francesca_dominici/dominici_data_pipelines/-/blob/master/medicaid/1_create_demographics_data.R)
 
-### Enrollments    
+### Medicaid Enrollments    
 
 #### Documentation 
 
 [Medicaid Platform](https://github.com/NSAPH/data_requests/tree/master/request_projects/dec2019_medicaid_platform_cvd)
 on NSAPH GitHub
 
-#### Data Path
-##### Files
+#### Medicaid Enrollments Data Path
+##### Enrollments Files
 
     medicaid_mortality_{YEAR}.fst
                              
 for YEAR in [1999:2012]
 
-##### NSAPH VM
+##### Enrollments data on NSAPH VM
 
     /data/incoming/rce/ci3_d_medicaid/processed_data/cms_medicaid-max/data_cms_medicaid-max-ps_patient-year/
 
-##### RCE
+##### Enrollments data on RCE
 
     /nfs/nsaph_ci3/data/ci3_d_medicaid/processed_data/cms_medicaid-max/data_cms_medicaid-max-ps_patient-year/
 
-#### Description of columns
+#### Enrollments: Description of columns
 
 Available in R script 
 [2_process_enrollment_data.R](https://github.com/NSAPH/data_model/blob/master/scripts/medicaid_scripts/processed_data/2_process_enrollment_data.R)
@@ -74,22 +74,22 @@ Also, on [internal GitLab](https://gitlab-int.rc.fas.harvard.edu/rse/francesca_d
 
 ### Admissions     
 
-#### Data Path
-##### Files
+#### Admissions Data Path
+##### Admissions Files
 
     cvd_admissions_{YEAR}.fst    
 
 for YEAR in [1999:2012]
 
-##### NSAPH VM
+##### Admissions data on NSAPH VM
 
     /data/incoming/rce/ci3_health_data/medicaid/cvd/1999_2012/desouza/data
 
-##### RCE
+##### Admissions data on RCE
 
     /nfs/nsaph_ci3/ci3_health_data/medicaid/cvd/1999_2012/desouza/data
 
-#### Description of columns
+#### Admissions: Description of columns
              
 Described in the documented for 
 [Medicaid CVD Claims 1999-2012](https://github.com/NSAPH/data_requests/blob/master/request_projects/dec2019_medicaid_platform_cvd/cvd_readme.md)

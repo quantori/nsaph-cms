@@ -22,7 +22,7 @@ local:
 ```
 
 
-## Overview
+## Overview of health data
                                      
 We use health data provided by 
 [Centers for Medicare & Medicaid Services (CMS)](https://www.cms.gov/) 
@@ -128,7 +128,7 @@ File [functions](members/functions.md) contain helper functions
 to parse dates in non-standard formats that are encountered in 
 raw medicare files that we have.
 
-## Indices and tables
+## Indices {#cms-indices-and-tables}
 
 * [](genindex)
 * [](modindex)
