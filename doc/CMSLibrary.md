@@ -1,5 +1,9 @@
 # Python package to manipulate health (CMS) data
 
+:::{seealso}
+[Python Module Index](modindex)
+:::
+
 ## Package cms
 
 * [fts2yaml](members/fts2yaml.rst) is a generic
@@ -38,10 +42,15 @@
     files, generating 
     [YAML data model](../../core-platform/doc/Datamodels.md) for each file
 
-This package contains code that was written to try to extract
+>>> This package contains code that was written to try to extract
 corrupted medicare data for 2015. Ultimately, this attempt
 was unsuccessful.
-                                                     
+
+:::{seealso}
+[Python Module Index](modindex)
+:::
+
+
 ## Additional details
 
 ### Parsing FTS
