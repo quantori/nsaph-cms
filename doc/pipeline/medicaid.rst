@@ -1,6 +1,6 @@
 orphan:
 
-medicaid.cwl
-============================
+Full Medicaid Processing Pipeline
+=================================
 
 .. cwldirective:: medicaid
