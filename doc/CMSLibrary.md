@@ -1,8 +1,8 @@
 # Python package to manipulate health (CMS) data
 
-:::{seealso}
-[Python Module Index](modindex)
-:::
+```{seealso}
+ [Python Module Index](modindex)
+```
 
 ## Package cms
 
@@ -46,9 +46,9 @@
 corrupted medicare data for 2015. Ultimately, this attempt
 was unsuccessful.
 
-:::{seealso}
-[Python Module Index](modindex)
-:::
+```{seealso}
+ [Python Module Index](modindex)
+```
 
 
 ## Additional details
