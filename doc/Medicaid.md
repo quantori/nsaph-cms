@@ -78,6 +78,13 @@ Four main tables are used to fulfill user requests:
             |--- eligibility
                 |--- admissions
 
+
+```{image} medicaid-db.png
+---
+width: 600
+---
+```
+
 An additional table `monthly` is only used to generate the tables above
 and is not exposed to users. CMS raw data contains
 a column for each month and type of data thus producing

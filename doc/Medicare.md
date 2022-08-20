@@ -118,6 +118,13 @@ into two views:
 2. Inpatient Admissions (aka hospitalizations, aka medpar)
 
 ### Creating Federated Patient Summary
+
+```{image} medicare-db.png
+---
+width: 600
+---
+```
+
         
 The federated patient summary is created in two steps.
 The division into two steps is purely because of technical reasons
