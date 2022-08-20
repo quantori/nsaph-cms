@@ -159,7 +159,7 @@ we apply the following rules:
 
 * A record is clearly marked as containing duplicates.
   a column `duplicates` contains the number of 
-  inconsistencies using teh following specification:
+  inconsistencies using the following specification:
 
         source: "COUNT(distinct {identifiers})"
   where `{identifiers}` refers to a list of columns marked

@@ -29,7 +29,7 @@ We use health data provided by
           
 Data processing pipelines included in this package
 create a data warehouse with health data (Medicare and Medicaid).
-They perform ingestion of raw data into teh database, data 
+They perform ingestion of raw data into the database, data 
 cleansing and deduplication , when possible, data quality analysis
 and optimization of the tables for efficient queries.
 

@@ -111,7 +111,7 @@ extarcted by the parser is used to:
 
 ## Combining raw files into a single view
 
-Once all raw files are ingested into teh database they are combined 
+Once all raw files are ingested into the database they are combined 
 into two views:
 
 1. Patient summary (aka MBSF, aka Beneficiary summary)
@@ -323,7 +323,7 @@ The following columns are created for Enrollments:
 This step technically combines all `cms.medpar*` and `cms.mcr_ip_*`
 tables into a single view using `CREATE VIEW` SQL statement.
 
-It also cleanses and conditions data from teh following columns:
+It also cleanses and conditions data from the following columns:
 
 * `year` 
   * If it is a string in original file, it is converted to integer

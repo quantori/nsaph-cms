@@ -18,7 +18,7 @@
 #
 """
 Loader looks for SAS 7BDAT files in a given path
-matching a given pattern and loads teh data in the database.
+matching a given pattern and loads the data in the database.
 
 Used for 1999 to 2010 years
 """
@@ -35,7 +35,7 @@ from nsaph.loader import LoaderConfig
 class SASLoader(MedicareSAS):
     """
     Loader looks for SAS 7BDAT files in a given path
-    matching a given pattern and loads teh data in the database.
+    matching a given pattern and loads the data in the database.
 
     Used for 1999 to 2010 years
     """
