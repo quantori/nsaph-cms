@@ -47,8 +47,6 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.intersphinx',
     'myst_parser',
-    'nsaph_utils.docutils.cwl_parser',
-    'nsaph_utils.docutils.cwl_directive',
 ]
 
 myst_heading_anchors = 5
@@ -62,3 +60,5 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.nsaph', 'notes', 'venv']
+
+
