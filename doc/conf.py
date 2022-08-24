@@ -14,7 +14,6 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../src/python'))
-sys.path.insert(0, os.path.abspath('../src/cwl'))
 
 add_module_names = False
 autoclass_content = 'both'
@@ -61,10 +60,5 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.nsaph', 'notes', 'venv']
-
-source_suffix = {
-    '.rst': 'restructuredtext',
-    '.cwl': 'cwl',
-}
 
 
